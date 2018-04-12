@@ -1,0 +1,31 @@
+% [PB_NAME]
+%
+% This script semi-automates your .... analyses.
+ 
+% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
+
+%%
+
+
+
+
+
+%%
+
+
+
+
+
+%%
+
+ 
+
+
+
+ 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+%                                                           %
+%       Part of Programmeer Beer Toolbox (PBToolbox)        %
+%       Written by: Jesse J. Heckman (2018)                 %
+%                                                           %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

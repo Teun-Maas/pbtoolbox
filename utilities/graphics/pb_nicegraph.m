@@ -1,0 +1,148 @@
+function pb_nicegraph(varargin)
+% PB_NICEGRAPH(VARARGIN)
+%
+% PB_NICEGRAPH(VARARGIN) adjusts figure settings for all axes in current or
+% selected figure. Optional input arguments are: figure, color def, conditions
+% and colmatch.
+% 
+% See also PB_DEFSUBPLOTS
+
+% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
+
+
+    %% Initialization: Define axes, colorschemes, & plots
+    
+    fig         =   pb_keyval('fig',varargin,gcf);
+    def         =   pb_keyval('def',varargin,2);
+    conditions  =   pb_keyval('conditions',varargin,1);
+    
+    ax      = flipud(findobj(gcf,'Type','Axes'));
+    if ax<1; return; end
+    
+    [n,p] = pb_defsubplot(fig); 
+    
+    if p>0
+        ncol    = max(p)*conditions; 
+        col     = pb_selectcolor(ncol,def);
+    else
+        ncol    = 0;
+        col     = [];
+    end
+    
+    
+   %% Body: Make nice graphs
+    for i = 1:n
+        
+        
+        % Iterate over the axes in current figure
+        
+        % Set axis properties
+        set(ax(i), ...
+            'Box'         , 'off'     , ...
+            'TickDir'     , 'out'     , ...
+            'TickLength'  , [.02 .02] , ...
+            'XMinorTick'  , 'on'      , ...
+            'YMinorTick'  , 'on'      , ...
+            'YGrid'       , 'on'      , ...
+            'XGrid'       , 'on'      , ...
+            'XColor'      , [.3 .3 .3], ...
+            'YColor'      , [.3 .3 .3], ...
+            'FontSize'    , 13        ,...
+            'YDir'        , 'normal'  ,...
+            'LineWidth'   , 1         );
+
+        % LINE:
+        %
+        % Use as 'primary' data
+        hline = findobj(gca,'Type','Line');
+    
+        for j=1:length(hline)
+            set(hline(length(hline)+1-j), ...
+                'Color'         , col(j,:)  , ...
+                'LineWidth'     , 1.5         );
+        end
+
+        % BAR:
+        %
+        % Use as 'primary' data
+        hbar = findobj(gca,'Type','Bar');
+    
+        for k=1:length(hbar)
+            set(hbar(k), ...
+                'FaceColor'         , col(cmatch(i),:)  , ...
+                'EdgeColor'         , col(cmatch(i),:)./2, ...
+                'LineWidth'         , 1.5         );
+            if length(hbar) > 1
+                set(hbar(k), ...
+                    'FaceAlpha'     , 0.66);
+            end
+        end
+        
+        % HISTOGRAM:
+        % 
+        % Use as 'primary' data
+        h = findobj(gca,'Type','Histogram');
+        if ~isempty(h)
+        end
+        
+        for l=1:length(h)
+            set(h(l), ...
+                'FaceColor'         , col(cmatch(i),:)  , ...
+                'EdgeColor'         , col(cmatch(i),:)./2, ...
+                'LineWidth'         , 1.5         );
+            if length(h) > 1
+                set(h(l), ...
+                    'FaceAlpha'     , 0.66);
+            end
+        end
+        
+        % SCATTER: 
+        %
+        % Use as 'background' data for fits and regressions
+        h = findobj(gca,'Type','Scatter');
+        ScatCol = pb_statcolor(length(h)+1,[],[],[],'def',5);
+        
+        for iScat = 1:length(h)
+            DotSize = 36; %DSize(length(h(iScat).XData));
+            set(h(iScat), ...
+                'Marker'            , 'o' , ...
+                'MarkerFaceColor'   , ScatCol(1,:), ...
+                'MarkerEdgeColor'   , ScatCol(1,:), ...
+                'SizeData'          , DotSize, ...
+                'HandleVisibility'  , 'off');      
+        
+        end
+        
+        
+        % AREA: 
+        % 
+        % Use as 'range' to match with fitted data plots.
+        h = findobj(gca,'Type','Area');
+        AreaCol = pb_statcolor(length(h)+1,[],[],[],'def',5);
+        
+        for iArea = 1:length(h)
+            set(h(iArea), ...
+            'FaceColor'         , AreaCol(iArea,:)  , ...
+            'LineStyle'         , 'none' , ...
+            'FaceAlpha'         , 0.4);
+        end
+    end
+end
+
+function DotSize = DSize(NDots)
+    % Defines the DotSize for scatterplot
+    DotSize = 2500/NDots;
+    if DotSize < 36
+        DotSize = 36;
+    end
+end
+
+
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+%                                                           %
+%       Part of Programmeer Beer Toolbox (PBToolbox)        %
+%       Written by: Jesse J. Heckman (2018)                 %
+%                                                           %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
