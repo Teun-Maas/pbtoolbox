@@ -21,7 +21,7 @@ function pb_nicegraph(varargin)
     
     [n,p] = pb_defsubplot(fig); 
     
-    if p>0
+    if max(p)>0
         ncol    = max(p)*conditions; 
         col     = pb_selectcolor(ncol,def);
     else
@@ -33,23 +33,22 @@ function pb_nicegraph(varargin)
    %% Body: Make nice graphs
     for i = 1:n
         
-        
-        % Iterate over the axes in current figure
-        
         % Set axis properties
-        set(ax(i), ...
-            'Box'         , 'off'     , ...
-            'TickDir'     , 'out'     , ...
-            'TickLength'  , [.02 .02] , ...
-            'XMinorTick'  , 'on'      , ...
-            'YMinorTick'  , 'on'      , ...
-            'YGrid'       , 'on'      , ...
-            'XGrid'       , 'on'      , ...
-            'XColor'      , [.3 .3 .3], ...
-            'YColor'      , [.3 .3 .3], ...
-            'FontSize'    , 13        ,...
-            'YDir'        , 'normal'  ,...
-            'LineWidth'   , 1         );
+        setAx = ax(i);
+        
+        setAx.Box           = 'off';
+        setAx.TickDir       = 'out';
+        setAx.TickLength    = [.02 .02];
+        setAx.XMinorTick    = 'on';
+        setAx.YMinorTick    = 'on';
+        setAx.YGrid         = 'on';
+        setAx.XGrid         = 'on';
+        setAx.XColor        = [.3 .3 .3];
+        setAx.YColor        = [.3 .3 .3];
+        setAx.FontSize      = 13;
+        setAx.YDir          = 'normal';
+        setAx.LineWidth     = 1;
+
 
         % LINE:
         %
