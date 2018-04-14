@@ -24,7 +24,7 @@ function fullpath = pb_searchfile(path,fname)
         return
     end
     a = find(~isempty(subdirinfo),1);
-    fullpath = [subdirinfo{a}.folder '/' subdirinfo{a}.name];
+    fullpath = [subdirinfo{a}.folder filesep subdirinfo{a}.name];
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

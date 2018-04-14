@@ -28,8 +28,8 @@ function pb_script(varargin)
             end
         case 2
             fname   = varargin{1};
-            if varargin{2}(end) ~= '/' 
-                varargin{2} = [varargin{2} '/']; 
+            if varargin{2}(end) ~= filesep 
+                varargin{2} = [varargin{2} filesep]; 
             end
             path    = [pbt_D varargin{2}];
         case 3

@@ -53,18 +53,18 @@ function pb_nicegraph(varargin)
         % LINE:
         %
         % Use as 'primary' data
-        hline = findobj(gca,'Type','Line');
+        hline = findobj(ax(i),'Type','Line');
     
         for j=1:length(hline)
             set(hline(length(hline)+1-j), ...
                 'Color'         , col(j,:)  , ...
-                'LineWidth'     , 1.5         );
+                'LineWidth'     , 1         );
         end
 
         % BAR:
         %
         % Use as 'primary' data
-        hbar = findobj(gca,'Type','Bar');
+        hbar = findobj(ax(i),'Type','Bar');
     
         for k=1:length(hbar)
             set(hbar(k), ...
@@ -80,7 +80,7 @@ function pb_nicegraph(varargin)
         % HISTOGRAM:
         % 
         % Use as 'primary' data
-        h = findobj(gca,'Type','Histogram');
+        h = findobj(ax(i),'Type','Histogram');
         if ~isempty(h)
         end
         
@@ -98,7 +98,7 @@ function pb_nicegraph(varargin)
         % SCATTER: 
         %
         % Use as 'background' data for fits and regressions
-        h = findobj(gca,'Type','Scatter');
+        h = findobj(ax(i),'Type','Scatter');
         ScatCol = pb_statcolor(length(h)+1,[],[],[],'def',5);
         
         for iScat = 1:length(h)
@@ -116,7 +116,7 @@ function pb_nicegraph(varargin)
         % AREA: 
         % 
         % Use as 'range' to match with fitted data plots.
-        h = findobj(gca,'Type','Area');
+        h = findobj(ax(i),'Type','Area');
         AreaCol = pb_statcolor(length(h)+1,[],[],[],'def',5);
         
         for iArea = 1:length(h)
