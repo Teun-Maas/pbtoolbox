@@ -80,7 +80,7 @@ pa_sac2mat(); % MANUALLY select! input: *.hv / output: *.mat
 load(strcat(fname,'-0001.mat')) % load 'XX-0001-YY-MM-DD-000n.mat --> create: Sac, Stim
 clear fn fname s;
 S = pb_stim2MSstim(Stim);
-[M] = pa_supersac(Sac,Stim);
+[M] = pa_supersac(Sac,S);
 
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

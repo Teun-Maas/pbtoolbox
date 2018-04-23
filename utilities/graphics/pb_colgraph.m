@@ -23,7 +23,7 @@ function pb_colgraph(varargin)
     
     [n,m,p] = pb_defsubplot(cfn);
     
-    if ~isempty(p);
+    if ~isempty(p)
         ncol    = max(max(p));
         col     = pb_selectcolor(ncol,def);
         for iAx = 1:n*m
@@ -36,6 +36,10 @@ function pb_colgraph(varargin)
     else
         close(cfn)
         fprintf('Current figure (%d) does not contain axes/plots.\n',cfn);
+    end
+    
+    if ~hstate
+        hold off
     end
     
   

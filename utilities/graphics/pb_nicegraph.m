@@ -15,6 +15,7 @@ function pb_nicegraph(varargin)
     fig         =   pb_keyval('fig',varargin,gcf);
     def         =   pb_keyval('def',varargin,2);
     conditions  =   pb_keyval('conditions',varargin,1);
+    linewidth   =   pb_keyval('linewidth',varargin,1);
     
     ax      = flipud(findobj(gcf,'Type','Axes'));
     if ax<1; return; end
@@ -53,26 +54,26 @@ function pb_nicegraph(varargin)
         % LINE:
         %
         % Use as 'primary' data
-        hline = findobj(ax(i),'Type','Line');
+        h_line = findobj(ax(i),'Type','Line');
     
-        for j=1:length(hline)
-            set(hline(length(hline)+1-j), ...
+        for j=1:length(h_line)
+            set(h_line(length(h_line)+1-j), ...
                 'Color'         , col(j,:)  , ...
-                'LineWidth'     , 1         );
+                'LineWidth'     , linewidth         );
         end
 
         % BAR:
         %
         % Use as 'primary' data
-        hbar = findobj(ax(i),'Type','Bar');
+        h_bar = findobj(ax(i),'Type','Bar');
     
-        for k=1:length(hbar)
-            set(hbar(k), ...
+        for k=1:length(h_bar)
+            set(h_bar(k), ...
                 'FaceColor'         , col(cmatch(i),:)  , ...
                 'EdgeColor'         , col(cmatch(i),:)./2, ...
-                'LineWidth'         , 1.5         );
-            if length(hbar) > 1
-                set(hbar(k), ...
+                'LineWidth'         , linewidth         );
+            if length(h_bar) > 1
+                set(h_bar(k), ...
                     'FaceAlpha'     , 0.66);
             end
         end
@@ -88,7 +89,7 @@ function pb_nicegraph(varargin)
             set(h(l), ...
                 'FaceColor'         , col(cmatch(i),:)  , ...
                 'EdgeColor'         , col(cmatch(i),:)./2, ...
-                'LineWidth'         , 1.5         );
+                'LineWidth'         , linewidth         );
             if length(h) > 1
                 set(h(l), ...
                     'FaceAlpha'     , 0.66);
@@ -109,7 +110,6 @@ function pb_nicegraph(varargin)
                 'MarkerEdgeColor'   , ScatCol(1,:), ...
                 'SizeData'          , DotSize, ...
                 'HandleVisibility'  , 'off');      
-        
         end
         
         

@@ -28,12 +28,26 @@ M = [V;A;B];                                    % all
 
 %% Evaluate stimulus duration
 
-ss = M(M(:,30)==1,:);                           % 1 ms
-sm = M(M(:,30)==3,:);                           % 3 ms
-lm = M(M(:,30)==10,:);                          % 10 ms
-ll = M(M(:,30)==30,:);                          % 30 ms
 
-cfn=cfn+1; figure(cfn);
+cfn=cfn+1; figure(cfn); clf; 
+
+uDur = unique(M(:,30));
+for indD = 1:length(uDur)
+    
+    for j = 1:2
+        subplot(2,length(uDur),(j-1)*length(uDur) + indD)
+        
+        sel = M(:,30) == uDur(indD);
+        y = M(sel,7+j); x = M(sel,22+j);
+        plot(x,y,'o');
+        axis([-100 100 -100 100]); pb_dline; 
+    end
+end
+
+pb_nicegraph
+
+%%
+
 
 % Azimuth
 y = ss(:,8); x = ss(:,23);
@@ -94,12 +108,12 @@ pb_nicegraph;
 %% Plot saccades:
 
 udur = unique(round(M(:,30)));
-length(udur)
+length(udur);
 cfn=cfn+1; figure(cfn); clf;
 
 for i = 1:length(udur)
    
-    subplot(2,3,i)
+    subplot(2,3,i);
     hold on;
     
     sel = M(:,30) == udur(i) & M(:,2) == 2;
