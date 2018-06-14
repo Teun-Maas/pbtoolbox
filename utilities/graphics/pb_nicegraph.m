@@ -17,7 +17,7 @@ function pb_nicegraph(varargin)
     conditions  =   pb_keyval('conditions',varargin,1);
     linewidth   =   pb_keyval('linewidth',varargin,1);
     
-    ax      = flipud(findobj(gcf,'Type','Axes'));
+    ax      = pb_fobj(gcf,'Type','Axes');
     if ax<1; return; end
     
     [n,p] = pb_defsubplot(fig); 
@@ -61,6 +61,18 @@ function pb_nicegraph(varargin)
                 'Color'         , col(j,:)  , ...
                 'LineWidth'     , linewidth         );
         end
+        
+        % ERRORBAR:
+        %
+        % Use as 'primary' data
+        h_error = findobj(ax(i),'Type','ErrorBar');
+    
+        for j=1:length(h_error)
+            set(h_error(length(h_error)+1-j), ...
+                'Color'         , col(j,:)  , ...
+                'LineWidth'     , linewidth         );
+        end
+        
 
         % BAR:
         %

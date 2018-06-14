@@ -14,7 +14,7 @@ function pb_edit(varargin)
 
     %% Initialization
 
-    pbt_D = '/Users/jjheckman/Documents/Code/Matlab/PBToolbox/'; %
+    pbt_D = '/Users/jjheckman/Documents/Code/Gitlab/pbtoolbox/'; %
     default_D = '/tmp/defaultbin/';
     cd(pbt_D);
     
