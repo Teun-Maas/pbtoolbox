@@ -2,7 +2,7 @@ function h = pb_fobj(varargin)
 % PB_FOBJ(varargin)
 %
 % PB_FOBJ(varargin) returns the flipud of an object array. This allows for
-% more ease during figure editing.
+% more ease during figure editing, as obj will be sorted logically.
 %
 % See also FINDOBJ, FLIPUD, PB_NICEGRAPH
  
