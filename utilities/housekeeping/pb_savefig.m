@@ -1,4 +1,4 @@
-function pb_savefig()
+function pb_savefig(varargin)
 % PB_SAVEFIG()
 %
 % Creates a template function for PBToolbox.
@@ -9,6 +9,14 @@ function pb_savefig()
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  
+    cd('/Users/jjheckman/Documents/Data/PhD/Figure');
+    
+    g = groot;
+    
+    if nargin == 0
+        filter = {'*.fig';'*.pdf'};
+        [file, path] = uiputfile(filter);        
+    end
 
  
 end
