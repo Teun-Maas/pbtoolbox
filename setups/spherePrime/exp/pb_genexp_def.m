@@ -26,7 +26,7 @@ function pb_genexp_def
     
     %expfile     = 'def_exp'; 
     expfile     = input('   Experiment name:              ','s');
-    datdir      = 'JJH\';
+    datdir      = 'JJH/';
     
     minsnd      = 200; % 200 ms gap (total darkness and silence) for optimal OPN inhibition...
     maxsnd      = 200;
@@ -221,7 +221,7 @@ function pb_genexp_def
         %RP2 as close to the previous target as possible.
         if ChaList(n,3) == ChaList(n,7) %Use this to find matching RP2's
             for m = 1:length(cfg.lookup)
-                if ChaList(n,7) == cfg.lookup(m,3)
+                if ChaList(n,7) == cfg.lookup(m,2)
                 else
                     Xcntr       = abs(cfg.lookup(m,5)-ChaList(n,5));
                     Ycntr       = abs(cfg.lookup(m,6)-ChaList(n,6));
@@ -380,7 +380,7 @@ function writeexp(expfile,datdir,theta,phi,theta2,phi2,snd,snd2,int,ledon,sndon,
             VIS(2).LED = 'LED'; VIS(2).X = theta2(Trl); VIS(2).Y = phi2(Trl); VIS(2).Int = 5; VIS(2).EventOn = 2; VIS(2).Onset = 0; VIS(2).EventOff = 2; VIS(2).Offset = dur(Trl);
             
             % Make sure control trials have only 1 event
-            if ~isempty(find(rpermlist==Trl, 1))
+            if ~isempty(find(rpermlist == Trl, 1))
                 AUD(2).EventOn = 1;
                 AUD(2).Onset = ledon(Trl)+sndon(Trl)+150;
                 VIS(2).EventOn = 1; 
