@@ -1,5 +1,5 @@
 function bool = pb_or(logic)
-% PB_OR()
+% PB_OR(LOGIC)
 %
 % Iterates 'or'-logical operation on all elements of input argument.
 %

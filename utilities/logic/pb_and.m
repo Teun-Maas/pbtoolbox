@@ -1,5 +1,5 @@
-function bool = pb_and(logicArray)
-% PB_AND()
+function bool = pb_and(logic)
+% PB_AND(LOGIC)
 %
 % Iterates 'and'-logical operation on all elements of input argument.
 %
@@ -15,11 +15,11 @@ function bool = pb_and(logicArray)
         return
     end
     
-    logicArray = logicArray(:);
-    bool = logicArray(1);
-    for i=1:length(logicArray)-1
-        logicArray = logicArray(2:end);
-        bool = and(bool,logicArray(1));
+    logic = logic(:);
+    bool = logic(1);
+    for i=1:length(logic)-1
+        logic = logic(2:end);
+        bool = and(bool,logic(1));
     end
  
 end

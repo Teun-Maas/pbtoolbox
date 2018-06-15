@@ -1,11 +1,11 @@
 function [ind, log] = pb_findempty(varargin)
-% PB_FINDEMPTY()
+% PB_FINDEMPTY(VARARGIN)
 %
-% Creates a template function for PBToolbox.
+% Finds empty argins in varargin.
 %
-% PB_FINDEMPTY()  ...
+% PB_FINDEMPTY(VARARGIN) returns indices and bool array of evaluated varargin 
 %
-% See also ...
+% See also PB_AND, PB_OR
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

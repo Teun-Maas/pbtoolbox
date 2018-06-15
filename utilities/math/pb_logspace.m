@@ -1,11 +1,12 @@
 function y = pb_logspace(d1, d2, n, base)
-% PB_LOGSPACE()
+% PB_LOGSPACE(D1,D2,N,BASE)
 %
-% Creates a template function for PBToolbox.
+% Returns a log-spaced array of your input.
 %
-% PB_LOGSPACE()  ...
+% PB_LOGSPACE(D1,D2,N,BASE) returns the logaritmic spaced array from d1 to
+% d2 of size n.
 %
-% See also ...
+% See also PB_LOG
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  

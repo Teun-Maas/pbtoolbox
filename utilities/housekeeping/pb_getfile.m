@@ -1,11 +1,10 @@
 function [fpath] = pb_getfile(varargin)
-% PB_GETFILE()
+% PB_GETFILE(VARARGIN)
 %
-% Creates a template function for PBToolbox.
+% PB_GETFILE(VARARGIN) returns selected file from gui. Default input
+% for directory is userpath.
 %
-% PB_GETFILE()  ...
-%
-% See also ...
+% See also PB_GETDIR
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

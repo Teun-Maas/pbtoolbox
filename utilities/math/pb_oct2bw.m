@@ -1,5 +1,5 @@
 function F = pb_oct2bw(F1,oct)
-% PB_OCT2BW()
+% PB_OCT2BW(F1,OCT)
 %
 % Generates sequence of F2 that lies oct octaves above F1.
 %

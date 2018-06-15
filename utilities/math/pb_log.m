@@ -6,7 +6,7 @@ function C = pb_log(B, A)
 % PB_LOG(B,A) returns the logaritmic value of A-log(B), i.e. log(B)/log(A).
 % if no value is provided for A, the natural log is assumed.
 %
-% See also ...
+% See also PB_LOGSPACE
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  

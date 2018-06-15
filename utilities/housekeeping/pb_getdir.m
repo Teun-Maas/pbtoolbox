@@ -1,11 +1,10 @@
 function path = pb_getdir(varargin)
-% PB_GETDIR()
+% PB_GETDIR(VARARGIN)
 %
-% Creates a template function for PBToolbox.
+% PB_GETDIR(VARARGIN) returns selected directory from gui. Default input
+% for directory is userpath
 %
-% PB_GETDIR()  ...
-%
-% See also ...
+% See also PB_GETFILE
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

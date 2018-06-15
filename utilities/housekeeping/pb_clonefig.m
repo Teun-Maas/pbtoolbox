@@ -3,9 +3,10 @@ function h = pb_clonefig(fID)
 %
 % Creates a clone from a graphic object.
 %
-% PB_CLONEFIG(fID)  
+% PB_CLONEFIG(fID) clobes figure into new empty figure. If no imput was 
+% provided, default figure is gcf.
 %
-% See also ...
+% See also PB_NICEGRAPH, PB_FOBJ
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  
