@@ -1,14 +1,13 @@
 function [val, remaining] = pb_keyval(key, varargin)
-
-% PB_KEYVAL returns the value that corresponds to the requested key in a
-% key-value pair list of variable input arguments
+% PB_KEYVAL(KEY, VARARGIN)
 %
-% Use as
-%   [val] = pa_keyval(key, varargin)
+% PB_KEYVAL(KEY,VARARGIN) returns the value that corresponds to the requested key in a
+% key-value pair list of variable input arguments.
 %
-% 
+% See also PB_GETDIR
+ 
+% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-% what to return if the key is not found
     emptyval = [];
 
     if nargin==3 && iscell(varargin{1})
