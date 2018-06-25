@@ -12,11 +12,6 @@ cd('/Users/jjheckman/Documents/Data/PhD'); % default data directory
 cdir = uigetdir(); if cdir ~= 0; cd(cdir); end
 
 
-%%
-
-path = pb_getdir('dir','/Users/jjheckman/Documents/Data/PhD/ms_dds');
-cd(path);
-
 %% Set variables
 
 prompt = {
