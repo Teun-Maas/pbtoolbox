@@ -14,39 +14,45 @@ cdir = uigetdir(); if cdir ~= 0; cd(cdir); end
 
 %% Set variables
 
-prompt = {
-    'Enter experimenter initials (XX): ', ...
-    'Enter year (YY): ', ...
-    'Enter month (MM): ', ...
-    'Enter day (DD): ', ...  
-    'Particpant (000n): '};
+% prompt = {
+%     'Enter experimenter initials (XX): ', ...
+%     'Enter year (YY): ', ...
+%     'Enter month (MM): ', ...
+%     'Enter day (DD): ', ...  
+%     'Particpant (000n): '};
+% 
+% formatOut = 'yy'; YYd = datestr(now,formatOut);
+% formatOut = 'mm'; MMd = datestr(now,formatOut);
+% formatOut = 'dd'; DDd = datestr(now,formatOut);
+% 
+% defAns = {'JJH',YYd,MMd,DDd,'000'};
+% 
+% title = 'Experiment selection';
+% numlines = 1;
+% 
+% answ = inputdlg(prompt,title,numlines,defAns);
+% 
+% s.XX = answ{1};
+% s.YY = answ{2};
+% s.MM = answ{3};
+% s.DD = answ{4};
+% s.PN = answ{5};
+% 
+% clear answ DDd defAns formatOut MMd numlines prompt title YYd;
+% 
+% fname = strcat(s.XX,'-',s.PN,'-',s.YY,'-',s.MM,'-',s.DD);
+% 
+% fn.s2hd = { 
+%     strcat(fname,'-0000.sphere'), ...
+%     strcat(fname,'-0001.sphere')};
+% 
+% fn.cal = strcat(fname,'-0000.csv');
 
-formatOut = 'yy'; YYd = datestr(now,formatOut);
-formatOut = 'mm'; MMd = datestr(now,formatOut);
-formatOut = 'dd'; DDd = datestr(now,formatOut);
+%% Get variables
 
-defAns = {'JJH',YYd,MMd,DDd,'000'};
+d = dir('*.sphere');
+fname = d(1).name;
 
-title = 'Experiment selection';
-numlines = 1;
-
-answ = inputdlg(prompt,title,numlines,defAns);
-
-s.XX = answ{1};
-s.YY = answ{2};
-s.MM = answ{3};
-s.DD = answ{4};
-s.PN = answ{5};
-
-clear answ DDd defAns formatOut MMd numlines prompt title YYd;
-
-fname = strcat(s.XX,'-',s.PN,'-',s.YY,'-',s.MM,'-',s.DD);
-
-fn.s2hd = { 
-    strcat(fname,'-0000.sphere'), ...
-    strcat(fname,'-0001.sphere')};
-
-fn.cal = strcat(fname,'-0000.csv');
 
 
 %% create data files
