@@ -12,61 +12,38 @@ cd('/Users/jjheckman/Documents/Data/PhD'); % default data directory
 cdir = uigetdir(); if cdir ~= 0; cd(cdir); end
 
 
-%% Set variables
-
-% prompt = {
-%     'Enter experimenter initials (XX): ', ...
-%     'Enter year (YY): ', ...
-%     'Enter month (MM): ', ...
-%     'Enter day (DD): ', ...  
-%     'Particpant (000n): '};
-% 
-% formatOut = 'yy'; YYd = datestr(now,formatOut);
-% formatOut = 'mm'; MMd = datestr(now,formatOut);
-% formatOut = 'dd'; DDd = datestr(now,formatOut);
-% 
-% defAns = {'JJH',YYd,MMd,DDd,'000'};
-% 
-% title = 'Experiment selection';
-% numlines = 1;
-% 
-% answ = inputdlg(prompt,title,numlines,defAns);
-% 
-% s.XX = answ{1};
-% s.YY = answ{2};
-% s.MM = answ{3};
-% s.DD = answ{4};
-% s.PN = answ{5};
-% 
-% clear answ DDd defAns formatOut MMd numlines prompt title YYd;
-% 
-% fname = strcat(s.XX,'-',s.PN,'-',s.YY,'-',s.MM,'-',s.DD);
-% 
-% fn.s2hd = { 
-%     strcat(fname,'-0000.sphere'), ...
-%     strcat(fname,'-0001.sphere')};
-% 
-% fn.cal = strcat(fname,'-0000.csv');
-
 %% Get variables
 
 d = dir('*.sphere');
-fname = d(1).name;
+sname = d(1).name
 
+experimenter    = pb_delreadstr(sname,'delimiter','-','n',1);
+participant     = pb_delreadstr(sname,'delimiter','-','n',2);
+year            = pb_delreadstr(sname,'delimiter','-','n',3);
+month           = pb_delreadstr(sname,'delimiter','-','n',4);
+day             = pb_delreadstr(sname,'delimiter','-','n',5);
 
+bname = [experimenter '-' participant '-' year '-' month '-' day '-']
 
 %% create data files
 
 spheretrial2complete(); % creates 2 .sphere files: calibration "0000" block, and data "000n" block 
 
-% 1. Set trial directory as the 'Current Folder'
-% 2. run spheretrial2complete();
+%% Prep Calibration data
 
-sphere2hoopdat(fn.s2hd{1}); % calibration (*-0000-*.sphere) and data (*-000n-*.sphere) -> .dat
-sphere2hoopdat(fn.s2hd{2});
+[fname,~] = pb_getfile('ext',[bname '*.sphere'],'dir',cdir);
 
-sphere2hoopcsv(fn.s2hd{1}); % 2 calibration and data -> .csv
-sphere2hoopcsv(fn.s2hd{2});
+sphere2hoopdat(fname); % calibration (*-0000-*.sphere)
+sphere2hoopcsv(fname)
+
+%% Calibrate experiment data
+
+[fname,~] = pb_getfile('ext',[bname '*.sphere'],'dir',cdir);
+
+sphere2hoopdat(fname);
+sphere2hoopcsv(fname);
+
+%%
 
 pa_calibrate() % calibrates "0000.csv" data: SELECT FILES MANUALLY
 

@@ -1,4 +1,4 @@
-function [fpath] = pb_getfile(varargin)
+function [fname, path] = pb_getfile(varargin)
 % PB_GETFILE(VARARGIN)
 %
 % PB_GETFILE(VARARGIN) returns selected file from gui. Default input

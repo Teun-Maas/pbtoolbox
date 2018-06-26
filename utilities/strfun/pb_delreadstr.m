@@ -1,4 +1,4 @@
-function cnt = pb_delreadstr(str, varargin)
+function [strN] = pb_delreadstr(str, varargin)
 % PB_DELREADSTR(STR, VARARGIN)
 %
 % PB_DELREADSTR(STR, VARARGIN) reads nth-element from a string seperated by a delimiter.
@@ -13,25 +13,25 @@ function cnt = pb_delreadstr(str, varargin)
     n           = pb_keyval('n',varargin,1);
     
     D = strfind(str, delimiter);
+    if isempty(D); strN = str; return; end
+    N = length(D)-1;
     
-    cnt = 0;
-    
-    for ind = 1:length(D)
-        if ind == 1 && D(ind) > 1
-            cnt = cnt+1;
-            disp('1')
-        elseif ind == length(D) && D(ind) < length(str)
-            cnt = cnt+1;
-            disp('end')
-        else
-                
-        end
+    if D(1)>1
+        N = N+1;
+        D = [0 D];
     end
     
+    if D(end) < length(str)
+        N = N+1;
+        D = [D length(str)+1];
+    end
     
-    % INCLUDE MAIN CODE, for length(D), write strs then select nth element
+    if n>N
+        error('Not enough elements in string.');
+    end
     
- 
+    strN = str(D(n)+1:D(n+1)-1);
+    
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
