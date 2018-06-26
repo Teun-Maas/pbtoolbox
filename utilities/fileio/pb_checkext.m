@@ -4,7 +4,7 @@ function fname = pb_checkext(fname,ext)
 % PB_CHECKEXT(FNAME,EXT) checks if filename contains a specific extension already, if not it
 % provides the filename with the extension.
 %
-% See also PB_WRITEFUN, PB_FCHECKEXIST
+% See also PB_WRITEFUN, PB_FEXT
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
