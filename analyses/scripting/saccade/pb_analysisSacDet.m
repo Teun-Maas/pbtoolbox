@@ -33,14 +33,14 @@ spheretrial2complete(); % creates 2 .sphere files: calibration "0000" block, and
 
 [fname,~] = pb_getfile('ext',[bname '*.sphere'],'dir',cdir);
 
-sphere2hoopdat(fname); % calibration (*-0000-*.sphere)
+sphere2hoopdat(fname); % calibration 
 sphere2hoopcsv(fname)
 
 %% Calibrate experiment data
 
 [fname,~] = pb_getfile('ext',[bname '*.sphere'],'dir',cdir);
 
-sphere2hoopdat(fname);
+sphere2hoopdat(fname); % data
 sphere2hoopcsv(fname);
 
 %%
@@ -55,13 +55,13 @@ pa_calibrate() % calibrates "0000.csv" data: SELECT FILES MANUALLY
 
 %% Fine tune saccades
 
-pa_sacdet(strcat(fname,'-0001.hv')); % input: *.hv output:*.hv
+pa_sacdet(fname); % input: *.hv output:*.hv
 
 
 %% Load variables
 
 pa_sac2mat(); % MANUALLY select! input: *.hv / output: *.mat
-load(strcat(fname,'-0001.mat')) % load 'XX-0001-YY-MM-DD-000n.mat --> create: Sac, Stim
+load(fname) % load 'XX-0001-YY-MM-DD-000n.mat --> create: Sac, Stim
 clear fn fname s;
 S = pb_stim2MSstim(Stim);
 [M] = pa_supersac(Sac,S);
