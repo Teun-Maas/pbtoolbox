@@ -55,6 +55,9 @@ pa_calibrate() % calibrates "0000.csv" data: SELECT FILES MANUALLY
 
 %% Fine tune saccades
 
+% CalibPupilDataDDS.m
+% Pupil2hvDDS.m
+
 pa_sacdet(fname); % input: *.hv output:*.hv
 
 
