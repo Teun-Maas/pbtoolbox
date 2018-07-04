@@ -42,7 +42,7 @@ function run_terminal(D)
             quit = input([newline 'Are you sure you would like to exit the local terminal? [Y/n]' newline newline '  '],'s');
          end
          if quit == 'Y' | quit == 'y'
-            fprintf([newline 'Local terminal aborted' newline]);
+            fprintf([newline 'Local terminal aborted' newline newline]);
             return
          elseif quit == 'n'
             D = input([newline '  '],'s');
