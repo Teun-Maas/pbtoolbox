@@ -5,7 +5,7 @@ function pb_nicegraph(varargin)
 % selected figure. Optional input arguments are: figure, color def, conditions
 % and colmatch.
 % 
-% See also PB_DEFSUBPLOTS
+% See also PB_DEFSUBPLOTS, PB_NICEBOXPLOT
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
