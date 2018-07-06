@@ -9,37 +9,42 @@ function pb_niceboxplot(h, varargin)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   if nargin == 0; h = gca; end
- 
+   if nargin == 0; h = gcf; end
+   
    outliers = pb_keyval('outliers',varargin,0);
    ac = pb_keyval('ac',varargin,0);
-   def = pb_keyval('def',varargin,2);
+   def = pb_keyval('def',varargin,1);
    
-   if ~ac; delete(pb_fobj(h,'Tag','Upper Adjacent Value')); delete(pb_fobj(h,'Tag','Lower Adjacent Value')); end
-   if ~outliers; delete(pb_fobj(h,'Tag','Outliers')); end
-   
-   n = length(pb_fobj(h,'Tag','Box'));
-   
-   lines = pb_fobj(h,'Type','Line');
-   
-   col = pb_selectcolor(n,def);
-   
-   linewidth   = 2;
-   linestyle    = '-';
-   linecomp    = 4+outliers+ac+ac;
-   
-   for i = 1:n
-      for j = i:n:linecomp*2
-         lines(j).LineWidth = linewidth;
-         lines(j).LineStyle = linestyle;
-         lines(j).Color = col(i,:);
+   axx = pb_fobj(gcf,'Type','Axes');
+   for iAxes=1:length(axx)
+      ax = axx(iAxes);
+      
+      if ~ac; delete(pb_fobj(ax,'Tag','Upper Adjacent Value')); delete(pb_fobj(ax,'Tag','Lower Adjacent Value')); end
+      if ~outliers; delete(pb_fobj(ax,'Tag','Outliers')); end
+
+      n = length(pb_fobj(ax,'Tag','Box'));
+      lines = pb_fobj(ax,'Type','Line');
+      col = pb_selectcolor(n,def);
+
+      
+      linewidth   = 2;
+      linestyle   = '-';
+      linecomp    = 4+outliers+ac+ac;
+
+      gca
+      
+      for i=1:n
+         for j = i:n:linecomp*n
+            lines(j).LineWidth = linewidth;
+            lines(j).LineStyle = linestyle;
+            lines(j).Color = col(i,:);
+         end
+      end
+      bx = pb_fobj(ax,'Tag','Box');
+      for k=1:length(bx)
+         patch(axx(iAxes),get(bx(k),'XData'),get(bx(k),'YData'),col(k,:),'FaceAlpha',.3,'EdgeColor',col(k,:),'LineWidth',linewidth);
       end
 
-   end
-   
-   bx = pb_fobj(gca,'Tag','Box');
-   for k=1:length(bx)
-      patch(get(bx(k),'XData'),get(bx(k),'YData'),col(k,:),'FaceAlpha',.3,'EdgeColor',col(k,:),'LineWidth',linewidth);
    end
    figure(gcf);
 end
