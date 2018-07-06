@@ -12,8 +12,11 @@ function pb_niceboxplot(h, varargin)
    if nargin == 0; h = gcf; end
    
    outliers = pb_keyval('outliers',varargin,0);
-   ac = pb_keyval('ac',varargin,0);
-   def = pb_keyval('def',varargin,1);
+   ac       = pb_keyval('ac',varargin,0);
+   def      = pb_keyval('def',varargin,1);
+   colmatch = pb_keyval('colmatch',varargin,1);
+   col      = pb_keyval('col',varargin);
+   
    
    axx = pb_fobj(gcf,'Type','Axes');
    for iAxes=1:length(axx)
@@ -24,7 +27,9 @@ function pb_niceboxplot(h, varargin)
 
       n = length(pb_fobj(ax,'Tag','Box'));
       lines = pb_fobj(ax,'Type','Line');
-      col = pb_selectcolor(n,def);
+      
+      if isempty(col); col = pb_selectcolor(n,def); end
+      if colmatch || size(col,1) ~= n; for iN=2:n; col(iN,:) = col(1,:); end; end
 
       
       linewidth   = 2;
