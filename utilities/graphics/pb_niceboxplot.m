@@ -9,37 +9,38 @@ function pb_niceboxplot(h, varargin)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   %% Set initial variables
    if nargin == 0; h = gcf; end
    
-   outliers = pb_keyval('outliers',varargin,0);
-   ac       = pb_keyval('ac',varargin,0);
-   def      = pb_keyval('def',varargin,1);
-   colmatch = pb_keyval('colmatch',varargin,1);
-   col      = pb_keyval('col',varargin);
+   outliers    = pb_keyval('outliers',varargin,0);
+   ac          = pb_keyval('ac',varargin,0);
+   def         = pb_keyval('def',varargin,1);
+   colmatch    = pb_keyval('colmatch',varargin,0);
+   col         = pb_keyval('col',varargin);
+   alpha       = pb_keyval('alpha',varargin,.3);
+   linewidth   = pb_keyval('linewidth',varargin,1.5);
+   linestyle   = pb_keyval('linestyle',varargin,'-');
    
-   
+   %% Body
    axx = pb_fobj(gcf,'Type','Axes');
    for iAxes=1:length(axx)
       ax = axx(iAxes);
       
+      % Remove BS
       if ~ac; delete(pb_fobj(ax,'Tag','Upper Adjacent Value')); delete(pb_fobj(ax,'Tag','Lower Adjacent Value')); end
       if ~outliers; delete(pb_fobj(ax,'Tag','Outliers')); end
 
-      n = length(pb_fobj(ax,'Tag','Box'));
+      nBP = length(pb_fobj(ax,'Tag','Box'));
       lines = pb_fobj(ax,'Type','Line');
       
-      if isempty(col); col = pb_selectcolor(n,def); end
-      if colmatch || size(col,1) ~= n; for iN=2:n; col(iN,:) = col(1,:); end; end
+      % Create color pattern
+      if isempty(col); col = pb_selectcolor(nBP,def); end
+      if colmatch || size(col,1) ~= nBP; for iN=2:nBP; col(iN,:) = col(1,:); end; end
 
-      
-      linewidth   = 2;
-      linestyle   = '-';
       linecomp    = 4+outliers+ac+ac;
 
-      gca
-      
-      for i=1:n
-         for j = i:n:linecomp*n
+      for i=1:nBP
+         for j = i:nBP:linecomp*nBP
             lines(j).LineWidth = linewidth;
             lines(j).LineStyle = linestyle;
             lines(j).Color = col(i,:);
@@ -47,7 +48,7 @@ function pb_niceboxplot(h, varargin)
       end
       bx = pb_fobj(ax,'Tag','Box');
       for k=1:length(bx)
-         patch(axx(iAxes),get(bx(k),'XData'),get(bx(k),'YData'),col(k,:),'FaceAlpha',.3,'EdgeColor',col(k,:),'LineWidth',linewidth);
+         patch(axx(iAxes),get(bx(k),'XData'),get(bx(k),'YData'),col(k,:),'FaceAlpha',alpha,'EdgeColor',col(k,:),'LineWidth',linewidth);
       end
 
    end
