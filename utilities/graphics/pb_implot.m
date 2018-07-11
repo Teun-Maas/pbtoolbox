@@ -8,7 +8,6 @@ function h = pb_implot(Idx, varargin)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-
    if isempty(Idx); return; end
    
    f  = pb_keyval('fig',varargin,gcf);
@@ -28,6 +27,7 @@ function h = pb_implot(Idx, varargin)
 end
 
 function [x,y] = i2xy(Idx,a)
+   % Converts array index to x and y coordinates.
    y = mod((a.YLim(2)*a.XLim(2))-Idx,a.YLim(2))+1;
    x = ceil(Idx/a.YLim(2));
 end
