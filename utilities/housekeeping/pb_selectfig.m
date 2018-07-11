@@ -3,7 +3,7 @@ function h = pb_selectfig(h)
 %
 % PB_SELECTFIG(h) selects figure from handle.
 %
-% See also ...
+% See also PB_SELECTAXIS, PB_IMPLOT
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
