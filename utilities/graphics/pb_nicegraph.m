@@ -50,7 +50,6 @@ function pb_nicegraph(varargin)
         setAx.YDir          = 'normal';
         setAx.LineWidth     = 1;
 
-
         % LINE:
         %
         % Use as 'primary' data
@@ -73,7 +72,6 @@ function pb_nicegraph(varargin)
                 'LineWidth'     , linewidth         );
         end
         
-
         % BAR:
         %
         % Use as 'primary' data

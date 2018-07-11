@@ -18,7 +18,7 @@ if ~isempty(path); v = VideoReader(path); end
 figure(1);
 currAxes = axes;
 
-for i = 1:floor(v.Duration*v.FrameRate)
+for i = 1:10:floor(v.Duration*v.FrameRate)
     vf = readFrame(v);
     image(vf,'Parent',currAxes)
     currAxes.Visible = 'off';
