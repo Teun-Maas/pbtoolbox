@@ -16,7 +16,7 @@ function pb_writefun(path,fname)
         return % safety measure
     end
     
-    tpath = '/Users/jjheckman/Documents/Code/Matlab/PBToolbox/documentation/templates/';
+    tpath = '/Users/jjheckman/Documents/Code/Gitlab/pbtoolbox/documentation/templates/';
     template = 'template_pbfun.txt';
     
     tText = fileread([tpath template]);

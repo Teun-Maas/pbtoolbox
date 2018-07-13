@@ -28,8 +28,12 @@ end
 
 function [x,y] = i2xy(Idx,a)
    % Converts array index to x and y coordinates.
-   y = mod((a.YLim(2)*a.XLim(2))-Idx,a.YLim(2))+1;
-   x = ceil(Idx/a.YLim(2));
+   l = length(Idx); x = ones(1,l); y = ones(1,l);
+   for i = 1:l
+      y(i) = mod((a.YLim(2)*a.XLim(2))-Idx(i),a.YLim(2))+1;
+      x(i) = ceil(Idx(i)/a.YLim(2));
+   end
+   x
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

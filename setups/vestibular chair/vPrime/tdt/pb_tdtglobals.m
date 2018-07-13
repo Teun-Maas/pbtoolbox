@@ -1,11 +1,11 @@
-function [pb_name]()
-% [PB_NAME]()
+function pb_tdtglobals()
+% PB_TDTGLOBALS()
 %
-% [PB_NAME]()  ...
+% PB_TDTGLOBALS()  ...
 %
 % See also ...
 
-% PBToolbox ([YEAR]): JJH: j.heckman@donders.ru.nl
+% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
 
  
@@ -14,6 +14,7 @@ end
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %
-%       Written by: Jesse J. Heckman ([YEAR])                 %
+%       Written by: Jesse J. Heckman (2018)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+

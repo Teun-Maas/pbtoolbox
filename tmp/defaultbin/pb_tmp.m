@@ -34,19 +34,20 @@ bwE = ~bwareaopen(~bwE,500);
 % %plot
 % subplot(211); imshow(bwM); title('Mice')
 % subplot(212); imshow(bwE); title('Ears')
-% 
-% %%
 
 clf; 
 imshow(bwM);
-CC = bwconncomp(~bwM)
+CC = bwconncomp(~bwM);
 
+cfg.CurrentFrame = fN;
+cfg.Frame(fN).BW = bwE;
+
+cfg = pb_fmice(cfg);
 
 %% find difference between both
 
 diff = bwM ~= bwE;
-figure(1);
-imshow(~diff)
+pb_implot([240:490],'style','rx');
 
 %% Edge
 
