@@ -6,13 +6,15 @@
 
 %% Load data
 
-% clear all hidden;
-% close all;
+clear all hidden;
+close all;
 cfn = 0;
 
 cdir = '/Users/jjheckman/Documents/Data/PhD/';
-[fpath] = pb_getfile('dir',cdir,'ext','*.mat');
-if ~isempty(fpath); load(fpath); end
+[fname, path] = pb_getfile('dir',cdir,'ext','*.mat');
+if ~isempty(fname); load([path fname]); end
+
+clear path fname cdir
 
 %% Convert MSI Stim
 
@@ -20,25 +22,28 @@ S = pb_stim2MSstim(Stim);                       % convert 'Stim' to contain mult
 
 %% Extract modality-specific supersac data
 
-V = pa_supersac(Sac, S,1,0);                    % visual
-A = pa_supersac(Sac, S,2,0);                    % auditory
-B = pa_supersac(Sac,S,3,0);                     % bimodal
+V = pa_supersac(Sac, Stim,1);                    % visual
+A = pa_supersac(Sac, Stim,2);                    % auditory
+B = pa_supersac(Sac,Stim,3);                     % bimodal
 M = [V;A;B];                                    % all
 
+
+%%
+A = pa_supersac(Sac, Stim);                    % auditory
 
 %% Evaluate stimulus duration
 
 
 cfn=cfn+1; figure(cfn); clf; 
 
-uDur = unique(M(:,30));
+uDur = unique(A(:,30));
 for indD = 1:length(uDur)
     
     for j = 1:2
         subplot(2,length(uDur),(j-1)*length(uDur) + indD)
         
-        sel = M(:,30) == uDur(indD);
-        y = M(sel,7+j); x = M(sel,22+j);
+        sel = A(:,30) == uDur(indD);
+        y = A(sel,7+j); x = A(sel,22+j);
         plot(x,y,'o');
         axis([-100 100 -100 100]); pb_dline; 
     end
