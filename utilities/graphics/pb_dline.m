@@ -35,6 +35,7 @@ function h = pb_dline(varargin)
     %% Plot diagonal
     
     h = plot([axxes(1) axxes(2)],[axxes(1) axxes(2)],style);
+    set(h,'Tag','graphical aid: diagonal');
     set(h,'HandleVisibility',visibility); % set handle visibility
     if ~ho
         hold off

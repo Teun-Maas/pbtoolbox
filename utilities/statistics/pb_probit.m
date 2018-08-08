@@ -18,7 +18,8 @@ function [h,stats] = pb_probit(RT, varargin)
     x = -1./sort(RT);
     n = numel(iRT);
     y = probitscale((1:n)./n);
-    scatter(x,y);
+    rd = scatter(x,y);
+    set(rd,'Tag','rawdata');
     
     hold on;
     
@@ -29,6 +30,7 @@ function [h,stats] = pb_probit(RT, varargin)
     xtick	= sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
     
     h = plot(q,prob,'o');
+    set(h,'Tag','probit model');
     
     if ~ho; hold off; end
     
@@ -49,7 +51,7 @@ function [h,stats] = pb_probit(RT, varargin)
     pb_hline();
     
     stats = b;
-
+    set(b,'Tag','graphical aid: regline');
     set(b,'HandleVisibility',visibility);     
 end
 
@@ -57,8 +59,7 @@ function chi = probitscale(cdf)
     % creates a probitscale
     myerf       = 2*cdf - 1;
     myerfinv    = sqrt(2)*erfinv(myerf);
-    chi         = myerfinv;
-    
+    chi         = myerfinv;    
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

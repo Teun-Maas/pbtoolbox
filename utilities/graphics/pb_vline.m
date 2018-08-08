@@ -33,6 +33,7 @@ function h = pb_vline(x, varargin)
     end
 
     %% Checkout
+    set(h,'Tag','graphical aid: vertical');
     set(h,'HandleVisibility',visibility); % set handle visibility
     if ~ho
         hold off;
