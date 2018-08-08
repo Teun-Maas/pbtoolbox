@@ -54,8 +54,8 @@ function Col = pb_statcolor(ncol,statmap,palette,Par,varargin)
     
     switch def
         case 1
-            statmap = 'qualitative';
-            palette = 'dynamic';
+         statmap = 'qualitative';
+         palette = 'dynamic';
         case 2
         	statmap = 'qualitative';
         	palette = 'harmonic';
