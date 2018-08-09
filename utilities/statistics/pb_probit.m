@@ -1,11 +1,10 @@
-function [h,stats] = pb_probit(RT, varargin)
+function [h,stats] = pb_probit(D, varargin)
 % PB_PROBIT(RT,VARARGIN)
 %
 % Creates a probit plot.
 %
 % PB_PROBIT(RT,VARARGIN) plots RT data and transforms axes to the classic
-% probit display, i.e. cum. prob. vs RTs. Note, function can be used in
-% combination 
+% probit display, i.e. cum. prob. vs RTs. Note, RTs have to be passed on as structs: D(n).RT
 %
 % See also PLOT, PB_NICEGRAPH, REGSTATS
  
@@ -14,26 +13,34 @@ function [h,stats] = pb_probit(RT, varargin)
     visibility = pb_keyval('visibility',varargin,'off');
     ho         = pb_keyval('ho',varargin,ishold);
     
-    iRT = 1/RT;
-    x = -1./sort(RT);
-    n = numel(iRT);
-    y = probitscale((1:n)./n);
-    rd = scatter(x,y);
-    set(rd,'Tag','rawdata');
-    
     hold on;
+
+    %% rawdata
+    for i = 1:length(D)
+       iRT = 1/D(i).rt;
+       x = -1./sort(D(i).rt);
+       n = numel(iRT);
+       y = probitscale((1:n)./n);
+       rd(i) = scatter(x,y);
+       set(rd,'Tag','rawdata');
+    end
+
     
-    % quantiles
+    %% quantiles
     p		= [1,2,5,10,25,50,75,90 95 98 99]/100;
-    prob	= probit(p);
-    q		= -1./quantile(RT,p);
     xtick	= sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
     
-    h = plot(q,prob,'o');
-    set(h,'Tag','probit model');
-    
-    if ~ho; hold off; end
-    
+    for j=1:length(D)
+       prob	= probit(p);
+       q		= -1./quantile(D(j).rt,p);
+       h(j) = plot(q,prob,'o');
+       
+       
+       x = q; y = prob;
+       b = regstats(y,x);
+       rl(j) = regline(b.beta,'k--');
+    end
+   
     set(gca,'XTick',xtick,'XTickLabel',-1./xtick);
     xlim([min(xtick) max(xtick)]);
     set(gca,'YTick',prob,'YTickLabel',p*100);
@@ -44,15 +51,13 @@ function [h,stats] = pb_probit(RT, varargin)
     xlabel('Reaction time (ms)');
     ylabel('Cumulative probability');
 
-
-    x = q; y = prob;
-    b = regstats(y,x);
-    b = regline(b.beta,'k--');
     pb_hline();
     
-    stats = b;
-    set(b,'Tag','graphical aid: regline');
-    set(b,'HandleVisibility',visibility);     
+    if ~ho; hold off; end
+    
+    set(h,'Tag','probit model');
+    set(rl,'Tag','graphical aid: regline');
+    set(rl,'HandleVisibility',visibility);     
 end
 
 function chi = probitscale(cdf)
@@ -61,7 +66,7 @@ function chi = probitscale(cdf)
     myerfinv    = sqrt(2)*erfinv(myerf);
     chi         = myerfinv;    
 end
- 
+
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %
