@@ -1,4 +1,4 @@
-function [h,stats] = pb_probit(D, varargin)
+function [h,D] = pb_probit(D, varargin)
 % PB_PROBIT(RT,VARARGIN)
 %
 % Creates a probit plot.
@@ -26,7 +26,7 @@ function [h,stats] = pb_probit(D, varargin)
     end
 
     
-    %% quantiles
+    %% quantiles & regression
     p		= [1,2,5,10,25,50,75,90 95 98 99]/100;
     xtick	= sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
     
@@ -35,6 +35,8 @@ function [h,stats] = pb_probit(D, varargin)
        q		= -1./quantile(D(j).rt,p);
        
        b = regstats(prob,q);
+       D(j).stats = b;
+       
        rl(j) = regline(b.beta,'k--');
        h(j) = plot(q,prob,'o');
     end
