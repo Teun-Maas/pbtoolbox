@@ -33,12 +33,10 @@ function [h,stats] = pb_probit(D, varargin)
     for j=1:length(D)
        prob	= probit(p);
        q		= -1./quantile(D(j).rt,p);
-       h(j) = plot(q,prob,'o');
        
-       
-       x = q; y = prob;
-       b = regstats(y,x);
+       b = regstats(prob,q);
        rl(j) = regline(b.beta,'k--');
+       h(j) = plot(q,prob,'o');
     end
    
     set(gca,'XTick',xtick,'XTickLabel',-1./xtick);
