@@ -4,7 +4,7 @@ function [h,D] = pb_probit(D, varargin)
 % Creates a probit plot.
 %
 % PB_PROBIT(RT,VARARGIN) plots RT data and transforms axes to the classic
-% probit display, i.e. cum. prob. vs RTs. Note, RTs have to be passed on as structs: D(n).RT
+% probit display, i.e. cum. prob. vs promptness. Note, RTs have to be passed on as structs: D(n).RT
 %
 % See also PLOT, PB_NICEGRAPH, REGSTATS
  
