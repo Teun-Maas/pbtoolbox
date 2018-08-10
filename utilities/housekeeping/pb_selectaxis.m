@@ -10,7 +10,7 @@ function h = pb_selectaxis(h)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    if nargin==0; h = gca; return; end
-   
+
    if isnumeric(h); g = gcf; z = h;
       h = pb_fobj(g,'Type','Axes');
       h = axes(h(z));

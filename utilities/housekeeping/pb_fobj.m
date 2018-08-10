@@ -7,9 +7,8 @@ function h = pb_fobj(varargin)
 % See also FINDOBJ, FLIPUD, PB_NICEGRAPH, PB_CLONEFIG
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
- 
-    h = flipud(findobj(varargin{:}));
- 
+
+   h = flipud(findobj(varargin{:}));
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

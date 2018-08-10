@@ -17,56 +17,58 @@ function [h,D] = pb_probit(D, varargin)
    fig         = pb_keyval('fig',varargin, gcf);
    ax          = pb_keyval('ax',varargin, gca);
    
-   fig         = pb_selectfig(fig);
-   ax          = pb_selectaxis(ax);
-   
-	hold on;
+   pb_selectfig(fig);
+   pb_selectaxis(ax);
+   hold on;
 
    len = length(D); 
    rd = gobjects(len); rl = gobjects(len); h = gobjects(len);
 
-   %% rawdata
+   %% Rawdata
+   
    for i = 1:len
-      iRT = 1/D(i).rt;
-      x = -1./sort(D(i).rt);
-      n = numel(iRT);
-      y = probitscale((1:n)./n);
+      iRT   = 1/D(i).rt;
+      x     = -1./sort(D(i).rt);
+      n     = numel(iRT);
+      y     = probitscale((1:n)./n);
       rd(i) = scatter(x,y);
-      set(rd,'Tag','rawdata');
    end
 
+   set(rd,'Tag','rawdata');
     
-    %% quantiles & regression
-    p		= [1,2,5,10,25,50,75,90 95 98 99]/100;
-    xtick	= sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
-    
-    for j=1:len
-       prob	= probit(p);
-       q		= -1./quantile(D(j).rt,p);
-       b    = regstats(prob,q);
-       
-       D(j).stats = b;
-       rl(j) = regline(b.beta,'k--');
-       h(j) = plot(q,prob,'o');
-    end
-   
-    set(gca,'XTick',xtick,'XTickLabel',-1./xtick);
-    xlim([min(xtick) max(xtick)]);
-    set(gca,'YTick',prob,'YTickLabel',p*100);
-    ylim([probit(0.1/100) probit(99.9/100)]);
-    axis square;
-    box off
-    
-    xlabel('Reaction time (ms)');
-    ylabel('Cumulative probability');
+   %% Quantiles & regression
 
-    pb_hline();
-    
-    if ~ho; hold off; end
-    
-    set(h,'Tag','probit model');
-    set(rl,'Tag','graphical aid: regline');
-    set(rl,'HandleVisibility',visibility);     
+   p       = [1,2,5,10,25,50,75,90 95 98 99]/100;
+   xtick	= sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
+
+   for j = 1:len
+      prob	= probit(p);
+      q		= -1./quantile(D(j).rt,p);
+      b    = regstats(prob,q);
+
+      D(j).stats = b;
+      rl(j) = regline(b.beta,'k--');
+      h(j) = plot(q,prob,'o');
+   end
+
+   set(h,'Tag','probit model');
+   set(rl,'Tag','graphical aid: regline');
+   set(rl,'HandleVisibility',visibility);   
+   
+   %% Design
+
+   set(gca,'XTick',xtick,'XTickLabel',-1./xtick);
+   set(gca,'YTick',prob,'YTickLabel',p*100);
+   xlim([min(xtick) max(xtick)]);
+   ylim([probit(0.1/100) probit(99.9/100)]);
+   xlabel('Reaction time (ms)');
+   ylabel('Cumulative probability');
+   axis square;
+   box off
+
+   pb_hline();
+
+   if ~ho; hold off; end
 end
 
 function chi = probitscale(cdf)

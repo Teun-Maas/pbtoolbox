@@ -16,13 +16,12 @@ function pb_nicecorrelation(h, varargin)
    ax = pb_fobj(h,'Type','Axes');
    n  = length(ax);
    
-   for i=1:n
+   for i = 1:n
       ax(n);
       pb_hline(origin(1),'style',style);
       pb_vline(origin(2),'style',style);
       pb_dline('style',style);
-   end
- 
+	end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

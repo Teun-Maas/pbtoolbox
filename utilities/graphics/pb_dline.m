@@ -13,34 +13,30 @@ function h = pb_dline(varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
 
-    %% Initialization
+   %% Initialization
 
-    style = pb_keyval('style',varargin,'k--');
-    visibility = pb_keyval('visibility',varargin,'off');
-    
-    ho = ishold;
-    if ~ho
-        hold on
-    end
+   style = pb_keyval('style',varargin,'k--');
+   visibility = pb_keyval('visibility',varargin,'off');
 
-    %% Set axis
-    axxes		= axis;
-    if axxes(1)~=axxes(3)
-        min_x = min(axxes([1 3])); axxes([1 3]) = min_x;
-    end
-    if axxes(2)~=axxes(4)
-        max_x = max(axxes([2 4])); axxes([2 4]) = max_x;
-    end
+   ho = ishold;
+   if ~ho; hold on; end
 
-    %% Plot diagonal
-    
-    h = plot([axxes(1) axxes(2)],[axxes(1) axxes(2)],style);
-    set(h,'Tag','graphical aid: diagonal');
-    set(h,'HandleVisibility',visibility); % set handle visibility
-    if ~ho
-        hold off
-    end
+   %% Set axis
+   axxes		= axis;
+   if axxes(1) ~= axxes(3)
+      min_x = min(axxes([1 3])); axxes([1 3]) = min_x;
+   end
+   if axxes(2) ~= axxes(4)
+      max_x = max(axxes([2 4])); axxes([2 4]) = max_x;
+   end
 
+   %% Plot diagonal
+
+   h = plot([axxes(1) axxes(2)],[axxes(1) axxes(2)],style);
+   set(h,'Tag','graphical aid: diagonal');
+   set(h,'HandleVisibility',visibility); % set handle visibility
+   
+   if ~ho; hold off; end
 end
 
 

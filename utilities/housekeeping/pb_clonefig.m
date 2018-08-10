@@ -9,20 +9,13 @@ function h = pb_clonefig(fID)
 % See also PB_NICEGRAPH, PB_FOBJ
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
- 
 
-    %% Initialize
+   g = pb_fobj(groot,'Type','Figure');
+   
+   if isempty(g); return; end
+   if nargin == 0; fID = gcf; end
 
-    g = pb_fobj(groot,'Type','Figure');
-    if isempty(g); return; end
-    
-    if nargin == 0
-        fID = gcf;
-    end
-        
-    h = copyobj(fID,groot);
-
- 
+   h = copyobj(fID,groot);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

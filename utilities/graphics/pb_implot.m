@@ -33,7 +33,6 @@ function [x,y] = i2xy(Idx,a)
       y(i) = mod((a.YLim(2)*a.XLim(2))-Idx(i),a.YLim(2))+1;
       x(i) = ceil(Idx(i)/a.YLim(2));
    end
-   x
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

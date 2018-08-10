@@ -8,19 +8,16 @@ function fname = pb_checkext(fname,ext)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-    strBool = contains(fname,ext);
-    if ~strBool
-        fname = [fname ext];
-    end
-    checkValid(fname);
+   strBool = contains(fname,ext);
+   if ~strBool; fname = [fname ext]; end
+   
+   checkValid(fname);
 end
 
 function checkValid(fname)
-    % Checks for multiple dots: i.e. indication of mismatched extensions.
-    check = length(strfind(fname, '.'));
-    if check>1
-        error('Error. Extensions do not match.')
-    end
+   % Checks for multiple dots: i.e. indication of mismatched extensions.
+   check = length(strfind(fname, '.'));
+   if check>1; error('Error. Extensions do not match.'); end
 end
 
 

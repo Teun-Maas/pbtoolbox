@@ -8,14 +8,12 @@ function path = pb_getdir(varargin)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   cdir    = pb_keyval('dir',varargin,userpath);
+   title 	= pb_keyval('title',varargin,'Open folder...'); % titles have been removed from matlab ui's in OS X - El capitain
 
-    cdir    = pb_keyval('dir',varargin,userpath);
-    title 	= pb_keyval('title',varargin,'Open folder...'); % titles have been removed from matlab ui's in OS X - El capitain
-
-    [path] = uigetdir(cdir,title); 
-
-    if path(1) == 0; path = []; return; end
-
+   [path] = uigetdir(cdir,title); 
+   
+   if path(1) == 0; path = []; return; end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

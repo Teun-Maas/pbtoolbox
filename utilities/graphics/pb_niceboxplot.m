@@ -19,7 +19,7 @@ function pb_niceboxplot(h, varargin)
    col         = pb_keyval('col',varargin);
    alpha       = pb_keyval('alpha',varargin,.3);
    linewidth   = pb_keyval('linewidth',varargin,1.5);
-   linestyle   = pb_keyval('linestyle',varargin,'-');
+	linestyle   = pb_keyval('linestyle',varargin,'-');
    
    %% Body
    axx = pb_fobj(gcf,'Type','Axes');

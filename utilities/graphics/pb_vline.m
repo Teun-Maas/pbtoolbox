@@ -13,31 +13,31 @@ function h = pb_vline(x, varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
 
-    %% Initialization
+   %% Initialization
 
-    if nargin < 1
-        x = 0; 
-    end
-    
-    style = pb_keyval('style',varargin,'k--');
-    visibility = pb_keyval('visibility',varargin,'off');
-    
-    %% Plot
+   if nargin < 1; x = 0; end
 
-    x       = x(:)'; 
-    ho = ishold; hold on;
-    y_lim   = get(gca,'YLim');
-    
-    for i = 1:length(x)
-        h(i)       = plot([x(i);x(i)], y_lim, style);
-    end
+   style      = pb_keyval('style',varargin,'k--');
+   visibility = pb_keyval('visibility',varargin,'off');
+   
+   ho  	= ishold; hold on;
+   len   = length(x);
+   h     = gobject(len);
 
-    %% Checkout
-    set(h,'Tag','graphical aid: vertical');
-    set(h,'HandleVisibility',visibility); % set handle visibility
-    if ~ho
-        hold off;
-    end
+   %% Plot
+
+   x        = x(:)'; 
+   y_lim    = get(gca,'YLim');
+
+   for i = 1:len
+      h(i)  = plot([x(i);x(i)], y_lim, style);
+   end
+
+   %% Checkout
+   
+   set(h,'Tag','graphical aid: vertical');
+   set(h,'HandleVisibility',visibility); % set handle visibility
+   if ~ho; hold off; end
 end
 
 

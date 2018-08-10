@@ -7,17 +7,17 @@ function [ext,name] = pb_fext(fname)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-    index = strfind(fname, '.');
-    
-    if isempty(index) 
-        ext = [];
-        name = fname;
-    elseif length(index) > 1
-            error('Filenames cannot contain more than 1 full stop.')
-    else
-        name = fname(1:index-1);
-        ext = fname(index:end);
-    end
+   index = strfind(fname, '.');
+
+   if isempty(index) 
+      ext = [];
+      name = fname;
+   elseif length(index) > 1
+      error('Filenames cannot contain more than 1 full stop.')
+   else
+      name = fname(1:index-1);
+      ext = fname(index:end);
+   end
 end
 
 

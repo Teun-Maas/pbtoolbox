@@ -6,7 +6,7 @@ function h = pb_selectfig(h)
 % See also PB_SELECTAXIS, PB_IMPLOT
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
-   
+
    if isnumeric(h); g = groot; z = h;
       for iFig = 1:length(g.Children)
          if h == g.Children(iFig).Number
