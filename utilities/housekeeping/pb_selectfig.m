@@ -7,18 +7,19 @@ function h = pb_selectfig(h)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
- 
    if isnumeric(h); g = groot; z = h;
       for iFig = 1:length(g.Children)
          if h == g.Children(iFig).Number
             h = g.Children(iFig);
          end
+         figure(h);
       end
-   if isnumeric(h)
-      h = gcf; 
-      disp(['The figure(' num2str(z) ') requested could not be found. The defaulft handle is figure(' num2str(h.Number) ')'])
-   end
+      if isnumeric(h)
+         h = figure(gcf); 
+         disp(['The figure(' num2str(z) ') requested could not be found. The defaulft handle is figure(' num2str(h.Number) ')'])
+      end
    elseif isgraphics(h)
+      figure(h);
       return;
    else 
       error('Input type for "h" should be either numeric or graphics');

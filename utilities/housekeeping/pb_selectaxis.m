@@ -13,7 +13,7 @@ function h = pb_selectaxis(h)
    
    if isnumeric(h); g = gcf; z = h;
       h = pb_fobj(g,'Type','Axes');
-      h = h(z); 
+      h = axes(h(z));
    elseif ~isgraphics(h)
       error('Input type for "h" should be either numeric or graphics');
    end

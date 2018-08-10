@@ -9,34 +9,43 @@ function [h,D] = pb_probit(D, varargin)
 % See also PLOT, PB_NICEGRAPH, REGSTATS
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
-    
-    visibility = pb_keyval('visibility',varargin,'off');
-    ho         = pb_keyval('ho',varargin,ishold);
-    
-    hold on;
+   
+   %% Initalize
+   
+	visibility  = pb_keyval('visibility',varargin,'off');
+	ho          = pb_keyval('ho',varargin,ishold);
+   fig         = pb_keyval('fig',varargin, gcf);
+   ax          = pb_keyval('ax',varargin, gca);
+   
+   fig         = pb_selectfig(fig);
+   ax          = pb_selectaxis(ax);
+   
+	hold on;
 
-    %% rawdata
-    for i = 1:length(D)
-       iRT = 1/D(i).rt;
-       x = -1./sort(D(i).rt);
-       n = numel(iRT);
-       y = probitscale((1:n)./n);
-       rd(i) = scatter(x,y);
-       set(rd,'Tag','rawdata');
-    end
+   len = length(D); 
+   rd = gobjects(len); rl = gobjects(len); h = gobjects(len);
+
+   %% rawdata
+   for i = 1:len
+      iRT = 1/D(i).rt;
+      x = -1./sort(D(i).rt);
+      n = numel(iRT);
+      y = probitscale((1:n)./n);
+      rd(i) = scatter(x,y);
+      set(rd,'Tag','rawdata');
+   end
 
     
     %% quantiles & regression
     p		= [1,2,5,10,25,50,75,90 95 98 99]/100;
     xtick	= sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
     
-    for j=1:length(D)
+    for j=1:len
        prob	= probit(p);
        q		= -1./quantile(D(j).rt,p);
+       b    = regstats(prob,q);
        
-       b = regstats(prob,q);
        D(j).stats = b;
-       
        rl(j) = regline(b.beta,'k--');
        h(j) = plot(q,prob,'o');
     end
