@@ -10,11 +10,11 @@ function C = pb_log(B, A)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  
-    if nargin == 2
-        C = log(B)/log(A);
-    else
-        C = log(B);
-    end
+   if nargin == 2
+      C = log(B)/log(A);
+   else
+      C = log(B);
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

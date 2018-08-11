@@ -7,31 +7,31 @@ function [strN] = pb_delreadstr(str, varargin)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  
-    if isempty(str); return; end
+   if isempty(str); return; end
     
-    delimiter   = pb_keyval('delimiter',varargin,' ');
-    n           = pb_keyval('n',varargin,1);
+   delimiter   = pb_keyval('delimiter',varargin,' ');
+   n           = pb_keyval('n',varargin,1);
     
-    D = strfind(str, delimiter);
-    if isempty(D); strN = str; return; end
-    N = length(D)-1;
+   D = strfind(str, delimiter);
+   if isempty(D); strN = str; return; end
+   
+   N = length(D)-1;
     
-    if D(1)>1
-        N = N+1;
-        D = [0 D];
-    end
+   if D(1)>1
+      N = N+1;
+      D = [0 D];
+   end
     
-    if D(end) < length(str)
-        N = N+1;
-        D = [D length(str)+1];
-    end
+   if D(end) < length(str)
+      N = N+1;
+      D = [D length(str)+1];
+   end
     
-    if n>N
+   if n>N
         error('Not enough elements in string.');
-    end
+   end
     
-    strN = str(D(n)+1:D(n+1)-1);
-    
+   strN = str(D(n)+1:D(n+1)-1);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

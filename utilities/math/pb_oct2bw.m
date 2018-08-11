@@ -5,10 +5,8 @@ function F = pb_oct2bw(F1,oct)
 %
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
- 
 
-F = F1 .* 2.^oct;
- 
+   F = F1 .* 2.^oct;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

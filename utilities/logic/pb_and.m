@@ -10,18 +10,17 @@ function bool = pb_and(logic)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  
-    if nargin <1
-        bool = false;
-        return
-    end
-    
-    logic = logic(:);
-    bool = logic(1);
-    for i=1:length(logic)-1
-        logic = logic(2:end);
-        bool = and(bool,logic(1));
-    end
- 
+   if nargin <1
+      bool = false;
+      return
+   end
+   
+   logic = logic(:);
+   bool = logic(1);
+   for i=1:length(logic)-1
+      logic = logic(2:end);
+      bool = and(bool,logic(1));
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
