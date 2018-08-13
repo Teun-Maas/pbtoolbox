@@ -4,7 +4,8 @@ function [h,D] = pb_probit(D, varargin)
 % Creates a probit plot.
 %
 % PB_PROBIT(RT,VARARGIN) plots RT data and transforms axes to the classic
-% probit display, i.e. cum. prob. vs promptness. Note, RTs have to be passed on as structs: D(n).RT
+% probit display, i.e. cum. prob. vs promptness. Note, multiple RTs have to
+% be passed on as structs: D(n).RT, else a simple RT var (double) suffices.
 %
 % See also PLOT, PB_NICEGRAPH, REGSTATS
  
@@ -14,19 +15,19 @@ function [h,D] = pb_probit(D, varargin)
    
 	visibility  = pb_keyval('visibility',varargin,'off');
 	ho          = pb_keyval('ho',varargin,ishold);
-   fig         = pb_keyval('fig',varargin, gcf);
-   ax          = pb_keyval('ax',varargin, gca);
+	fig         = pb_keyval('fig',varargin, gcf);
+	ax          = pb_keyval('ax',varargin, gca);
    
    pb_selectfig(fig);
    pb_selectaxis(ax);
    hold on;
 
-   len = length(D); 
-   rd = gobjects(len); rl = gobjects(len); h = gobjects(len);
+   D = fixArgIn(D); len = length(D); 
+	rd = gobjects(len); rl = gobjects(len); h = gobjects(len);
 
-   %% Rawdata
+	%% Rawdata
    
-   for i = 1:len
+	for i = 1:len
       iRT   = 1/D(i).rt;
       x     = -1./sort(D(i).rt);
       n     = numel(iRT);
@@ -35,8 +36,8 @@ function [h,D] = pb_probit(D, varargin)
    end
 
    set(rd,'Tag','rawdata');
-    
-   %% Quantiles & regression
+
+	%% Quantiles & regression
 
    p       = [1,2,5,10,25,50,75,90 95 98 99]/100;
    xtick	= sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
@@ -55,7 +56,7 @@ function [h,D] = pb_probit(D, varargin)
    set(rl,'Tag','graphical aid: regline');
    set(rl,'HandleVisibility',visibility);   
    
-   %% Design
+	%% Design
 
    set(gca,'XTick',xtick,'XTickLabel',-1./xtick);
    set(gca,'YTick',prob,'YTickLabel',p*100);
@@ -72,10 +73,25 @@ function [h,D] = pb_probit(D, varargin)
 end
 
 function chi = probitscale(cdf)
-    % creates a probitscale
-    myerf       = 2*cdf - 1;
-    myerfinv    = sqrt(2)*erfinv(myerf);
-    chi         = myerfinv;    
+   % creates a probitscale
+   
+   myerf       = 2*cdf - 1;
+   myerfinv    = sqrt(2)*erfinv(myerf);
+   chi         = myerfinv;    
+end
+
+function D = fixArgIn(tmp)
+   % checks /correct datatype and orientation of input data
+   
+   D = struct;
+   if isnumeric(tmp)
+      D.rt = tmp;
+   end
+   
+   s = size(D.rt);
+   if s(1) < s(2)
+      D.rt = D.rt';
+   end
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
