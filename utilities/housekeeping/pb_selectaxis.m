@@ -11,7 +11,8 @@ function h = pb_selectaxis(h)
 
    if nargin==0; h = gca; return; end
 
-   if isnumeric(h); g = gcf; z = h;
+   if isnumeric(h) 
+      g = gcf; z = h;
       h = pb_fobj(g,'Type','Axes');
       h = axes(h(z));
    elseif ~isgraphics(h)

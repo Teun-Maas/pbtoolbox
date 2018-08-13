@@ -7,7 +7,8 @@ function h = pb_selectfig(h)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   if isnumeric(h); g = groot; z = h;
+   if isnumeric(h) 
+      g = groot; z = h;
       for iFig = 1:length(g.Children)
          if h == g.Children(iFig).Number
             h = g.Children(iFig);
@@ -21,9 +22,9 @@ function h = pb_selectfig(h)
    elseif isgraphics(h)
       figure(h);
       return;
-   else 
+	else 
       error('Input type for "h" should be either numeric or graphics');
-   end
+	end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

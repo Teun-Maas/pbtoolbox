@@ -15,15 +15,15 @@ function fullpath = pb_searchfile(path,fname)
    dirinfo(~[dirinfo.isdir]) = [];  %remove non-directories
    subdirinfo  = cell(length(dirinfo));
    fullpath    = [];
-   
+
    for K = 1:length(dirinfo)
       thisdir = dirinfo(K).name;
       subdirinfo{K} = dir(fullfile(thisdir, fname));
    end
-   
+
    a = find(~isempty(subdirinfo),1);
    if ~isempty(subdirinfo{a}); fullpath = [subdirinfo{a}.folder filesep subdirinfo{a}.name]; else; disp([newline '   ' fname ' could not be found!']); end
-end
+   end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
