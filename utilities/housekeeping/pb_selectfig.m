@@ -13,18 +13,18 @@ function h = pb_selectfig(h)
          if h == g.Children(iFig).Number
             h = g.Children(iFig);
          end
-         figure(h);
+         h = figure(h);
       end
       if isnumeric(h)
-         h = figure(gcf); 
-         disp(['The figure(' num2str(z) ') requested could not be found. The defaulft handle is figure(' num2str(h.Number) ')'])
+         h = figure(gcf);
+         disp(['The figure(' num2str(z) ') requested could not be found. The defaulft handle is figure(' num2str(h.Number) ')']);
       end
    elseif isgraphics(h)
       figure(h);
       return;
-	else 
+   else
       error('Input type for "h" should be either numeric or graphics');
-	end
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

@@ -9,20 +9,20 @@ function h = pb_implot(Idx, varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    if isempty(Idx); return; end
-   
+
    f  = pb_keyval('fig',varargin,gcf);
    a  = pb_keyval('axis',varargin,gca);
    style = pb_keyval('style',varargin,'rx');
-   
+
    ho = pb_keyval('ho',varargin,ishold);
-   
+
    if ~isgraphics(f); f = pb_selectfig(f); end
    if ~isgraphics(a); a = pb_selectaxis(a); end
-   
+
    hold on; 
    [x,y] = i2xy(Idx,a);
    h = plot(x,y,style);
-   
+
    if ~ho; hold off; end 
 end
 

@@ -10,7 +10,7 @@ function fname = pb_checkext(fname,ext)
 
    strBool = contains(fname,ext);
    if ~strBool; fname = [fname ext]; end
-   
+
    checkValid(fname);
 end
 

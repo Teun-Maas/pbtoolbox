@@ -31,7 +31,7 @@ function h = pb_hline(y, varargin)
    end
 
    %% Checkout
-   
+
    set(h,'Tag','graphical aid: horizonal');
    set(h,'HandleVisibility',visibility); % set handle visibility
    if ~ho; hold off; end

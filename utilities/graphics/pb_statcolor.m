@@ -43,11 +43,11 @@ function Col = pb_statcolor(ncol,statmap,palette,Par,varargin)
       palette = 'luminancechroma';
    end
    if nargin<4
-   	% 	Par = [Lmin Lmax Cmin Cmax Hmin Hmax];
+      % 	Par = [Lmin Lmax Cmin Cmax Hmin Hmax];
       Par = [100 0 100 20];
    end
-      dispFlag = pb_keyval('disp',varargin,false);
-      def = pb_keyval('def',varargin);
+   dispFlag = pb_keyval('disp',varargin,false);
+   def = pb_keyval('def',varargin);
 
    %% Default values
    Par		= []; 
@@ -80,15 +80,15 @@ function Col = pb_statcolor(ncol,statmap,palette,Par,varargin)
          statmap = 'diverging';
          palette = [];
          Par = [10 100 100 260 30]; % [Lmin Lmax Cmax H1 H2] 'Blue-White-Red'
-      % 		Par = [40 100 90 140 320]; % [Lmin Lmax Cmax H1 H2] 'Green-White-Purple'
+         %Par = [40 100 90 140 320]; % [Lmin Lmax Cmax H1 H2] 'Green-White-Purple'
      case 9
          statmap = 'sequential';
          palette = 'luminancechromahue';
-      	ar = [70 70 70 70 0 360]; % [Lmin Lmax Cmin Cmax H1 H2] %Rainbow
+         Par = [70 70 70 70 0 360]; % [Lmin Lmax Cmin Cmax H1 H2] %Rainbow
      case 10
          statmap = 'divergingskew';
          palette = [];
-      	ar = [00 100 100 260 30]; % [Lmin Lmax Cmax H1 H2] 'Blue-White-Red'
+         Par = [00 100 100 260 30]; % [Lmin Lmax Cmax H1 H2] 'Blue-White-Red'
    end
 
    statmap = lower(statmap);

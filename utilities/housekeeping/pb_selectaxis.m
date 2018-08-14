@@ -1,4 +1,4 @@
-function h = pb_selectaxis(h)
+function ax = pb_selectaxis(h)
 % PB_SELECTAXIS(H)
 %
 % Creates a template function for PBToolbox.
@@ -10,11 +10,11 @@ function h = pb_selectaxis(h)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    if nargin==0; h = gca; return; end
-
+   
    if isnumeric(h) 
-      g = gcf; z = h;
-      h = pb_fobj(g,'Type','Axes');
-      h = axes(h(z));
+      f = pb_fobj(gcf,'Type','Axes')
+      tmp  = f(h);
+      ax = set(gcf,'CurrentAxes',tmp); % DOES NOT WORK?
    elseif ~isgraphics(h)
       error('Input type for "h" should be either numeric or graphics');
    end
