@@ -5,7 +5,7 @@ function signal = pb_cleanSP(signal,len)
 % 
 % PB_CLEANSP(signal,len) takes the signal and cuts of the
 % 0-tail until the minimum length, len, of the signal. If len is not 
-% provided it cuts of after the first 0 after the last non zero.
+% provided it cuts of at the second 0 after the last non zero.
 %
 % See also ...
 
