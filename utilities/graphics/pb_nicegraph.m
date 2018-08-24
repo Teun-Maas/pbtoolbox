@@ -9,7 +9,6 @@ function pb_nicegraph(varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-
    %% Initialization: Define axes, colorschemes, & plots
 
 	fig         =   pb_keyval('fig',varargin,gcf);
