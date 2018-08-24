@@ -25,8 +25,8 @@ function D = pb_iTF(y,varargin)
    
    D.tfun   = x;
    D.t      = T;
-   D.x      = xfun(amplitude,T,omega);
-   D.py     = yfun(amplitude,T,omega);
+   D.x      = xfun(amplitude,T,omega) .* tukeywin(length(T),.25)';
+   D.py     = yfun(amplitude,T,omega) .* tukeywin(length(T),.25)';
     
 end
  
