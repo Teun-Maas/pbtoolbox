@@ -1,7 +1,9 @@
 function array = pb_lookup(array, varargin)
-% PB_LOOKUP()
+% PB_LOOKUP(array,varargin)
 %
-% PB_LOOKUP()  ...
+% PB_LOOKUP() converts array using a lookup table. For instance, when
+% working with the VC setup, parrallel PLC transform LED IDs. This lookup
+% table allows you to logically select the correct ID.
 %
 % See also ...
 
