@@ -6,17 +6,20 @@ function array = pb_lookup(array, varargin)
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
-
-   if nargin == 0; return; end
-   tmp = array;
    
-   for i = numel(ledArray)
-      tmp(i) = lookup();
+   fn    = pb_keyval('fn',varargin,[]); [~,sheets] = xlsfinfo(fn);
+   sheet = pb_keyval('sheet',varargin,sheets{end}); 
+   
+   if nargin == 0; return; end
+   if isempty(fn); return; end
+   
+   [num,~,~] = xlsread(fn,sheet);
+   
+   for i = 1:numel(array)
+      array(i) = num(num(:,1)==array(i),2);
    end
-
- 
 end
- 
+
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %
