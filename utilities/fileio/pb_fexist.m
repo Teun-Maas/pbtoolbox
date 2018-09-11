@@ -1,13 +1,13 @@
-function pb_vPrime()
-% PB_VPRIME()
+function bool = pb_fexist(fn)
+% PB_FEXIST()
 %
-% PB_VPRIME()  ...
+% PB_FEXIST()  ...
 %
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   pb_vPrimeGUI;
+   bool = exist(fn, 'file') == 2;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

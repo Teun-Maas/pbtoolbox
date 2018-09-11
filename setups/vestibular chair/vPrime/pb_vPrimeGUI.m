@@ -143,7 +143,8 @@ function buttonRun_Callback(hObject, eventdata, handles)
       Exp.expfile       = get(handles.editLoad,'string');
       Exp.recording     = get(handles.editRec,'string');
 
-      disp(['Experimentor: ' Exp.experimenter newline 'Expfile: ' Exp.expfile newline 'Subject ID: ' Exp.SID newline 'Recording: ' Exp.recording newline]);
+      disp(['Experimenter: ' Exp.experimenter newline 'Expfile: ' Exp.expfile newline 'Subject ID: ' Exp.SID newline 'Recording: ' Exp.recording newline]);
+      pb_vRunExp(Exp,handles)
    end
 end
 
