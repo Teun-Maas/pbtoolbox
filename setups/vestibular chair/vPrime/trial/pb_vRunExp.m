@@ -1,4 +1,4 @@
-function pb_vRunExp(Exp,h)
+function pb_vRunExp(expinfo,h)
 % PB_VRUNEXP(varargin)
 %
 % PB_VRUNEXP() forms the core body of experimental paradigms in the VC, and 
@@ -12,9 +12,9 @@ function pb_vRunExp(Exp,h)
    %% INITIALIZE
    %  load & read experiment
    
-   [experiment, cfg]    = pb_vReadExp(Exp.expfile); % struct
-   nblocks              = cfg.nblocks;
-   nTotTrials           = cfg.ntrials;
+   [block, cfg]    = pb_vReadExp(expinfo.expfile); % struct
+   nblocks         = cfg.Blocks;
+   nTotTrials      = cfg.Trials;
    
 
    
@@ -23,8 +23,10 @@ function pb_vRunExp(Exp,h)
    %  iterate experiment
    
    for iBlock = 1:nblocks
-      nTrials  = Experiment(iBlock).info.ntrials; % ntrials in block
-      signal   = Experiment(iBlock).info.veststim; % IMPORTANT: veststim has to be a struct with hor and vert component!
+      nTrials  = length(block(iBlock).trial);   
+      signal   = block(iBlock).signal;          
+      
+      pb_vSafety(signal);                       % Checks for safe vestibular parameters!! 
 
       
       for iTrial = 1:nTrials
