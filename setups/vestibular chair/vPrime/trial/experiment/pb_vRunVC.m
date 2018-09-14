@@ -8,15 +8,14 @@ function Dat = pb_vRunVC(signal)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    dur = 10;
-   amp = 10;
-   type = 'sine';
 
-   vSignal = pb_vCreateSignal(1, dur, 10, 1, type);
-   hSignal = pb_vCreateSignal(1, dur, 10, 1, type);
+
+   vSignal = pb_vCreateSignal(1, signal(1).duration, 10, 1, signal(1).type);
+   hSignal = pb_vCreateSignal(1, signal(2).duration, 10, 1, signal(2).type);
  
-   Dat.v.x = vSignal.x .* amp;
+   Dat.v.x = vSignal.x .* signal(1).amplitude;
    Dat.v.t = (0:1:length(Dat.v.x)-1)/10;
-   Dat.h.x = hSignal.x .* 0;
+   Dat.h.x = hSignal.x .* signal(2).amplitude;
    Dat.h.t = (0:1:length(Dat.h.x)-1)/10;
 
 end

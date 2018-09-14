@@ -7,20 +7,20 @@ function pb_vSafety(signal)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   if ~strcmp(signal.hor.type,'none')
-      if signal.hor.duration > 300 
+   if ~strcmp(signal(2).type,'none')
+      if signal(2).duration > 300 
          error('Unsafe signal: Horizontal duration too long!')
       end
-      if signal.hor.amplitude > 20
+      if signal(2).amplitude > 20
          error('Unsafe signal: Horizontal amplitude too large!')
       end
    end
    
-   if ~strcmp(signal.ver.type,'none')
-      if signal.ver.duration > 300 
+   if ~strcmp(signal(1).type,'none')
+      if signal(1).duration > 300 
          error('Unsafe signal: Vertical duration too long!')
       end
-      if signal.ver.amplitude > 50
+      if signal(1).amplitude > 50
          error('Unsafe signal: Horizontal amplitude too large!')
       end
    end
