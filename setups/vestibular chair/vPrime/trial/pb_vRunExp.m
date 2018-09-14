@@ -8,43 +8,87 @@ function pb_vRunExp(expinfo,h)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-
    %% INITIALIZE
    %  load & read experiment
    
-   [block, cfg]    = pb_vReadExp(expinfo.expfile); % struct
-   nblocks         = cfg.Blocks;
-   nTotTrials      = cfg.Trials;
+   [block, cfg]  	= pb_vReadExp(expinfo.expfile);     % struct
+   nblocks       	= cfg.Blocks;
+   nTotTrials    	= cfg.Trials;
    
-
+   cnt               = 0;
+   bDat(nblocks)     = struct;                        % pre-allocate data for speed
+   tDat(nTotTrials)  = struct;
    
-   
+   set(h.buttonClose, 'Enable', 'off')                % avoid closing GUI during executing run function     
+   set(h.buttonRun, 'Enable', 'off');
+   set(h.buttonLoad, 'Enable', 'off') 
    %% BODY
-   %  iterate experiment
+   %  Iterate experiment
    
    for iBlock = 1:nblocks
+      % Runs blocks of trials with a vestibular condition
       nTrials  = length(block(iBlock).trial);   
-      signal   = block(iBlock).signal;          
-      
-      pb_vSafety(signal);                       % Checks for safe vestibular parameters!! 
+      signal   = block(iBlock).signal;  
 
+      updateBlock(h,iBlock,signal);
+      pb_vSafety(signal);                             % Checks for safe vestibular parameters!! 
       
+      bDat(iBlock).signal = pb_vRunVC(signal);
+      
+      % Plot signals
+      h.signals; cla; hold on; col = pb_selectcolor(2,2); pause(.1);
+      plot(bDat(iBlock).signal.v.t,bDat(iBlock).signal.v.x,'Color',col(1,:)); 
+      plot(bDat(iBlock).signal.h.t,bDat(iBlock).signal.h.x,'Color',col(2,:));
+   
       for iTrial = 1:nTrials
-      %pb_vClearTrial();
-      %pb_vRecordData();
-      %pb_vRunTrial(experiment(iTrial));
-      %pb_vFeedbackGUI();
-   end
-   
-   
+         % Runs all trials within one block
+         cnt = cnt+1; 
+         updateTrial(h, iTrial, cnt, nTotTrials, tDat);
+            
+         %pb_vClearTrial();
+         %pb_vRecordData();
+         %pb_vRunTrial(experiment(iTrial));
+         %pb_vFeedbackGUI();
+         pause(1);
+      end
+   end 
    %% CHECK OUT
    %  store data
    
-   
-   
-   
+   set(h.buttonClose, 'Enable', 'on');
+   set(h.buttonRun, 'Enable', 'on');
+   set(h.buttonLoad, 'Enable', 'on');
 end
- 
+
+function updateBlock(h, iBlock, signal)
+   % Updates the block information to the GUI
+   
+   bn = pb_sentenceCase(num2str(iBlock,'%03d'));                           % count block
+   set(h.Bn,'string',bn);
+   
+   vs = ['V = ' pb_sentenceCase(signal.ver.type) ...                       % VC stim
+      ', H = ' pb_sentenceCase(signal.hor.type)];
+   set(h.Vs,'string',vs);
+end
+
+function updateTrial(h, iTrial, cnt, nTotTrials, tDat)
+   % Updates the trial information to the GUI
+   
+   h.figure1.Name = ['vPrime - ' num2str(cnt) '/' num2str(nTotTrials)];    % counting title
+   
+   tn = num2str(iTrial,'%03d');                                            % blocktrial
+   set(h.Tn,'string',tn)
+   
+   updateDat(h, tDat);
+end
+
+function updateDat(h, Dat)
+    % Updates the visual feedback data
+
+    
+end
+
+
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %

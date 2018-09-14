@@ -59,6 +59,8 @@ function pb_vPrimeGUI_OpeningFcn(hObject, eventdata, handles, varargin)
    % Update handles structure
    guidata(hObject, handles);
    set(handles.editLoad,'string',cd);
+   
+   if isunix; cd('/Users/jjheckman/Documents/Data'); end
 
    % UIWAIT makes pb_vPrimeGUI wait for user response (see UIRESUME)
    % uiwait(handles.figure1);
@@ -144,7 +146,8 @@ function buttonRun_Callback(hObject, eventdata, handles)
       Exp.recording     = get(handles.editRec,'string');
 
       disp(['Experimenter: ' Exp.experimenter newline 'Expfile: ' Exp.expfile newline 'Subject ID: ' Exp.SID newline 'Recording: ' Exp.recording newline]);
-      pb_vRunExp(Exp,handles)
+
+      pb_vRunExp(Exp,handles);
    end
 end
 
@@ -153,7 +156,8 @@ function buttonClose_Callback(hObject, eventdata, handles)
    % hObject    handle to buttonClose (see GCBO)
    % eventdata  reserved - to be defined in a future version of MATLAB
    % handles    structure with handles and user data (see GUIDATA)
-   close(gcf);
+
+   close(handles.figure1);
 end
 
 % --- Executes on button press in buttonLoad.
@@ -181,7 +185,6 @@ function editPart_Callback(hObject, eventdata, handles)
 
    % Hints: get(hObject,'String') returns contents of editPart as text
    %        str2double(get(hObject,'String')) returns contents of editPart as a double
-
 
    % --- Executes during object creation, after setting all properties.
 end
