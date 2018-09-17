@@ -1,19 +1,24 @@
-function Dat = pb_vRunVC(signal)
-% PB_VRUNVC()
+function pb_vRecordData(exp,trial)
+% PB_VRECORDDATA()
 %
-% PB_VRUNVC()  ...
+% PB_VRECORDDATA()  ...
 %
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   vSignal = pb_vCreateSignal(1, signal(1).duration, 10, 1, signal(1).type);
-   hSignal = pb_vCreateSignal(1, signal(2).duration, 10, 1, signal(2).type);
- 
-   Dat.v.x = vSignal.x .* signal(1).amplitude;
-   Dat.v.t = (0:1:length(Dat.v.x)-1)/10;
-   Dat.h.x = hSignal.x .* signal(2).amplitude;
-   Dat.h.t = (0:1:length(Dat.h.x)-1)/10;
+   cd(exp.dir)
+   day   = datestr(now,'yy-mm-dd');
+   trial = num2str(trial,'%04d');
+   fname = [exp.experimenter '-' ...
+            exp.SID '-' ...
+            day '-' ...
+            exp.recording '-' ...
+            trial '.vc'];
+         
+   fid = fopen(fname, 'wt');
+   fprintf(fid,'test\n');
+   fclose(fid);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

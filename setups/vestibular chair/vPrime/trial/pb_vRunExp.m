@@ -20,10 +20,14 @@ function pb_vRunExp(expinfo,h)
    tDat(nTotTrials)  = struct;
    
    set(h.buttonClose,   'Enable', 'off')                % avoid closing GUI during executing run function     
-   set(h.buttonRun,     'Enable', 'off');
-   set(h.buttonLoad,    'Enable', 'off') 
+   set(h.buttonRun,     'Enable', 'off')
+   set(h.buttonLoad,    'Enable', 'off')
+   
+   h.signals; cla; 
    %% BODY
    %  Iterate experiment
+   
+   pause(2);
    
    for iBlock = 1:nblocks
       % Runs blocks of trials with a vestibular condition
@@ -38,7 +42,10 @@ function pb_vRunExp(expinfo,h)
       bDat(iBlock).signal = pb_vRunVC(signal);
       
       % Plot signals
-      h.signals; cla; hold on; col = pb_selectcolor(2,2);
+      h.signals; cla; hold on; 
+      h.signals.YLim = [-50 50];
+      col = pb_selectcolor(2,2);
+      
       plot(bDat(iBlock).signal.v.t,bDat(iBlock).signal.v.x,'Color',col(1,:)); 
       plot(bDat(iBlock).signal.h.t,bDat(iBlock).signal.h.x,'Color',col(2,:));
    
@@ -47,16 +54,18 @@ function pb_vRunExp(expinfo,h)
          cnt = cnt+1; 
          updateTrial(h, iTrial, cnt, nTotTrials, tDat);
             
-         %pb_vClearTrial();
-         %pb_vRecordData();
+         pb_vClearTrial(cnt,iBlock,iTrial);
+         pb_vRecordData(expinfo,cnt);
          %pb_vRunTrial(experiment(iTrial));
          %pb_vFeedbackGUI();
-         pause(.1);
+         pause(1);
       end
       pause(2)
    end 
    %% CHECK OUT
    %  store data
+   
+   disp([newline newline 'Experiment finished!'])
    
    set(h.buttonClose,   'Enable', 'on');
    set(h.buttonRun,     'Enable', 'on');
@@ -69,7 +78,7 @@ function updateBlock(h, iBlock, signal)
    bn = pb_sentenceCase(num2str(iBlock,'%03d'));                           % count block
    set(h.Bn,'string',bn);
    
-   vs = ['V = ' pb_sentenceCase(signal(1).type) ...                       % VC stim
+   vs = ['V = ' pb_sentenceCase(signal(1).type) ...                        % VC stim
       ', H = ' pb_sentenceCase(signal(2).type)];
    set(h.Vs,'string',vs);
 end
@@ -77,9 +86,9 @@ end
 function updateTrial(h, iTrial, cnt, nTotTrials, Dat)
    % Updates the trial information to the GUI
    
-   h.figure1.Name = ['vPrime - ' num2str(cnt) '/' num2str(nTotTrials) ' Trials'];    % counting title
+   h.figure1.Name = ['vPrime - ' num2str(cnt) '/' num2str(nTotTrials) ' Trials'];      % counting title
    
-   tn = num2str(iTrial,'%03d');                                            % blocktrial
+   tn = num2str(iTrial,'%03d');                                                        % blocktrial
    set(h.Tn,'string',tn)
    
 end

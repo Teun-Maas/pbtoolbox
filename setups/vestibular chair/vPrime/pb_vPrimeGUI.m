@@ -22,7 +22,7 @@ function varargout = pb_vPrimeGUI(varargin)
 
    % Edit the above text to modify the response to help pb_vPrimeGUI
 
-   % Last Modified by GUIDE v2.5 10-Sep-2018 11:28:27
+   % Last Modified by GUIDE v2.5 17-Sep-2018 12:27:46
 
    % Begin initialization code - DO NOT EDIT
    gui_Singleton = 1;
@@ -58,9 +58,9 @@ function pb_vPrimeGUI_OpeningFcn(hObject, eventdata, handles, varargin)
 
    % Update handles structure
    guidata(hObject, handles);
-   set(handles.editLoad,'string',cd);
    
-   if isunix; cd('/Users/jjheckman/Documents/Data'); end
+   cd(datapath);
+   set(handles.editLoad,'string',cd);
 
    % UIWAIT makes pb_vPrimeGUI wait for user response (see UIRESUME)
    % uiwait(handles.figure1);
@@ -87,6 +87,15 @@ function popExperimenter_Callback(hObject, eventdata, handles)
 
    % Hints: contents = cellstr(get(hObject,'String')) returns popExperimenter contents as cell array
    %        contents{get(hObject,'Value')} returns selected item from popExperimenter
+   path = get(handles.editLoad,'string');
+   if isempty(pb_fext(path))
+      path = datapath;
+      contents 	= get(handles.popExperimenter,'string');
+      user        = contents{get(handles.popExperimenter,'Value')};
+      newpath     = datapath([path filesep user]);
+      
+      set(handles.editLoad,'string',newpath);
+   end
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -145,8 +154,12 @@ function buttonRun_Callback(hObject, eventdata, handles)
       Exp.expfile       = get(handles.editLoad,'string');
       Exp.recording     = get(handles.editRec,'string');
 
-      disp(['Experimenter: ' Exp.experimenter newline 'Expfile: ' Exp.expfile newline 'Subject ID: ' Exp.SID newline 'Recording: ' Exp.recording newline]);
-
+      % Sets parameters & run exp
+      Exp = mkDat(Exp,handles);
+      disp(['Experimenter: '  Exp.experimenter newline ...
+            'Expfile: '       Exp.expfile newline ...
+            'Subject ID: '    Exp.SID newline ...
+            'Recording: '     Exp.recording newline]);
       pb_vRunExp(Exp,handles);
    end
 end
@@ -166,9 +179,12 @@ function buttonLoad_Callback(hObject, eventdata, handles)
    % eventdata  reserved - to be defined in a future version of MATLAB
    % handles    structure with handles and user data (see GUIDATA)
    
-   editTxt = get(handles.editLoad,'string');
-   [ext, ~] = pb_fext(editTxt);
-   if isempty(ext); cdir = editTxt; else; fol = dir(editTxt); cdir = fol.folder; end
+   path = get(handles.editLoad,'string');
+   path = datapath(path);
+   set(handles.editLoad,'string',path);
+   
+   [ext, ~] = pb_fext(path);
+   if isempty(ext); cdir = path; else; fol = dir(path); cdir = fol.folder; end
    
    [fn, path] = pb_getfile('dir',cdir,'ext','*.exp','title','Load exp-file..' );
    if fn ~= 0
@@ -221,5 +237,43 @@ function editRec_CreateFcn(hObject, eventdata, handles)
    %       See ISPC and COMPUTER.
    if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
        set(hObject,'BackgroundColor','white');
+   end
+end
+
+function exp = mkDat(exp,handles)
+   % Creates directory and sets parameters for data storage
+   datname = [exp.experimenter '-' exp.SID '-' datestr(now,'yy-mm-dd')]; %% <-- SET PATH FOR WINDOWS DATADIR
+   path = [datapath filesep exp.experimenter filesep 'Recordings' filesep datname];
+   
+   if ~exist(path,'dir'); mkdir(path); cd(path); mkdir('trial'); end
+   
+   path = [path filesep 'trial']; exp.dir = path; cd(path);
+   fname = [datname '-' exp.recording '-0001.vc'];
+   
+   while exist(fname,'file')
+      % Check for existing recordings
+      quest = 'Recording already exists. How to proceed?';
+      answer = questdlg(quest,'Choices','Overwrite', 'Increment','Stop','Stop');
+      switch answer
+          case 'Overwrite'
+              break;
+          case 'Increment'
+               exp.recording = num2str(str2double(exp.recording)+1,'%04d');
+               set(handles.editRec,'string',exp.recording);      
+          case 'Stop'
+              error('Run stopped.');
+      end
+      fname = [datname '-' num2str(exp.recording,'%04d') '-0001.vc']; 
+   end
+end
+
+function path = datapath(path)
+   if nargin == 0; path = []; end
+   if isempty(path) || ~exist(path)
+      if isunix
+         path = '/Users/jjheckman/Documents/Data/PhD/Experiment/VC';
+      else
+         path = 'C:/VC/DATA';
+      end  
    end
 end

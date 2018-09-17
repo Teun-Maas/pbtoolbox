@@ -1,19 +1,14 @@
-function Dat = pb_vRunVC(signal)
-% PB_VRUNVC()
+function pb_vClearTrial(cnt,blck,trl)
+% PB_VCLEARTRIAL()
 %
-% PB_VRUNVC()  ...
+% PB_VCLEARTRIAL()  ...
 %
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   vSignal = pb_vCreateSignal(1, signal(1).duration, 10, 1, signal(1).type);
-   hSignal = pb_vCreateSignal(1, signal(2).duration, 10, 1, signal(2).type);
- 
-   Dat.v.x = vSignal.x .* signal(1).amplitude;
-   Dat.v.t = (0:1:length(Dat.v.x)-1)/10;
-   Dat.h.x = hSignal.x .* signal(2).amplitude;
-   Dat.h.t = (0:1:length(Dat.h.x)-1)/10;
+   disp([newline '<strong>New Trial started...</strong> '...
+         newline ' Trial: ' num2str(cnt) ' (B' num2str(blck) 'T' num2str(trl) ')']);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
