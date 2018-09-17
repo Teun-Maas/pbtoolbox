@@ -7,7 +7,7 @@ function pb_prepSac()
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
-   cdir        = '/Users/jjheckman/Documents/Data/PhD/Setups/Sphere/introduction/';
+   cdir        = cd;
    [fn, path]  = pb_getfile('dir',cdir,'ext','*.*','title','Select an experimentfile');
    [ext,~]     = pb_fext(fn); 
    
