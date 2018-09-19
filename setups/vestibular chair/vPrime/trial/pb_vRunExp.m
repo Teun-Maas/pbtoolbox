@@ -23,7 +23,11 @@ function pb_vRunExp(expinfo,h)
    set(h.buttonRun,     'Enable', 'off')
    set(h.buttonLoad,    'Enable', 'off')
    
-   h.signals; cla; 
+   % Ready feedback plots
+   axes(h.signals); cla;   
+   axes(h.eTrace); cla; h.eTrace.YLim = [0 300]; h.eTrace.XLim = [0 2.5]; 
+   axes(h.hTrace); cla; h.hTrace.YLim = [0 300]; h.hTrace.XLim = [0 2.5];
+   
    %% BODY
    %  Iterate experiment
    
@@ -33,21 +37,24 @@ function pb_vRunExp(expinfo,h)
       % Runs blocks of trials with a vestibular condition
       nTrials  = length(block(iBlock).trial);
       
-      signal(1)   = block(iBlock).signal.ver;  
+      %% RUN CHAIR
+      %  read signals
+      signal(1)   = block(iBlock).signal.ver;
       signal(2)   = block(iBlock).signal.hor;     
+      signal      = pb_vSafety(signal); 
+      
+      % run chair
+      bDat(iBlock).signal = pb_vRunVC(signal); 
+      
+      %% PLOT SIGNALS
+      %  set axis and plot signals
+      axes(h.signals); cla; hold on; 
+      h.signals.YLim = [-50 50];
+      
+      plot(bDat(iBlock).signal.v.t,bDat(iBlock).signal.v.x,'k');
+      plot(bDat(iBlock).signal.h.t,bDat(iBlock).signal.h.x,'b');
       
       updateBlock(h,iBlock,signal);
-      pb_vSafety(signal);                             % Checks for safe vestibular parameters!! 
-      
-      bDat(iBlock).signal = pb_vRunVC(signal);
-      
-      % Plot signals
-      h.signals; cla; hold on; 
-      h.signals.YLim = [-50 50];
-      col = pb_selectcolor(2,2);
-      
-      plot(bDat(iBlock).signal.v.t,bDat(iBlock).signal.v.x,'Color',col(1,:)); 
-      plot(bDat(iBlock).signal.h.t,bDat(iBlock).signal.h.x,'Color',col(2,:));
    
       for iTrial = 1:nTrials
          % Runs all trials within one block
@@ -59,14 +66,47 @@ function pb_vRunExp(expinfo,h)
          %pb_vRunTrial(experiment(iTrial));
          %pb_vFeedbackGUI();
          pause(1);
+         
+         %% PLOT TRACES
+         %  head trace
+         axes(h.hTrace); hold on;
+         ws = 20; b  = (1/ws)*ones(1,ws); a  = 1;
+         
+         x  = 0:.05:2.5; 
+         y  = randi(300,1,length(x)) .* tukeywin(length(x), 2)';
+         y  = filter(b,a,y) .* tukeywin(length(x),1)';
+         plot(x,y);
+         
+         %  eye trace
+         axes(h.eTrace); hold on;    
+         ws = 20; b  = (1/ws)*ones(1,ws); a  = 1;
+         
+         x  = 0:.05:2.5; 
+         y  = randi(300,1,length(x)) .* tukeywin(length(x), 2)';
+         y  = filter(b,a,y) .* tukeywin(length(x),1)';
+         plot(x,y);
+         
+         %  highlight active traces
+         te = pb_fobj(h.eTrace,'Type','Line'); 
+         th = pb_fobj(h.hTrace,'Type','Line'); 
+         col = pb_selectcolor(10,5);
+         
+         for iT = 1:length(th)
+            switch iT 
+               case length(th)
+                  th(iT).Color = col(10,:);
+                  te(iT).Color = col(10,:);
+               otherwise 
+                  th(iT).Color = col(1,:);
+                  te(iT).Color = col(1,:);
+            end
+         end
       end
-      pause(2)
+      pause(1)
    end 
    %% CHECK OUT
-   %  store data
-   
    disp([newline newline 'Experiment finished!'])
-   
+
    set(h.buttonClose,   'Enable', 'on');
    set(h.buttonRun,     'Enable', 'on');
    set(h.buttonLoad,    'Enable', 'on');
@@ -90,7 +130,6 @@ function updateTrial(h, iTrial, cnt, nTotTrials, Dat)
    
    tn = num2str(iTrial,'%03d');                                                        % blocktrial
    set(h.Tn,'string',tn)
-   
 end
 
 

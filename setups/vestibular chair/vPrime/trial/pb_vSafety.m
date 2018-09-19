@@ -1,4 +1,4 @@
-function pb_vSafety(signal)
+function signal = pb_vSafety(signal)
 % PB_VSAFETY()
 %
 % PB_VSAFETY()  ...
@@ -9,19 +9,23 @@ function pb_vSafety(signal)
 
    if ~strcmp(signal(2).type,'none')
       if signal(2).duration > 300 
-         error('Unsafe signal: Horizontal duration too long!')
+         warning('Unsafe signal: Horizontal duration too long. Duration reduced to 300.' );
+         signal(2).duration = 300;
       end
       if signal(2).amplitude > 20
-         error('Unsafe signal: Horizontal amplitude too large!')
+         warning('Unsafe signal: Horizontal amplitude too large. Amplitude reduced to 20');
+         signal(2).amplitude = 20;
       end
    end
    
    if ~strcmp(signal(1).type,'none')
       if signal(1).duration > 300 
-         error('Unsafe signal: Vertical duration too long!')
+         warning('Unsafe signal: Vertical duration too long!');
+         signal(1).duration = 300;
       end
-      if signal(1).amplitude > 50
-         error('Unsafe signal: Horizontal amplitude too large!')
+      if signal(1).amplitude > 40
+         warning('Unsafe signal: Horizontal amplitude too large!');
+         signal(2).amplitude = 40;
       end
    end
 end

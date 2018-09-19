@@ -166,7 +166,7 @@ function cfg = hread(fid,cfg)
 end
 
 function signal = readVest(line)
-   types = {'none','sine','noise','step'};
+   types = {'none','sine','noise','turn'};
    n = str2num(erase(sscanf(line,'%s',2),sscanf(line,'%s',1)))+1;
    type  = types{n};
    signal.type = type;

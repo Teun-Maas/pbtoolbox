@@ -1,4 +1,4 @@
-function D = pb_vCreateSignal(N, dur, SR, freq, type)
+function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
 % PB_VCREATESIGNAL()
 %
 % PB_VCREATESIGNAL()  ...
@@ -6,30 +6,28 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type)
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
-
-    for i=1:N
-        switch type
-            case 'noise' 
-                [D(i).x,D(i).t] = VC_noisesignal(0, dur, SR);
-                %plot(D(i).t,D(i).x); hold on;
-            case 'sine'
-                [D.x,D.t] = VC_sinesignal(dur, SR, freq);
-                %plot(D.t,D.x); hold on;
-            case 'predictsine'
-                [D.x,D.t] = VC_predictedsine(dur, SR, freq);
-                %plot(D.t,D.x); hold on;
-            case 'turn'
-                [D.x,D.t] = VC_turnsignal(dur, SR);
-                %plot(D.t,D.x);
-            otherwise
-                error('False type specification');
-        end
-                
-    end
+   
+   dshow = pb_keyval('dshow',varargin,'false');
+   
+   D(N) = struct;
+   for i=1:N
+      switch type
+         case 'noise' 
+            [D(i).x,D(i).t] = VC_noisesignal(0, dur, SR);
+         case 'sine'
+            [D(i).x,D(i).t] = VC_sinesignal(dur, SR, freq);
+         case 'predictsine'
+            [D(i).x,D(i).t] = VC_predictedsine(dur, SR, freq);
+         case 'turn'
+            [D(i).x,D(i).t] = VC_turnsignal(dur, SR);
+         otherwise
+            error('False type specification');
+      end
+   end
+   if dshow; figure(); hold on; for i=1:N; plot(D(i).t,D(i).x); pb_nicegraph; end; end
 end
 
 function [x,t] = VC_noisesignal(mu, dur, SR)
-
     % function generates a noise signal with mean mu, length dur and frequency freq.
     
     % noise signal
@@ -92,7 +90,6 @@ function [x,t]  = VC_turnsignal(dur, SR)
     t = 0:1/SR:dur;
     v = randn(1,1);
     x = v*t;
-    
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
