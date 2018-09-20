@@ -192,7 +192,7 @@ function Col = pb_statcolor(ncol,statmap,palette,Par,varargin)
          LCH		= [LCH1; LCH2];
 
    end
-   Col		= LCH2RGB(LCH);
+   Col		= pb_LCH2RGB(LCH);
 
    if dispFlag
       figure();

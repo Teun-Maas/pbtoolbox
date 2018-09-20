@@ -8,8 +8,8 @@ function Dat = pb_vRunVC(signal)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    %% CREATE SIGNALS
-   vSignal = pb_vCreateSignal(1, signal(1).duration, 10, 1, signal(1).type);
-   hSignal = pb_vCreateSignal(1, signal(2).duration, 10, 1, signal(2).type);
+   vSignal = pb_vCreateSignal(1, signal(1).duration, 10, .1, signal(1).type);
+   hSignal = pb_vCreateSignal(1, signal(2).duration, 10, .1, signal(2).type);
  
    Dat.v.x = vSignal.x .* signal(1).amplitude;
    Dat.v.t = (0:1:length(Dat.v.x)-1)/10;
