@@ -7,7 +7,7 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
-   dshow = pb_keyval('dshow',varargin,'false');
+   dshow = pb_keyval('dshow',varargin,false);
    
    D(N) = struct;
    for i=1:N

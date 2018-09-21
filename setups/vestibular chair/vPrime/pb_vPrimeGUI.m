@@ -270,9 +270,11 @@ end
 function path = datapath(path)
    if nargin == 0; path = []; end
    if isempty(path) || ~exist(path)
-      if isunix
+      if ismac                                                             % MAC       (personal   //    NO VC, NO TDT)
          path = '/Users/jjheckman/Documents/Data/PhD/Experiment/VC';
-      else
+      elseif isunix && ~ismac                                            	% LINUX     (public     //    VC, NO TDT)
+         path = 'C:/VC/DATA';
+      elseif ispc                                                        	% WINDOWS   (public     //    VC, TDT)
          path = 'C:/VC/DATA';
       end  
    end
