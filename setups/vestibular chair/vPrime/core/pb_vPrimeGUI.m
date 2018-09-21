@@ -270,12 +270,14 @@ end
 function path = datapath(path)
    if nargin == 0; path = []; end
    if isempty(path) || ~exist(path)
+      username = char(java.lang.System.getProperty('user.name'));
       if ismac                                                             % MAC       (personal   //    NO VC, NO TDT)
-         path = '/Users/jjheckman/Documents/Data/PhD/Experiment/VC';
+         path = ['/Users/' username '/Documents/Data'];
+         %path = '/Users/jjheckman/Documents/Data/PhD/Experiment/VC';
       elseif isunix && ~ismac                                            	% LINUX     (public     //    VC, NO TDT)
-         path = '/home/jesse/Documents/Data';
+         path = ['/home/' username '/Documents/Data'];
       elseif ispc                                                        	% WINDOWS   (public     //    VC, TDT)
-         path = 'C:/VC/DATA';
+         path = ['C:\Users\' '\Documents\Data'];
       end  
    end
 end
