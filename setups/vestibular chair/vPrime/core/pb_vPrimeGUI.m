@@ -277,7 +277,7 @@ function path = datapath(path)
       elseif isunix && ~ismac                                            	% LINUX     (public     //    VC, NO TDT)
          path = ['/home/' username '/Documents/Data'];
       elseif ispc                                                        	% WINDOWS   (public     //    VC, TDT)
-         path = ['C:\Users\' '\Documents\Data'];
+         path = ['C:\Users\' username '\Documents\Data'];
       end  
    end
 end
