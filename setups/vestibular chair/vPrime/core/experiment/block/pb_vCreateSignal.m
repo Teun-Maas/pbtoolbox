@@ -1,16 +1,17 @@
 function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
-% PB_VCREATESIGNAL()
+% PB_VCREATESIGNAL(N, DUR, SR, FREQ, TYPE, VARARGIN)
 %
-% PB_VCREATESIGNAL()  ...
+% PB_VCREATESIGNAL(N, DUR, SR, FREQ, TYPE, VARARGIN) creates an unscaled
+% signal for the vestibular chair.
 %
-% See also ...
+% See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP, PB_VSIGNALVC.
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
    dshow = pb_keyval('dshow',varargin,false);
    
    D(N) = struct;
-   for i=1:N
+   for i = 1:N
       switch type
          case 'noise' 
             [D(i).x,D(i).t] = VC_noisesignal(0, dur, SR);
@@ -24,9 +25,10 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
             error('False type specification');
       end
    end
-   if dshow; figure(); hold on; for i=1:N; plot(D(i).t,D(i).x); pb_nicegraph; end; end
+   if dshow; figure; hold on; for i=1:N; plot(D(i).t,D(i).x); pb_nicegraph; end; end
 end
 
+%-- Specific signal functions --%
 function [x,t] = VC_noisesignal(mu, dur, SR)
     % function generates a noise signal with mean mu, length dur and frequency freq.
     
@@ -49,11 +51,9 @@ function [x,t] = VC_noisesignal(mu, dur, SR)
     % tukey window 
     L       =   length(t);
     x       =   x.* tukeywin(L,0.25);
-    
 end
 
 function [x,t] = VC_sinesignal(dur, SR, freq)
-
     % function generates a sine signal
 
     w = freq*2*pi;
@@ -62,14 +62,10 @@ function [x,t] = VC_sinesignal(dur, SR, freq)
     
     L       =   length(t);
     x       =   x.* tukeywin(L,0.25)';
-    
-    
 end
 
-function [x,t] = VC_predictedsine(dur, SR, freq)
-
-    % function generates a sine signal that in theory should generete an
-    % perfect sine output: y(t)=sin(wt).
+function [x,t] = VC_predictedsine(dur, SR, freq) %%% <--- TO DO: FIX THE TRANSFER FUNCTION!!
+    % function generates a perfect sine output
     
     a = 1.39;
     b = 1.4;
@@ -80,11 +76,9 @@ function [x,t] = VC_predictedsine(dur, SR, freq)
     
     L       =   length(t);
     x       =   x.* tukeywin(L,0.25)';
-    
 end
 
 function [x,t]  = VC_turnsignal(dur, SR)
-    
     % function will create turn signal of length dur
     
     t = 0:1/SR:dur;

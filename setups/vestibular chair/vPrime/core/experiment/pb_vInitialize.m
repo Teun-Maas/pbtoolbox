@@ -1,23 +1,27 @@
 function handles = pb_vInitialize(handles, initialize)
-% PB_VREADYEXP(h,initialize)
+% PB_VINITIALIZE(HANDLES, INITIALIZE)
 %
-% PB_VREADYEXP() interacts with GUI during check in/out experiment. 
+% PB_VINITIALIZE(HANDLES, INITIALIZE) interacts with GUI and command window 
+% during check in/out of experiment. 
 %
-% See also PB_VRUNEXP
+% See also PB_VPRIME, PB_VPRIME, PB_VRUNEXP.
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   if initialize; initialize = 'off'; else; initialize = 'on'; end
-
-   set(handles.buttonClose,   'Enable', initialize)                % avoid closing GUI during executing run function     
-   set(handles.buttonRun,     'Enable', initialize)
-   set(handles.buttonLoad,    'Enable', initialize)
-   
-   if strcmp(initialize,'off')
-      % test
-   else
-      disp([newline newline 'Experiment finished!']);
+   if initialize
+      buttonPress = 'off';    clc;
+      fprintf(['<strong>Experiment has started.</strong>' newline newline]);
+   else 
+      buttonPress = 'on'; 
+      fprintf([newline newline '<strong>Experiment has finished.</strong>' newline newline]);
+      
+      handles.cfg.recording = num2str(str2double(handles.cfg.recording)+1,'%04d');
+      set(handles.editRec,'string',handles.cfg.recording)
    end
+
+   set(handles.buttonClose,   'Enable', buttonPress)                % avoid closing GUI during executing run function     
+   set(handles.buttonRun,     'Enable', buttonPress)
+   set(handles.buttonLoad,    'Enable', buttonPress)
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

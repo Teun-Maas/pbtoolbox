@@ -1,9 +1,9 @@
 function handles = pb_getcfgdefaults(handles)
-% PB_GETCFGDEFAULTS()
+% PB_GETCFGDEFAULTS(HANDLES)
 %
-% PB_GETCFGDEFAULTS()  ...
+% PB_GETCFGDEFAULTS(HANDLES) initiaties default parameters into handles.
 %
-% See also ...
+% See also PB_VPRIME, PB_VPRIMEGUI.
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
@@ -21,7 +21,7 @@ function handles = pb_getcfgdefaults(handles)
    d			= datestr(now,formatOut);
    cfg.date	= d;
    cfg.datestring = d;
-   cfg.trialnumber = 1;
+   cfg.trialnumber = [1 1];      % format: [Tblock Texp]
    cfg.blocknumber = 1;
 
    %% TDT and PLC defaults

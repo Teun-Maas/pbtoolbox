@@ -1,13 +1,14 @@
 function handles = pb_createdir(handles)
-% PB_CREATEDIR()
+% PB_CREATEDIR(HANDLES)
 %
-% PB_CREATEDIR()  ...
+% PB_CREATEDIR(HANDLES) checks if intended data directory exists, and, 
+% if not, makes directory. Furthermore, a quick check is done to see if
+% there is already existing data in this folder to prevent loss of data.
 %
-% See also ...
+% See also PB_VPRIME, PB_VPRIME, PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   % Creates directory and sets parameters for data storage
    cfg = handles.cfg;
    
    path = [cfg.dname filesep 'trial'];
@@ -19,8 +20,10 @@ function handles = pb_createdir(handles)
    
    while exist(fname,'file')
       % Check for existing recordings
+      
       quest    = 'Recording already exists. Indicate how to proceed?'; 
       answer   = questdlg(quest,'Choices','Overwrite', 'Increment','Stop','Stop');
+      
       switch answer
          case 'Overwrite'
             break;
@@ -30,6 +33,7 @@ function handles = pb_createdir(handles)
          case 'Stop'
             error('Run stopped.');
       end
+      
       fname = [cfg.expInitials '-' cfg.subjectid '-' cfg.datestring '-' cfg.recording '-0001.vc' ];
    end
    handles.cfg = cfg;

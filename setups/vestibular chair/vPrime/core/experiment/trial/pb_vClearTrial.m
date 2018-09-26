@@ -1,16 +1,19 @@
-function pb_vClearTrial(cnt,blck,trl)
-% PB_VCLEARTRIAL()
+function pb_vClearTrial(handles)
+% PB_VCLEARTRIAL(HANDLES)
 %
-% PB_VCLEARTRIAL()  ...
+% PB_VCLEARTRIAL(HANDLES) empties previous trial: data, stimuli, GUI, and
+% updates the command window.
 %
-% See also ...
+% See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
+
+   tn = handles.cfg.trialnumber;
+   bn = handles.cfg.blocknumber;
       
    disp([newline '<strong>New Trial started...</strong> '...
-         newline ' Trial: ' num2str(cnt) ' (B' num2str(blck) 'T' num2str(trl) ')']);
-      
-   
+         newline ' Trial: ' num2str(tn(2)) ' (B' num2str(bn) 'T' num2str(tn(1)) ')']);
+
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

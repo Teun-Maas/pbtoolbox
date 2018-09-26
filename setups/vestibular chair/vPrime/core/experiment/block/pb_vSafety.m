@@ -1,31 +1,30 @@
 function signal = pb_vSafety(signal)
-% PB_VSAFETY()
+% PB_VSAFETY(SIGNAL)
 %
-% PB_VSAFETY()  ...
+% PB_VSAFETY(SIGNAL) checks the signal parameters for the vestibular chair 
+% to see wether they are within a 'safe' range. Note that if not, the values 
+% are fixed to safe maximum.
 %
-% See also ...
+% See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP, PB_VSIGNALVC.
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   if ~strcmp(signal(2).type,'none')
-      if signal(2).duration > 300 
-         warning('Unsafe signal: Horizontal duration too long. Duration reduced to 300.' );
-         signal(2).duration = 300;
-      end
-      if signal(2).amplitude > 20
-         warning('Unsafe signal: Horizontal amplitude too large. Amplitude reduced to 20');
-         signal(2).amplitude = 20;
-      end
-   end
-   
-   if ~strcmp(signal(1).type,'none')
-      if signal(1).duration > 300 
-         warning('Unsafe signal: Vertical duration too long!');
-         signal(1).duration = 300;
-      end
-      if signal(1).amplitude > 40
-         warning('Unsafe signal: Horizontal amplitude too large!');
-         signal(2).amplitude = 40;
+   vAx = {'Vertical','Horizontal'};
+
+   for iAx = 1:2
+      if ~strcmp(signal(iAx).type,'none')
+         if signal(iAx).duration > 300 
+            warning(['Detected unsafe signal. ' vAx{iAx} ' duration too long!']);
+            signal(iAx).duration = 300;
+         end
+         if signal(iAx).amplitude > 40/iAx
+            warning(['Detected unsafe signal. ' vAx{iAx} ' amplitude too large!']);
+            signal(iAx).amplitude = 40/iAx;
+         end
+        	if signal(iAx).frequency > .3
+            warning(['Detected unsafe signal. ' vAx{iAx} ' frequency too high!']);
+            signal(iAx).frequency = .3;
+         end
       end
    end
 end
