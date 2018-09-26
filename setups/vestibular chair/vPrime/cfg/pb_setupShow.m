@@ -1,26 +1,27 @@
-function handles = pb_vRecordData(handles)
-% PB_VRECORDDATA()
+function pb_setupShow(handles)
+% PB_SETUPSHOW()
 %
-% PB_VRECORDDATA()  ...
+% PB_SETUPSHOW()  ...
 %
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   cfg = handles.cfg;
-   
-   cd([cfg.dname filesep 'trial'])
+axes(handles.signals); 
+cla; hold on; 
+axis([0 120 -50 50]);
+box off
 
-   [~,prefix]        = pb_fext(cfg.fname);
-   fname             = [prefix '-' num2str(cfg.trialnumber,'%04d') '.vc'];
-   
-   fid = fopen(fname,'wt');
-   fwrite(fid, fname);
-   fclose(fid);
-   
-   handles.cfg = cfg;
+axes(handles.hTrace); 
+cla; hold on; 
+axis([0 2.5 0 300]);
+box off
+
+axes(handles.eTrace); 
+cla; hold on; 
+axis([0 2.5 0 300]);
+box off
 end
-
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %

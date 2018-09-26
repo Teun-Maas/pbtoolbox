@@ -9,6 +9,8 @@ function pb_vClearTrial(cnt,blck,trl)
       
    disp([newline '<strong>New Trial started...</strong> '...
          newline ' Trial: ' num2str(cnt) ' (B' num2str(blck) 'T' num2str(trl) ')']);
+      
+   
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

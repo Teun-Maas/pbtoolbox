@@ -44,7 +44,6 @@ function varargout = pb_vPrimeGUI(varargin)
    % End initialization code - DO NOT EDIT
 end
 
-
 % --- Executes just before pb_vPrimeGUI is made visible.
 function pb_vPrimeGUI_OpeningFcn(hObject, eventdata, handles, varargin)
    % This function has no output args, see OutputFcn.
@@ -53,13 +52,20 @@ function pb_vPrimeGUI_OpeningFcn(hObject, eventdata, handles, varargin)
    % handles    structure with handles and user data (see GUIDATA)
    % varargin   command line arguments to pb_vPrimeGUI (see VARARGIN)
 
+   handles			= pb_getcfgdefaults(handles); pb_sethandles(handles);
+   handles			= pb_gethandles(handles);
+   
+   handles			= pb_tdtinit(handles);
+
+   handles.data	= struct([]);
+   pb_setupShow(handles);
+   
    % Choose default command line output for pb_vPrimeGUI
    handles.output = hObject;
-
+   
    % Update handles structure
    guidata(hObject, handles);
-   
-   cd(datapath);
+
    set(handles.editLoad,'string',cd);
 
    % UIWAIT makes pb_vPrimeGUI wait for user response (see UIRESUME)
@@ -87,15 +93,11 @@ function popExperimenter_Callback(hObject, eventdata, handles)
 
    % Hints: contents = cellstr(get(hObject,'String')) returns popExperimenter contents as cell array
    %        contents{get(hObject,'Value')} returns selected item from popExperimenter
-   path = get(handles.editLoad,'string');
-   if isempty(pb_fext(path))
-      path = datapath;
-      contents 	= get(handles.popExperimenter,'string');
-      user        = contents{get(handles.popExperimenter,'Value')};
-      newpath     = datapath([path filesep user]);
-      
-      set(handles.editLoad,'string',newpath);
-   end
+   
+   handles  = pb_gethandles(handles);
+   newpath  = [pb_datapath filesep handles.cfg.expInitials];
+   set(handles.editLoad,'string',newpath);
+
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -139,28 +141,15 @@ function buttonRun_Callback(hObject, eventdata, handles)
    % hObject    handle to buttonRun (see GCBO)
    % eventdata  reserved - to be defined in a future version of MATLAB
    % handles    structure with handles and user data (see GUIDATA)
-   expf = get(handles.editLoad,'string');
-   [ext,~] = pb_fext(expf);
-   if isempty(ext)
+   
+   handles = pb_gethandles(handles);
+   
+
+   if isempty(pb_fext(handles.cfg.expfname))
       msgbox({'Non-valid file selected.';'Please select an expfile before starting an experiment.'});
    else
-      clc;
-      fprintf(['<strong>Experiment has started.</strong>\n\n']);
-      
-      % select experimental parameters
-      contents          = get(handles.popExperimenter,'string');
-      Exp.experimenter  = contents{get(handles.popExperimenter,'Value')};
-      Exp.SID           = get(handles.editPart,'string');
-      Exp.expfile       = get(handles.editLoad,'string');
-      Exp.recording     = get(handles.editRec,'string');
-
-      % Sets parameters & run exp
-      Exp = mkDat(Exp,handles);
-      disp(['Experimenter: '  Exp.experimenter newline ...
-            'Expfile: '       Exp.expfile newline ...
-            'Subject ID: '    Exp.SID newline ...
-            'Recording: '     Exp.recording newline]);
-      pb_vRunExp(Exp,handles);
+      clc; fprintf(['<strong>Experiment has started.</strong>\n\n']);     
+      pb_vRunExp(handles);
    end
 end
 
@@ -179,9 +168,9 @@ function buttonLoad_Callback(hObject, eventdata, handles)
    % eventdata  reserved - to be defined in a future version of MATLAB
    % handles    structure with handles and user data (see GUIDATA)
    
-   path = get(handles.editLoad,'string');
-   path = datapath(path);
-   set(handles.editLoad,'string',path);
+   handles = pb_gethandles(handles);
+   
+   path = handles.cfg.fpath;
    
    [ext, ~] = pb_fext(path);
    if isempty(ext); cdir = path; else; fol = dir(path); cdir = fol.folder; end
@@ -240,44 +229,3 @@ function editRec_CreateFcn(hObject, eventdata, handles)
    end
 end
 
-function exp = mkDat(exp,handles)
-   % Creates directory and sets parameters for data storage
-   datname = [exp.experimenter '-' exp.SID '-' datestr(now,'yy-mm-dd')]; %% <-- SET PATH FOR WINDOWS DATADIR
-   path = [datapath filesep exp.experimenter filesep 'Recordings' filesep datname];
-   
-   if ~exist(path,'dir'); mkdir(path); cd(path); mkdir('trial'); end
-   
-   path = [path filesep 'trial']; exp.dir = path; cd(path);
-   fname = [datname '-' exp.recording '-0001.vc'];
-   
-   while exist(fname,'file')
-      % Check for existing recordings
-      quest = 'Recording already exists. How to proceed?';
-      answer = questdlg(quest,'Choices','Overwrite', 'Increment','Stop','Stop');
-      switch answer
-          case 'Overwrite'
-              break;
-          case 'Increment'
-               exp.recording = num2str(str2double(exp.recording)+1,'%04d');
-               set(handles.editRec,'string',exp.recording);      
-          case 'Stop'
-              error('Run stopped.');
-      end
-      fname = [datname '-' num2str(exp.recording,'%04d') '-0001.vc']; 
-   end
-end
-
-function path = datapath(path)
-   if nargin == 0; path = []; end
-   if isempty(path) || ~exist(path)
-      username = char(java.lang.System.getProperty('user.name'));
-      if ismac                                                             % MAC       (personal   //    NO VC, NO TDT)
-         path = ['/Users/' username '/Documents/Data'];
-         %path = '/Users/jjheckman/Documents/Data/PhD/Experiment/VC';
-      elseif isunix && ~ismac                                            	% LINUX     (public     //    VC, NO TDT)
-         path = ['/home/' username '/Documents/Data'];
-      elseif ispc                                                        	% WINDOWS   (public     //    VC, TDT)
-         path = ['C:\Users\' username '\Documents\Data'];
-      end  
-   end
-end

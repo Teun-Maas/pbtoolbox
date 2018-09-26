@@ -1,4 +1,4 @@
-function pb_vRunExp(expinfo,h)
+function pb_vRunExp(handles)
 % PB_VRUNEXP(varargin)
 %
 % PB_VRUNEXP() forms the core body of experimental paradigms in the VC, and 
@@ -11,23 +11,34 @@ function pb_vRunExp(expinfo,h)
    %% INITIALIZE
    %  load & read experiment
    
-   [block, cfg]  	= pb_vReadExp(expinfo.expfile);
-   cnt            = pb_vInitialize(h,true);
+   pb_setupShow(handles);
+   handles        = pb_gethandles(handles);
+   handles        = pb_getblock(handles);
    
-   nblocks       	= cfg.Blocks;
-   nTotTrials    	= cfg.Trials;
    
-   bDat(nblocks)     = struct('v',[],'h',[]);                                             % pre-allocate data for speed
-   tDat(nTotTrials)  = struct;
+   %[block, cfg]  	= pb_vReadExp(handles);
+  
+   handles        = pb_createdir(handles);
+   handles        = pb_vInitialize(handles,true);
+   
+   % NOT SURE WETHER THIS REMAINS	%  %  %  %  %  %  %  %  % %
+   nblocks       	= handles.cfg.Blocks;                             % %
+   nTotTrials    	= handles.cfg.Trials;                             % %
+                                                            % %
+   bDat(nblocks)     = struct('v',[],'h',[]);               % %                             % pre-allocate data for speed
+   tDat(nTotTrials)  = struct;                              % %
+   % NOT SURE WETHER THIS REMAINS   %  %  %  %  %  %  %  %  % % 
    
    %% BODY
    %  Iterate experiment
+   
+   block = handles.block;
       
-   for iBlock = 1:nblocks
+   for iBlck = 1:nblocks
       % Runs blocks of trials with a vestibular condition
       
-      nTrials                       = length(block(iBlock).trial);
-      [bDat(iBlock),profile,dur]    = pb_vSignalVC(h,block,iBlock);       % reads, checks, creates & plots vestibular signals
+      nTrials                       = length(block(iBlck).trial);
+      [bDat(iBlck),profile,dur]    = pb_vSignalVC(handles,block,iBlck);       % reads, checks, creates & plots vestibular signals
       
       %% START CHAIR
       if ~ismac                                                            % in order to debug at my own laptop withouth getting servo related errors.                                           
@@ -42,16 +53,18 @@ function pb_vRunExp(expinfo,h)
       %% RUN TRIALS
       for iTrial = 1:nTrials
          % Runs all trials within one block
-         cnt = cnt+1; 
-         updateTrial(h, iTrial, cnt, nTotTrials);
+         cnt = handles.cfg.trialnumber;
+         updateTrial(handles, iTrial, cnt, nTotTrials);
+         %pb_vSetupTrial(block(iBlock).trial(iTrial).stim,cfg);
             
-         pb_vClearTrial(cnt,iBlock,iTrial);
-         pb_vRecordData(expinfo,cnt);
+         pb_vClearTrial(cnt,iBlck,iTrial);
+         handles = pb_vRecordData(handles);
+         
          %pb_vRunTrial(experiment(iTrial));
          %pb_vFeedbackGUI();
-         pb_vTraces(h);
-         pause(1);
-         
+         pb_vTraces(handles);
+         pause(1)
+         handles.cfg.trialnumber    = handles.cfg.trialnumber+1;
       end
       
       %% STOP CHAIR
@@ -67,9 +80,15 @@ function pb_vRunExp(expinfo,h)
          Dat.sv   = sv;
          Dat.pv   = pv;
       end
+      handles.cfg.blocknumber	= handles.cfg.blocknumber+1;
    end 
    %% CHECK OUT
-   pb_vInitialize(h,false);
+   pb_vInitialize(handles,false);
+   
+   % THIS CAN BE MOVED ELSEWHERE TO CLEAN UP CODE
+   handles.cfg.recording = num2str(str2double(handles.cfg.recording)+1,'%04d');
+   set(handles.editRec,'string',handles.cfg.recording)
+   % THIS CAN BE MOVED ELSEWHERE TO CLEAN UP CODE 
 end
 
 function updateTrial(h, iTrial, cnt, nTotTrials)

@@ -1,26 +1,22 @@
-function handles = pb_vRecordData(handles)
-% PB_VRECORDDATA()
+function handles = pb_getblock(handles)
+% PB_GETBLOCK()
 %
-% PB_VRECORDDATA()  ...
+% PB_GETBLOCK()  ...
 %
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   cfg = handles.cfg;
+   cfg            = handles.cfg;
    
-   cd([cfg.dname filesep 'trial'])
-
-   [~,prefix]        = pb_fext(cfg.fname);
-   fname             = [prefix '-' num2str(cfg.trialnumber,'%04d') '.vc'];
    
-   fid = fopen(fname,'wt');
-   fwrite(fid, fname);
-   fclose(fid);
+   [block, cfg]   = pb_vReadExp(cfg);
    
-   handles.cfg = cfg;
+   block          = pb_vPrimeZ(block,cfg);
+   
+   handles.block  = block;
+   handles.cfg    = cfg;
 end
-
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %

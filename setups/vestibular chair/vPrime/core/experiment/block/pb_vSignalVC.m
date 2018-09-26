@@ -1,4 +1,4 @@
-function [Dat,profile,dur] = pb_vSignalVC(h,block,iBlock)
+function [Dat,profile,dur] = pb_vSignalVC(handles,block,iBlock)
 % PB_VSIGNALVC()
 %
 % PB_VSIGNALVC()  ...
@@ -30,24 +30,30 @@ function [Dat,profile,dur] = pb_vSignalVC(h,block,iBlock)
    dur        = max([signal(1).duration signal(2).duration])+5;         % add 5 extra seconds for delay of the system
 
    %% FEEDBACK GUI
-   updateBlock(h,iBlock,signal);
+   updateBlock(handles,iBlock,signal);
    
-   axes(h.signals); cla; hold on; 
-   h.signals.YLim = [-50 50];
+   handles = pb_gethandles(handles);
+   
+   cb = handles.cfg.blocknumber;
+   dur = max([handles.block(cb).signal.ver.duration handles.block(cb).signal.hor.duration]);
+   
+   axes(handles.signals); cla; hold on; 
+   handles.signals.YLim = [-50 50];
+   handles.signals.XLim = [0 dur];
 
    plot(Dat.v.t,Dat.v.x,'k');
    plot(Dat.h.t,Dat.h.x,'b');
 end
 
-function updateBlock(h, iBlock, signal)
+function updateBlock(handles, iBlock, signal)
    % Updates the block information to the GUI
    
    bn = pb_sentenceCase(num2str(iBlock,'%03d'));                           % count block
-   set(h.Bn,'string',bn);
+   set(handles.Bn,'string',bn);
    
    vs = ['V = ' pb_sentenceCase(signal(1).type) ...                        % VC stim
          ', H = ' pb_sentenceCase(signal(2).type)];
-   set(h.Vs,'string',vs);
+   set(handles.Vs,'string',vs);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

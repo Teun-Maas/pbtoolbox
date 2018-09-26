@@ -1,4 +1,4 @@
-function [block,cfg] = pb_vReadExp(expfile)
+function [block,cfg] = pb_vReadExp(cfg)
 % PB_VREADEXP(expfile)
 %
 % PB_VREADEXP() reads experimental data from expfile and loads BLOCK and
@@ -10,12 +10,11 @@ function [block,cfg] = pb_vReadExp(expfile)
 
    %% INITIALIZE
    
+   expfile = cfg.expfname;
    if ~pb_fexist(expfile); return; end
    fid = fopen(expfile,'r');
    
    %% HEADER
-   
-   cfg         = struct; 
    
    cfg.comment = checkcomment(fid);
    cfg         = hread(fid,cfg);
@@ -116,10 +115,50 @@ function [block,cfg] = pb_vReadExp(expfile)
             block(bn).trial(tn).stim(sn).onevent		= par(1);
             block(bn).trial(tn).stim(sn).ondelay		= par(2);
       end
-
+      
+   
    end
+   cfg		= pb_vLookup(cfg);
+   
+   %% EXTRA:  Azimuth Elevation
+   for iBlck = 1:cfg.Blocks
+      ntrials = length(block(iBlck).trial);
+      for iTrl = 1:ntrials % for every trial
+         s			= block(iBlck).trial(iTrl).stim;
+         block(iBlck).trial(iTrl).nstim = numel(s); % number of stimuli per trial
+         for stmIdx	= 1:block(iBlck).trial(iTrl).nstim % for every stimulus in a trial
+            X			= block(iBlck).trial(iTrl).stim(stmIdx).X;
+            Y			= block(iBlck).trial(iTrl).stim(stmIdx).Y;
+            mod			= block(iBlck).trial(iTrl).stim(stmIdx).modality;
+            if ~isempty(X) % for every stimulus that has an X and Y parameter, determine azimuth and elevation
+               if cfg.Lab==1 % Hoop lab
+                  if strcmpi(mod,'sky')
+                     [Az,El] = hoopsky2azel(X,Y);
+                  else
+                     [Az,El]	= hoopXY2azel(X,Y);
+                  end
+               elseif ismember(cfg.Lab,[2 3]) % Sphere lab
+                  channel = cfg.interpolant(X,Y);
+                  Az		= cfg.lookup(channel+1,5);
+                  El		= cfg.lookup(channel+1,6);
+               elseif ismember(cfg.Lab,4) % SphereMinor lab
+                  channel = cfg.interpolant(X,Y);
+                  Az		= cfg.lookup(channel+1,4);
+                  El		= cfg.lookup(channel+1,5);
+               elseif ismember(cfg.Lab,5) % vPrime lab
+                  channel = cfg.interpolant(X,Y);
+                  Az		= cfg.lookup(channel+1,4);
+                  El		= cfg.lookup(channel+1,5);
+               end
+               block(iBlck).trial(iTrl).stim(stmIdx).azimuth		= Az;
+               block(iBlck).trial(iTrl).stim(stmIdx).elevation    = El;
+            end
+         end
+      end
+   end
+   
    %% CHECK OUT
-   fclose(fid);
+	fclose(fid);
 end
 
 function comment = checkcomment(fid)
