@@ -1,7 +1,8 @@
-function pb_vTraces(h)
-% PB_VTRACES()
+function pb_vTraces(handles)
+% PB_VTRACES(HANDLES)
 %
-% PB_VTRACES()  ...
+% PB_VTRACES(HANDLES) updates the trace velocity plots of eye and head in
+% GUI.
 %
 % See also ...
 
@@ -9,7 +10,7 @@ function pb_vTraces(h)
 
    %% PLOT TRACES
    %  head trace
-   axes(h.hTrace); hold on;
+   axes(handles.hTrace); hold on;
    ws = 20; b  = (1/ws)*ones(1,ws); a  = 1;
 
    x  = 0:.05:2.5; 
@@ -18,7 +19,7 @@ function pb_vTraces(h)
    plot(x,y);
 
    %  eye trace
-   axes(h.eTrace); hold on;    
+   axes(handles.eTrace); hold on;    
    ws = 20; b  = (1/ws)*ones(1,ws); a  = 1;
 
    x  = 0:.05:2.5; 
@@ -27,8 +28,8 @@ function pb_vTraces(h)
    plot(x,y);
 
    %%  HIGHLIGHT CURRENT
-   te = pb_fobj(h.eTrace,'Type','Line'); 
-   th = pb_fobj(h.hTrace,'Type','Line'); 
+   te = pb_fobj(handles.eTrace,'Type','Line'); 
+   th = pb_fobj(handles.hTrace,'Type','Line'); 
    col = pb_selectcolor(10,5);
    
    for iT = 1:length(th)
@@ -41,6 +42,7 @@ function pb_vTraces(h)
             te(iT).Color = col(1,:);
       end
    end
+   pause(1); % Hold for a sec!
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

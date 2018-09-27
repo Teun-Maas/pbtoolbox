@@ -1,4 +1,4 @@
-function pb_vClearTrial(handles)
+function cfg = pb_vClearTrial(stim, cfg)
 % PB_VCLEARTRIAL(HANDLES)
 %
 % PB_VCLEARTRIAL(HANDLES) empties previous trial: data, stimuli, GUI, and
@@ -8,12 +8,35 @@ function pb_vClearTrial(handles)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   tn = handles.cfg.trialnumber;
-   bn = handles.cfg.blocknumber;
+
+   %% Remove ledhandle if it exists
+   
+   nstim = numel(stim);
+   for iStm = 1:nstim
+      if isfield(stim(iStm),'ledhandle')
+         if ~isempty(stim(iStm).ledhandle)
+            stim(iStm).ledhandle.delete; 	% delete(leds)/switch off light;
+         end
+      end
+   end
+   
+   %% Turn off sounds
+   
+   for muxIdx = 1:2
+      % MUX(cfg.RZ6_1,muxIdx,0)
+   end
+   
+   %% Initiate trial
+
+   tn = cfg.trialnumber;
+   bn = cfg.blocknumber;
       
    disp([newline '<strong>New Trial started...</strong> '...
          newline ' Trial: ' num2str(tn(2)) ' (B' num2str(bn) 'T' num2str(tn(1)) ')']);
-
+      
+   if ispc
+      cfg.zBus.zBusTrigA(0, 0, 2);                                         % reset, clock start, (0,0,2): trigger entire rack, with a pulse structure, and 2 ms delay(2 ms = minimum).
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

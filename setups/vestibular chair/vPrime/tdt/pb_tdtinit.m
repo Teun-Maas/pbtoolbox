@@ -1,9 +1,9 @@
 function handles = pb_tdtinit(handles)
-% PB_TDTINIT()
+% PB_TDTINIT(HANDLES)
 %
-% PB_TDTINIT()  ...
+% PB_TDTINIT(HANDLES) sets tdt initials prior to experimentation.
 %
-% See also ...
+% See also PB_VPRIME, PB_VPRIMEGUI
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

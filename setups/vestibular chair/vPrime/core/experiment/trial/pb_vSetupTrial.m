@@ -1,9 +1,9 @@
-function pb_vSetupTrial(stim,cfg)
-% PB_VSETUPTRIAL()
+function [stim, cfg] = pb_vSetupTrial(stim,cfg)
+% PB_VSETUPTRIAL(STIM, CFG)
 %
-% PB_VSETUPTRIAL()  ...
+% PB_VSETUPTRIAL(STIM, CFG) sets up experimental parameters for Trial.
 %
-% See also ...
+% See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP.
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
@@ -88,14 +88,6 @@ function pb_vSetupTrial(stim,cfg)
       maxSamples = 0;
    end
    cfg.maxSamples = maxSamples;
-
-   %% Sound Acquisition
-   % if any(selsndacq)
-   % 	sndacq	= stim(selsndacq);
-   % 	cfg.RP2_1.SetTagVal('eventAcq',sndacq.onevent+1);
-   % 	cfg.RP2_1.SetTagVal('delayAcq',sndacq.ondelay);
-   % 	cfg.RP2_1.SetTagVal('acqSamples',cfg.nsamples); % amount of DA samples
-   % end
 
    %% Wait for?
    % This needs some tweaking

@@ -1,7 +1,8 @@
 function str = pb_sentenceCase(str)
-% PB_SENTENCECASE()
+% PB_SENTENCECASE(STR)
 %
-% PB_SENTENCECASE()  ...
+% PB_SENTENCECASE(STR) returns any input string in sentence case
+% capitalization.
 %
 % See also ...
 

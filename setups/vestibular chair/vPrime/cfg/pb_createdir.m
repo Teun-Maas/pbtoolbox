@@ -18,23 +18,22 @@ function handles = pb_createdir(handles)
    
    fname = [cfg.expInitials '-' cfg.subjectid '-' cfg.datestring '-' cfg.recording '-0001.vc' ]; 
    
-   while exist(fname,'file')
+   if exist(fname,'file')
       % Check for existing recordings
       
       quest    = 'Recording already exists. Indicate how to proceed?'; 
-      answer   = questdlg(quest,'Choices','Overwrite', 'Increment','Stop','Stop');
+      answer   = questdlg(quest,'Choices','Overwrite', 'Append','Stop','Stop');
       
       switch answer
-         case 'Overwrite'
-            break;
-         case 'Increment'
-            cfg.recording = num2str(str2double(cfg.recording)+1,'%04d');
+         case 'Append'
+            while exist(fname,'file')
+               cfg.recording = num2str(str2double(cfg.recording)+1,'%04d');
+               fname = [cfg.expInitials '-' cfg.subjectid '-' cfg.datestring '-' cfg.recording '-0001.vc' ];
+            end
             set(handles.editRec,'string',cfg.recording);   
          case 'Stop'
             error('Run stopped.');
       end
-      
-      fname = [cfg.expInitials '-' cfg.subjectid '-' cfg.datestring '-' cfg.recording '-0001.vc' ];
    end
    handles.cfg = cfg;
    handles     = pb_gethandles(handles);

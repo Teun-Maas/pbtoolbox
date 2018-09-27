@@ -40,20 +40,21 @@ function pb_vRunExp(handles)
          vs.start;         tic;
       end
 
-      %  RUN TRIALS
-      for iTrial = 1:nTrials
+      %%  RUN TRIALS
+      for iTrl = 1:nTrials
          % Runs all trials within one block
          
          updateTrial(handles);
-         pb_vClearTrial(handles); 
+         stim				= handles.block(iBlck).trial(iTrl).stim;
+         handles.cfg    = pb_vClearTrial(stim,handles.cfg); 
          
-         handles                    = pb_vStoreData(handles, bDat);
-         handles                    = updateCount(handles,'trial','count');
-         pb_vTraces(handles);       pause(1);
-         
-         %pb_vSetupTrial(block(iBlock).trial(iTrial).stim,cfg);
-         %pb_vRunTrial(experiment(iTrial));
-         %pb_vFeedbackGUI();
+         pb_vSetupTrial(stim,cfg);
+         % pb_vRunTrial(experiment(iTrial));
+
+         % pb_vFeedbackGUI();          %% <-- MAYBE NOT NECESSAIRY?
+         pb_vTraces(handles);       
+         handles        = pb_vStoreData(handles, bDat);
+         handles        = updateCount(handles,'trial','count');            % update trial
       end
       
       %  STOP CHAIR
