@@ -24,7 +24,7 @@ function handles = pb_tdtinit(handles)
 
    %% TDT status
    handles.cfg.RZ6_1Status	= RZ6_1.GetStatus;
-   handles                 = tdt_monitorMinor(handles);
+   %handles                 = tdt_monitorMinor(handles);
 
    %% Configuration
    handles.cfg.RZ6_1       = RZ6_1;
