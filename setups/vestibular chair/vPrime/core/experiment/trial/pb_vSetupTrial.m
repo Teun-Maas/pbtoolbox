@@ -53,7 +53,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
             end
          end
       end
-      stim(find(selled,1)).ledhandle = ledcontroller;
+      stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07'); %% CORRECT THESE LOCATIONS
       stim(find(selled,1)).ledhandle.write(s);
       %%
    end
@@ -94,8 +94,8 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    % search for latest event with longest offset
    % which should also include sampling period and sound although this does not have an
    % offevent
-   e				= [stim.offevent];
-   d				= [stim.offdelay];
+   e              = [stim.offevent];
+   d              = [stim.offdelay];
    mxevent			= max(e);
    sel				= ismember(e,mxevent);
    mxdelay			= max([d(sel) ceil(1000*cfg.nsamples./cfg.medusaFs) ceil(1000*maxSamples/48828.125)]);
