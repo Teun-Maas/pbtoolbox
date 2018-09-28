@@ -23,33 +23,33 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       s		= ledpattern(n);
 
       %%
-      cnt		= 0;
-      for ledIdx = 1:nled
+      for iLED = 1:nled
          % TDT RZ6
          % Set timing information on LEDs
          % Note that in RZ6 circuit, event 1 = start of experiment
-         str1 = ['eventLED' num2str(2*ledIdx-1)];
-         str2 = ['eventLED' num2str(2*ledIdx)];
-         cfg.RZ6_1circuit.SetTagVal(str1,led(ledIdx).onevent+1);
-         cfg.RZ6_1circuit.SetTagVal(str2,led(ledIdx).offevent+1);
-         str1 = ['delayLED' num2str(2*ledIdx-1)];
-         str2 = ['delayLED' num2str(2*ledIdx)];
-         cfg.RZ6_1circuit.SetTagVal(str1,led(ledIdx).ondelay+1);
-         cfg.RZ6_1circuit.SetTagVal(str2,led(ledIdx).offdelay+1);
+         str1 = ['eventLED' num2str(2*iLED-1)];
+         str2 = ['eventLED' num2str(2*iLED)];
+         cfg.RZ6_1.SetTagVal(str1,led(iLED).onevent+1);
+         cfg.RZ6_1.SetTagVal(str2,led(iLED).offevent+1);
+         str1 = ['delayLED' num2str(2*iLED-1)];
+         str2 = ['delayLED' num2str(2*iLED)];
+         cfg.RZ6_1.SetTagVal(str1,led(iLED).ondelay+1);
+         cfg.RZ6_1.SetTagVal(str2,led(iLED).offdelay+1);
 
          % PLC
          if isfield(led,'colour')
-            col = led(ledIdx).colour;
+            col = led(iLED).colour;
          else
             col = 1;
          end
+         cnt		= 0;
          for ii	= 1:2
             cnt = cnt+1;
             if ii==1
-               s(cnt).set(led(ledIdx).Z,cfg.ledcolours{col},1);
-               s(cnt).intensity(cfg.ledcolours{col},led(ledIdx).intensity); % hoop: range 0-255, sphere range 1-50
+               s(cnt).set(led(iLED).Z,cfg.ledcolours{col},1);
+               s(cnt).intensity(cfg.ledcolours{col},led(iLED).intensity); % hoop: range 0-255, sphere range 1-50
             else
-               s(cnt).set(led(ledIdx).Z,cfg.ledcolours{col},0);
+               s(cnt).set(led(iLED).Z,cfg.ledcolours{col},0);
             end
          end
       end
@@ -61,9 +61,9 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    %% Acquisition
    if any(selacq)
       acq	= stim(selacq);
-      cfg.RZ6_1circuit.SetTagVal('eventAcq',acq.onevent+1);
-      cfg.RZ6_1circuit.SetTagVal('delayAcq',acq.ondelay);
-      cfg.RZ6_1circuit.SetTagVal('acqSamples',cfg.nsamples); % amount of DA samples
+      cfg.RZ6_1.SetTagVal('eventAcq',acq.onevent+1);
+      cfg.RZ6_1.SetTagVal('delayAcq',acq.ondelay);
+      cfg.RZ6_1.SetTagVal('acqSamples',cfg.nsamples); % amount of DA samples
    end
 
 
@@ -73,13 +73,13 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    if any(selsnd)
       snd		= stim(selsnd);
       nsnd	= numel(snd);
-      for sndIdx = 1:nsnd
-         sndsetup	= cfg.lookup(snd(sndIdx).Z+1,2:4);
+      for iSND = 1:nsnd
+         sndsetup	= cfg.lookup(snd(iSND).Z+1,2:4);
          switch sndsetup(1)
             case 1
-               maxSamples = setSound(snd(sndIdx),cfg,'RP2_1');
+               maxSamples = setSound(snd(iSND),cfg,'RP2_1');
             case 2
-               maxSamples = setSound(snd(sndIdx),cfg,'RP2_2');
+               maxSamples = setSound(snd(iSND),cfg,'RP2_2');
          end
       end
    end
@@ -101,8 +101,8 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    mxdelay			= max([d(sel) ceil(1000*cfg.nsamples./cfg.medusaFs) ceil(1000*maxSamples/48828.125)]);
 
    %%
-   cfg.RZ6_1circuit.SetTagVal('eventWait',mxevent+1);
-   cfg.RZ6_1circuit.SetTagVal('delayWait',mxdelay);
+   cfg.RZ6_1.SetTagVal('eventWait',mxevent+1);
+   cfg.RZ6_1.SetTagVal('delayWait',mxdelay);
 
 end
  

@@ -11,6 +11,8 @@ function pb_vRunExp(handles)
    %% INITIALIZE
    %  load & read experiment
    
+   debug = true;
+   
    pb_setupShow(handles);
    handles	= pb_gethandles(handles);
    handles 	= pb_getblock(handles);
@@ -32,7 +34,7 @@ function pb_vRunExp(handles)
       [bDat(iBlck),profile,dur]     = pb_vSignalVC(handles);               % reads, checks, creates & plots vestibular signals
       
       %  START CHAIR
-      if ~ismac                                         
+      if ~ismac && ~debug                                        
          send_profile(profile); 
          
          vs = vs_servo;
@@ -48,7 +50,7 @@ function pb_vRunExp(handles)
          stim				= handles.block(iBlck).trial(iTrl).stim;
          handles.cfg    = pb_vClearTrial(stim,handles.cfg); 
          
-         [stim, cfg]    = pb_vSetupTrial(stim,handles.cfg);
+         %[stim, cfg]    = pb_vSetupTrial(stim,handles.cfg);
          % pb_vRunTrial(experiment(iTrial));
 
          % pb_vFeedbackGUI();          %% <-- MAYBE NOT NECESSAIRY?
@@ -58,7 +60,7 @@ function pb_vRunExp(handles)
       end
       
       %  STOP CHAIR
-      if ~ismac
+      if ~ismac && ~debug  
          elapsedTime = toc;                 
          if elapsedTime < dur; pause(dur-floor(elapsedTime)); end          % wait untill chair is finished running before disabling.
 
