@@ -74,21 +74,42 @@ function Col = pb_statcolor(ncol,statmap,palette,Par,varargin)
          Par		= [0 100 100 20]; % [Lmin Lmax Cmax H]
      case 7
          statmap = 'sequential';
-         palette = 'luminancechromahue';
-         Par = [0 100 100 100 30 90]; % [Lmin Lmax Cmin Cmax H1 H2] % Heat
+         palette = 'luminancechroma';
+         Par		= [0 100 100 80]; % [Lmin Lmax Cmax H]
      case 8
+         statmap = 'sequential';
+         palette = 'luminancechroma';
+         Par		= [0 100 50 140]; % [Lmin Lmax Cmax H]
+     case 9
+         statmap = 'sequential';
+         palette = 'luminancechroma';
+         Par		= [0 100 50 260]; % [Lmin Lmax Cmax H]
+     case 10
+         statmap = 'sequential';
+         palette = 'luminancechromahue';
+         Par = [0 100 100 75 -20 90]; % [Lmin Lmax Cmin Cmax H1 H2] % Heat
+     case 11
+         statmap = 'diverging';
+         palette = [];
+         Par = [10 100 100 260 140]; % [Lmin Lmax Cmax H1 H2] 'Blue-White-Red'
+     case 12
          statmap = 'diverging';
          palette = [];
          Par = [10 100 100 260 30]; % [Lmin Lmax Cmax H1 H2] 'Blue-White-Red'
-         %Par = [40 100 90 140 320]; % [Lmin Lmax Cmax H1 H2] 'Green-White-Purple'
-     case 9
-         statmap = 'sequential';
-         palette = 'luminancechromahue';
-         Par = [70 70 70 70 0 360]; % [Lmin Lmax Cmin Cmax H1 H2] %Rainbow
-     case 10
+     case 13
+         statmap = 'diverging';
+         Par = [40 100 90 140 320]; % [Lmin Lmax Cmax H1 H2] 'Green-White-Purple'
+     case 14
          statmap = 'divergingskew';
          palette = [];
          Par = [00 100 100 260 30]; % [Lmin Lmax Cmax H1 H2] 'Blue-White-Red'
+     case 15
+         statmap = 'sequential';
+         palette = 'luminancechromahue';
+         Par = [70 70 70 70 0 360]; % [Lmin Lmax Cmin Cmax H1 H2] %Rainbow
+      otherwise
+         statmap = 'qualitative';
+         palette = 'dynamic';
    end
 
    statmap = lower(statmap);
@@ -193,9 +214,9 @@ function Col = pb_statcolor(ncol,statmap,palette,Par,varargin)
 
    end
    Col		= pb_LCH2RGB(LCH);
-
+   
    if dispFlag
-      figure();
+      figure(99); clf;
       plotcolmap(Col);
    end
 end

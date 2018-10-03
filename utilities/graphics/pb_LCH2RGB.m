@@ -45,14 +45,14 @@ function RGB = pb_LCH2RGB(LCH)
    % Matrix multiplication: C(i,j) = A(i,p)*B(p,j);
    % https://en.wikipedia.org/wiki/CIE_1931_color_space
    % http://en.wikipedia.org/wiki/SRGB
-   T		=	[3.2406, -1.5372, -0.4986;...
-            -0.9689, 1.8758, 0.0415;...
-            0.0557, -0.2040, 1.0570];
+   T        =	[3.2406, -1.5372, -0.4986; ...
+               -0.9689, 1.8758, 0.0415; ...
+               0.0557, -0.2040, 1.0570];
    RGB		= XYZ*T';
 
    %% Gamma correction to convert RGB to sRGB
    sel			= RGB>0.0031308; % colorspace: 0.0031306684425005883
-   RGB(sel)	= 1.055*(RGB(sel).^(1/2.4))-0.055;
+   RGB(sel)    = 1.055*(RGB(sel).^(1/2.4))-0.055;
    RGB(~sel)	= 12.92*RGB(~sel);
 
    %% Final check
@@ -63,14 +63,9 @@ function RGB = pb_LCH2RGB(LCH)
 
    %% Clip values
    sel			= RGB>1;
-   RGB(sel)	= 1;
+   RGB(sel)    = 1;
    sel			= RGB<0;
-   RGB(sel)	= 0;
-
-
-
-
- 
+   RGB(sel)    = 0;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
