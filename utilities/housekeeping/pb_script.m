@@ -10,7 +10,7 @@ function pb_script(varargin)
     
 %% Initialization
 
-   pbt_D = '/Users/jjheckman/Documents/Code/Matlab/PBToolbox/analyses/scripting/';
+   pbt_D = [pb_userpath 'analyses/scripting/'];
    cd(pbt_D);
 
    switch nargin

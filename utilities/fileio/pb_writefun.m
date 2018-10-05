@@ -14,7 +14,7 @@ function pb_writefun(path,fname)
 
    if exist(fpath,'file'); return; end                                     % safety break
 
-   tpath = '/Users/jjheckman/Documents/Code/Gitlab/pbtoolbox/documentation/templates/';
+   tpath = [pb_userpath 'documentation/templates/'];
    template = 'template_pbfun.txt';
 
    tText = fileread([tpath template]);

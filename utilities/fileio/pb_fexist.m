@@ -1,4 +1,4 @@
-function bool = pb_fexist(fn)
+function bool = pb_fexist(fn,varargin)
 % PB_FEXIST()
 %
 % PB_FEXIST()  ...
@@ -7,7 +7,9 @@ function bool = pb_fexist(fn)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   bool = exist(fn, 'file') == 2;
+   searchType  = pb_keyval('type', varargin,'file');
+   bool        = exist(fn,searchType) == 2;
+   
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

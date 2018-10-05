@@ -1,16 +1,20 @@
-function pb_genaxes(varargin)
-% PB_GENAXES(VARARGIN)
+function pb_clean(varargin)
+% PB_CLEAN(varargin)
 %
-% Creates a template plot for .
-%
-% PB_GENAXES(VARARGIN)  ...
+% PB_CLEAN(varargin) cleans up your matlab. Closes all open figures,
+% empties the command window, and clears all vars in base workspace.
 %
 % See also ...
- 
-% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
- 
 
- 
+% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
+
+   fig      = pb_keyval('fig',varargin,true);
+   empty    = pb_keyval('clc',varargin,true);
+   clr      = pb_keyval('clr',varargin,true);
+   
+   if fig; close all; end
+   if empty; clc; end
+   if clr; evalin('base','clear'); end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

@@ -15,7 +15,7 @@ function pb_writescript(path,fname)
 
    if exist(fpath,'file'); return; end                                     % safety break
 
-   tpath = '/Users/jjheckman/Documents/Code/Matlab/PBToolbox/documentation/templates/';
+   tpath = [pb_userpath 'documentation/templates/'];
    template = 'template_pbscript.txt';
 
    tText = fileread([tpath template]);

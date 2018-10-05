@@ -14,9 +14,8 @@ function pb_edit(varargin)
 
    %% Initialization
 
-   pbt_D = '/Users/jjheckman/Documents/Code/Gitlab/pbtoolbox/'; %
-   default_D = '/tmp/defaultbin/';
-   cd(pbt_D);
+   default_D   = '/tmp/defaultbin/';
+   cd(pb_userpath);
 
    %% Body
 
@@ -28,7 +27,7 @@ function pb_edit(varargin)
       fname   = varargin{1};
       path    = which(fname);
       if isempty(path)
-         path    = [pbt_D default_D];
+         path    = [pb_userpath default_D];
       else
          edit(path);
          return
@@ -38,7 +37,7 @@ function pb_edit(varargin)
       if varargin{2}(end) ~= filesep 
          varargin{2} = [varargin{2} filesep]; 
       end
-      path    = [pbt_D varargin{2}];
+      path    = [pb_userpath varargin{2}];
    case 3
       error('Error: Too much input arguments.');
    end

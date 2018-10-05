@@ -1,9 +1,9 @@
 function pb_delete(varargin)
-% PB_DELETE()
+% PB_DELETE(varargin)
 %
-% PB_DELETE()  ...
+% PB_DELETE(varargin) deletes the last handle from a graphic object.
 %
-% See also ...
+% See also PB_FOBJ
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
@@ -16,7 +16,7 @@ function pb_delete(varargin)
    len = length(h);
    
    for iH = 1:len
-      if contains(h(iH).Type,'axes') || contains(h(iH).Type,'Figure')
+      if contains(h(iH).Type,'Axes') || contains(h(iH).Type,'Figure')
          cnt = cnt+1;
       end
    end
