@@ -8,8 +8,6 @@ clear
 vidObj   = VideoReader(pb_getfile('dir','/Users/jjheckman/Documents/Data/PhD/mouse'));
 figure(999);
 
-
-
 %% detect edge remove edge
 
 clf;
