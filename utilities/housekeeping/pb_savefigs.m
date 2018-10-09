@@ -10,8 +10,8 @@ function pb_savefigs(varargin)
    prefix   = pb_keyval('prefix',varargin,'Fig_');
    dir      = pb_keyval('dir',varargin,'true');
 
-   path = '/Users/jjheckman/Documents/Data/PhD/Figure/';
-   if dir; path = pb_getdir('dir',path), end
+   path = [pb_datadir 'PhD/Figure/'];
+   if dir; path = pb_getdir('dir',path); end
 
    g = groot;
    h = flipud(g.Children); 

@@ -11,7 +11,7 @@ function pb_savefig(varargin)
 
    fig     = pb_keyval('fig',varargin);
    fname   = pb_keyval('fname',varargin);
-   dir     = pb_keyval('dir',varargin,'/Users/jjheckman/Documents/Data/PhD/Figure/');
+   dir     = pb_keyval('dir',varargin,[pb_datadir 'PhD/Figure/']);
    cd(dir);
 
    g = groot;
