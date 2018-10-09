@@ -63,7 +63,6 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       acq	= stim(selacq);
       cfg.RZ6_1.SetTagVal('eventAcq',acq.onevent+1);
       cfg.RZ6_1.SetTagVal('delayAcq',acq.ondelay);
-      cfg.RZ6_1.SetTagVal('acqSamples',cfg.nsamples); % amount of DA samples
    end
 
 
