@@ -36,6 +36,7 @@ function pb_initializetoolbox()
    disp('   - writing startup.m');
    
    startup;
+   pb_datadir;       % select your data path
    cd(cdp);
    clc; disp(['ProgrammeerBeerToolbox was succesfully initialized...' newline])
 end
