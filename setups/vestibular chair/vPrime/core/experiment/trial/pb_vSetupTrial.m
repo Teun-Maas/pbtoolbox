@@ -88,20 +88,20 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    end
    cfg.maxSamples = maxSamples;
 
-   %% Wait for?
-   % This needs some tweaking
-   % search for latest event with longest offset
-   % which should also include sampling period and sound although this does not have an
-   % offevent
-   e              = [stim.offevent];
-   d              = [stim.offdelay];
-   mxevent			= max(e);
-   sel				= ismember(e,mxevent);
-   mxdelay			= max([d(sel) ceil(1000*cfg.nsamples./cfg.medusaFs) ceil(1000*maxSamples/48828.125)]);
+%% Wait for?
+% This needs some tweaking
+% search for latest event with longest offset
+% which should also include sampling period and sound although this does not have an
+% offevent
+e				= [stim.offevent];
+d				= [stim.offdelay];
+mxevent			= max(e);
+sel				= ismember(e,mxevent);
+mxdelay			= max([d(sel) ceil(1000*cfg.nsamples./cfg.RZ6Fs) ]);
 
-   %%
-   cfg.RZ6_1.SetTagVal('eventWait',mxevent+1);
-   cfg.RZ6_1.SetTagVal('delayWait',mxdelay);
+%%
+cfg.RZ6_1.SetTagVal('eventWait',mxevent+1);
+cfg.RZ6_1.SetTagVal('delayWait',mxdelay);
 
 end
  
