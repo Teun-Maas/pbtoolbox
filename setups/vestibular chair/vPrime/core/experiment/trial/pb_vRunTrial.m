@@ -1,4 +1,4 @@
-function pb_vRunTrial(handles)
+function pb_vRunTrial(cfg,stim)
 % PB_VRUNTRIAL(HANDLES)
 %
 % PB_VRUNTRIAL(HANDLES)  ...

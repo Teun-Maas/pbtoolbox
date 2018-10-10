@@ -50,8 +50,9 @@ function pb_vRunExp(handles)
          stim				= handles.block(iBlck).trial(iTrl).stim;
          handles.cfg    = pb_vClearTrial(stim,handles.cfg); 
          
-         [stim, cfg]    = pb_vSetupTrial(stim,handles.cfg);
-         pb_vRunTrial(experiment(iTrial));
+         [stim, cfg]    = pb_vSetupTrial(stim, handles.cfg);
+         
+         pb_vRunTrial(handles.cfg, stim);
          % pb_trialclean(stim, cfg);
 
          % pb_vFeedbackGUI();          %% <-- MAYBE NOT NECESSAIRY?
