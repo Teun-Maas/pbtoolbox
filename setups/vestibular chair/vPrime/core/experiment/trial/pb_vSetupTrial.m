@@ -75,7 +75,9 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       snd		= stim(selsnd);
       nsnd	= numel(snd);
       for sndIdx = 1:nsnd
-         pb_vSetSound(snd(sndIdx),cfg,'RZ6_1');
+         %% FOR NOW I LEAVE THIS OUT!! 
+         %pb_vSetSound(snd(sndIdx),cfg,'RZ6_1');
+         %% FOR NOW I LEAVE THIS OUT!!
       end
    end
 
