@@ -51,7 +51,8 @@ function pb_vRunExp(handles)
          handles.cfg    = pb_vClearTrial(stim,handles.cfg); 
          
          [stim, cfg]    = pb_vSetupTrial(stim,handles.cfg);
-         % pb_vRunTrial(experiment(iTrial));
+         pb_vRunTrial(experiment(iTrial));
+         % pb_trialclean(stim, cfg);
 
          % pb_vFeedbackGUI();          %% <-- MAYBE NOT NECESSAIRY?
          pb_vTraces(handles);       
