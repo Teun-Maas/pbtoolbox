@@ -34,12 +34,12 @@ function strOut = pb_sentenceCase(strIn)
             spStr = indFS(iFS)+1;
             if strIn(spStr) == ' '
                spStr = spStr+1;
-               strOut(end+1) = ' '
+               strOut(end+1) = ' ';
             end
       end
       
       
-      strOut   = [strOut tmp]
+      strOut   = [strOut tmp];
    end
 end
  
