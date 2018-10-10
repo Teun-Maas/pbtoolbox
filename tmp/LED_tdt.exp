@@ -1,0 +1,60 @@
+%
+%% Experiment: C:\DATA\JJH/
+%
+
+%% HEADER
+ITI		0	0
+Blocks  1
+Trials	5
+Repeats	1
+Random	0	% 0=no, 1=per set, 2=all trials
+Motor		n
+Lab		5
+
+% AX 	SIG AMP DUR	
+%			edg	bit	Event	Time	Event	Time
+
+% MOD	X	Y	ID	INT	On	On	Off	Off	Event
+%			edg	bit	Event	Time	Event	Time
+
+%% BODY
+~~~
+% Block: 1
+==>
+HOR		2 	15	60	.1			
+VER		1	25	60	.1
+
+% Trial: 1
+==>
+LED	0	0	 	5	0	0	1	776
+TRG0			1	2	0	0			1
+ACQ					1	500
+LED	-40	0	 	5	1	500	1	1500
+
+% Trial: 2
+==>
+LED	0	0	 	5	0	0	1	776
+TRG0			1	2	0	0			1
+ACQ					1	776
+LED	-30	0	 	5	1	500	1	1500
+
+% Trial: 3
+==>
+LED	0	0	 	5	0	0	1	776
+TRG0			1	2	0	0			1
+ACQ					1	776
+LED	-20	0	 	5	1	500	1	1500
+
+% Trial: 4
+==>
+LED	0	0	 	5	0	0	1	776
+TRG0			1	2	0	0			1
+ACQ					1	776
+LED	-10	0	 	5	1	500	1	1500
+
+% Trial: 5
+==>
+LED	0	0	 	5	0	0	1	776
+TRG0			1	2	0	0			1
+ACQ					1	776
+LED	0	0	 	5	1	500	1	1500
