@@ -12,7 +12,6 @@ function cfg = pb_tdtglobals(cfg)
    cfg.statTDTLoad    = 2;
    cfg.statTDTRun     = 3;
 
-
    %% Fixed RZ6.rcx
    % cfg.RZ6Fs	= 48828.125; % Hz = default, will be replaced in 
    cfg.dataidx		= {'Data_1' 'Data_2' 'Data_3'}; % names of Data sources Do I need this? --> VC

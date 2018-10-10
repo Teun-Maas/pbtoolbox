@@ -31,31 +31,32 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
          str2 = ['eventLED' num2str(2*iLED)];
          cfg.RZ6_1.SetTagVal(str1,led(iLED).onevent+1);
          cfg.RZ6_1.SetTagVal(str2,led(iLED).offevent+1);
+         
          str1 = ['delayLED' num2str(2*iLED-1)];
          str2 = ['delayLED' num2str(2*iLED)];
          cfg.RZ6_1.SetTagVal(str1,led(iLED).ondelay+1);
          cfg.RZ6_1.SetTagVal(str2,led(iLED).offdelay+1);
-
-         % PLC
-         if isfield(led,'colour')
-            col = led(iLED).colour;
+      end
+      
+      % PLC
+      if isfield(led,'colour')
+         col = led(iLED).colour;
+      else
+         col = 1;
+      end
+      cnt		= 0;
+      for ii	= 1:2
+         cnt = cnt+1;
+         if ii==1
+            s(cnt).set(led(iLED).Z,cfg.ledcolours{col},1);
+            s(cnt).intensity(cfg.ledcolours{col},led(iLED).intensity); % hoop: range 0-255, sphere range 1-50
          else
-            col = 1;
-         end
-         cnt		= 0;
-         for ii	= 1:2
-            cnt = cnt+1;
-            if ii==1
-               s(cnt).set(led(iLED).Z,cfg.ledcolours{col},1);
-               s(cnt).intensity(cfg.ledcolours{col},led(iLED).intensity); % hoop: range 0-255, sphere range 1-50
-            else
-               s(cnt).set(led(iLED).Z,cfg.ledcolours{col},0);
-            end
+            s(cnt).set(led(iLED).Z,cfg.ledcolours{col},0);
          end
       end
+      
       stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07'); %% CORRECT THESE LOCATIONS
       stim(find(selled,1)).ledhandle.write(s);
-      %%
    end
 
    %% Acquisition
@@ -63,23 +64,18 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       acq	= stim(selacq);
       cfg.RZ6_1.SetTagVal('eventAcq',acq.onevent+1);
       cfg.RZ6_1.SetTagVal('delayAcq',acq.ondelay);
+      cfg.RZ6_1.SetTagVal('acqSamples',cfg.nsamples); % amount of DA samples
    end
-
 
    %% Sound
    % 			[RP2tag1,RP2tag2,~,MUXind,MUXbit1,SpeakerChanNo] = GvB_SoundSpeakerLookUp(azrnd(ii),elrnd(ii),RP2_1,RP2_2,LedLookUpTable);
    % 			GvB_MUXSet(RP2tag1,RP2tag2,MUXind,MUXbit1,'set');
+
    if any(selsnd)
       snd		= stim(selsnd);
       nsnd	= numel(snd);
-      for iSND = 1:nsnd
-         sndsetup	= cfg.lookup(snd(iSND).Z+1,2:4);
-         switch sndsetup(1)
-            case 1
-               maxSamples = setSound(snd(iSND),cfg,'RP2_1');
-            case 2
-               maxSamples = setSound(snd(iSND),cfg,'RP2_2');
-         end
+      for sndIdx = 1:nsnd
+         pb_vSetSound(snd(sndIdx),cfg,'RZ6_1');
       end
    end
 
@@ -88,21 +84,20 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    end
    cfg.maxSamples = maxSamples;
 
-%% Wait for?
-% This needs some tweaking
-% search for latest event with longest offset
-% which should also include sampling period and sound although this does not have an
-% offevent
-e				= [stim.offevent];
-d				= [stim.offdelay];
-mxevent			= max(e);
-sel				= ismember(e,mxevent);
-mxdelay			= max([d(sel) ceil(1000*cfg.nsamples./cfg.RZ6Fs) ]);
+   %% Wait for?
+   % This needs some tweaking
+   % search for latest event with longest offset
+   % which should also include sampling period and sound although this does not have an
+   % offevent
+   e				= [stim.offevent];
+   d				= [stim.offdelay];
+   mxevent			= max(e);
+   sel				= ismember(e,mxevent);
+   mxdelay			= max([d(sel) ceil(1000*cfg.nsamples./cfg.RZ6Fs) ]);
 
-%%
-cfg.RZ6_1.SetTagVal('eventWait',mxevent+1);
-cfg.RZ6_1.SetTagVal('delayWait',mxdelay);
-
+   %%
+   cfg.RZ6_1.SetTagVal('eventWait',mxevent+1);
+   cfg.RZ6_1.SetTagVal('delayWait',mxdelay);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

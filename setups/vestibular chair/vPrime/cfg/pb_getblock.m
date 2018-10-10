@@ -7,13 +7,21 @@ function handles = pb_getblock(handles)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   cfg            = handles.cfg;
+   cfg                  = handles.cfg;
+   [block, cfg]         = pb_vReadExp(cfg);
+
+   %% CFG file
+   cfg.cfgfname         = which('HumanNH.cfg');
+   cfg						= pb_vReadCFG(cfg); % read cfg cfile
+   cfg.acqdur				= cfg.humanv1.ADC(1).samples / cfg.humanv1.ADC(1).rate * 1000; % TODO: HumanV1/duration of data acquisition (ms)
+   cfg.nsamples			= round(cfg.acqdur/1000*cfg.RZ6Fs); % length data acquisition (samples)
+   cfg.nchan				= 3;
    
-   [block, cfg]   = pb_vReadExp(cfg);
-   block          = pb_vPrimeZ(block,cfg);
+   %% Correct Block
+   block                = pb_vPrimeZ(block,cfg);
    
-   handles.block  = block;
-   handles.cfg    = cfg;
+   handles.block        = block;
+   handles.cfg          = cfg;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

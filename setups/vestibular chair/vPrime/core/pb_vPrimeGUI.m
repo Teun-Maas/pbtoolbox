@@ -147,7 +147,8 @@ function buttonRun_Callback(hObject, eventdata, handles)
 
    if isempty(pb_fext(handles.cfg.expfname))
       msgbox({'Non-valid file selected.';'Please select an expfile before starting an experiment.'});
-   else    
+   else   
+      clc
       pb_vRunExp(handles);
    end
 end
