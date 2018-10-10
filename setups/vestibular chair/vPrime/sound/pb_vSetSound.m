@@ -1,4 +1,4 @@
-function pb_vSetSound()
+function pb_vSetSound(snd,cfg,RZ6str)
 % PB_VSETSOUND()
 %
 % PB_VSETSOUND()  ...
