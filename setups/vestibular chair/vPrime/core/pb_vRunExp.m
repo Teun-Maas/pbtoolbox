@@ -59,6 +59,7 @@ function pb_vRunExp(handles)
          pb_vTraces(handles);       
          handles        = pb_vStoreData(handles, bDat);
          handles        = updateCount(handles,'trial','count');            % update trial
+         toc
       end
       
       %  STOP CHAIR
