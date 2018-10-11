@@ -5,7 +5,7 @@
 %% HEADER
 ITI		0	0
 Blocks  1
-Trials	5
+Trials	20
 Repeats	1
 Random	0	% 0=no, 1=per set, 2=all trials
 Motor		n
@@ -33,7 +33,6 @@ LED	-45	0	 	5	0	500	0	750
 ==>
 TRG0			1	2	0	0			1
 LED	-40	0	 	5	0	500	0	750
-
 
 % Trial: 3
 ==>
@@ -74,3 +73,48 @@ LED	-5	0	 	5	0	500	0	750
 ==>
 TRG0			1	2	0	0			1
 LED	-0	0	 	5	0	500	0	750
+
+% Trial: 11
+==>
+TRG0			1	2	0	0			1
+LED	5	0	 	5	0	500	0	750
+
+% Trial: 12
+==>
+TRG0			1	2	0	0			1
+LED	10	0	 	5	0	500	0	750
+
+% Trial: 13
+==>
+TRG0			1	2	0	0			1
+LED	15	0	 	5	0	500	0	750
+
+% Trial: 14
+==>
+TRG0			1	2	0	0			1
+LED	20	0	 	5	0	500	0	750
+
+% Trial: 15
+==>
+TRG0			1	2	0	0			1
+LED	25	0	 	5	0	500	0	750
+
+% Trial: 16
+==>
+TRG0			1	2	0	0			1
+LED	30	0	 	5	0	500	0	750
+
+% Trial: 17
+==>
+TRG0			1	2	0	0			1
+LED	35	0	 	5	0	500	0	750
+
+% Trial: 18
+==>
+TRG0			1	2	0	0			1
+LED	40	0	 	5	0	500	0	750
+
+% Trial: 19
+==>
+TRG0			1	2	0	0			1
+LED	45	0	 	5	0	500	0	750
