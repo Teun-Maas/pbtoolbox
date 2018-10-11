@@ -39,12 +39,13 @@ function pb_vRunExp(handles)
          
          vs = vs_servo;
          vs.enable;        pause(1); 
-         vs.start;         tic;
+         vs.start;         blockTime = tic;
       end
 
       %%  RUN TRIALS
       for iTrl = 1:nTrials
          % Runs all trials within one block
+         trialTime = tic;
          
          updateTrial(handles);
          stim				= handles.block(iBlck).trial(iTrl).stim;
@@ -59,12 +60,12 @@ function pb_vRunExp(handles)
          pb_vTraces(handles);       
          handles        = pb_vStoreData(handles, bDat);
          handles        = updateCount(handles,'trial','count');            % update trial
-         toc
+         toc(trialTime)
       end
       
       %  STOP CHAIR
       if ~ismac && ~debug  
-         elapsedTime = toc;                 
+         elapsedTime = toc(blockTime);                 
          if elapsedTime < dur; pause(dur-floor(elapsedTime)); end          % wait untill chair is finished running before disabling.
 
          vs.stop;
