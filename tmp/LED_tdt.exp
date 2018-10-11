@@ -5,7 +5,7 @@
 %% HEADER
 ITI		0	0
 Blocks  1
-Trials	20
+Trials	19
 Repeats	1
 Random	0	% 0=no, 1=per set, 2=all trials
 Motor		n
