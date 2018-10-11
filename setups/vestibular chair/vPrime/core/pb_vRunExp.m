@@ -12,6 +12,7 @@ function pb_vRunExp(handles)
    %  load & read experiment
    
    debug = true;
+   experimentTime = tic;
    
    pb_setupShow(handles);
    handles	= pb_gethandles(handles);
@@ -60,7 +61,7 @@ function pb_vRunExp(handles)
          pb_vTraces(handles);       
          handles        = pb_vStoreData(handles, bDat);
          handles        = updateCount(handles,'trial','count');            % update trial
-         toc(trialTime)
+         toc(trialTime);
       end
       
       %  STOP CHAIR
@@ -80,6 +81,7 @@ function pb_vRunExp(handles)
    end 
    %% CHECK OUT
    pb_vInitialize(handles,false);
+   toc(experimentTime);
 end
 
 %-- Feedback functions --%
