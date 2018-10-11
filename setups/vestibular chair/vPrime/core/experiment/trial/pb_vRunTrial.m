@@ -15,7 +15,7 @@ function pb_vRunTrial(cfg,stim)
    cfg.zBus.zBusTrigB(0, 0, 2); % start event 1/trial onset; trigger zBus 4 = RA16;
 
    %% Button Press
-   disp('Waiting for RZ6 button press/sound/led/acquisition');
+   %   disp('Waiting for RZ6 button press/sound/led/acquisition');
 
    t = tic;
 %    while ~cfg.RZ6_1.GetTagVal('Wait')
