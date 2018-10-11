@@ -61,12 +61,12 @@ function pb_vRunExp(handles)
          pb_vTraces(handles);       
          handles        = pb_vStoreData(handles, bDat);
          handles        = updateCount(handles,'trial','count');            % update trial
-         toc(trialTime);
+         toc(trialTime)
       end
       
       %  STOP CHAIR
       if ~ismac && ~debug  
-         elapsedTime = toc(blockTime);                 
+         elapsedTime = toc(blockTime);                
          if elapsedTime < dur; pause(dur-floor(elapsedTime)); end          % wait untill chair is finished running before disabling.
 
          vs.stop;
@@ -81,7 +81,7 @@ function pb_vRunExp(handles)
    end 
    %% CHECK OUT
    pb_vInitialize(handles,false);
-   toc(experimentTime);
+   toc(experimentTime)
 end
 
 %-- Feedback functions --%
