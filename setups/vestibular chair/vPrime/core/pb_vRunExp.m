@@ -11,7 +11,7 @@ function pb_vRunExp(handles)
    %% INITIALIZE
    %  load & read experiment
    
-   debug = true;
+   debug = false;
    experimentTime = tic;
    
    pb_setupShow(handles);
