@@ -45,7 +45,7 @@ function pb_vEndExp(cfg)
    %% Let's run some LEDs instead
    import org.zeromq.ZMQ
 
-   n = 5;
+   n = 8;
    s = ledpattern(n);
    
    seq1 = [0:2:9 fliplr(16:2:24)];
@@ -68,7 +68,7 @@ function pb_vEndExp(cfg)
    leds.write(s);
    for i=1:n
        leds.trigger;
-      pause(0.7);
+      pause(0.35);
    end
 
    %% Mop up
