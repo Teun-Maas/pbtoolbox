@@ -80,6 +80,7 @@ function pb_vRunExp(handles)
       handles = updateCount(handles,'block','count');
    end 
    %% CHECK OUT
+   pb_vEndExp(handles.cfg);
    pb_vInitialize(handles,false);
    toc(experimentTime)
 end
