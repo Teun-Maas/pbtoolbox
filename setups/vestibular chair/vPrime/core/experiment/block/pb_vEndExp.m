@@ -47,14 +47,17 @@ function pb_vEndExp(cfg)
 
    n = 5;
    s = ledpattern(n);
+   
+   seq1 = [0:2:9 fliplr(16:2:24)];
+   seq2 = [1:2:9 fliplr(17:2:24)];
 
    ir=50;
    ig=ir;
    for i=1:n
       if mod(i,2) == 0
-         s(i).set(0:2:19,'r');
+         s(i).set(seq1,'r');
       else 
-         s(i).set(1:2:19,'g');
+         s(i).set(seq2,'g');
       end
        s(i).intensity('r', ir);
        s(i).intensity('g', ig);

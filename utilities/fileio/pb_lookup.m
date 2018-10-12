@@ -1,4 +1,4 @@
-function array = pb_lookup(array, varargin)
+function [ID,az,el] = pb_lookup(array, varargin)
 % PB_LOOKUP(array,varargin)
 %
 % PB_LOOKUP() converts array using a lookup table. For instance, when
@@ -9,7 +9,8 @@ function array = pb_lookup(array, varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
-   fn    = pb_keyval('fn',varargin,[]); [~,sheets] = xlsfinfo(fn);
+   VC    = [pb_userpath 'setups/vestibular chair/vPrime/lookup/vPrime Measurement.xlsx'];
+   fn    = pb_keyval('fn',varargin,VC); [~,sheets] = xlsfinfo(fn);
    sheet = pb_keyval('sheet',varargin,sheets{end}); 
    
    if nargin == 0; return; end
