@@ -1,4 +1,4 @@
-function pb_vEndExp()
+function pb_vEndExp(cfg)
 % PB_VENDEXP()
 %
 % PB_VENDEXP()  ...
