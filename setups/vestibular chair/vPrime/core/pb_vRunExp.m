@@ -24,8 +24,12 @@ function pb_vRunExp(handles)
    nblocks        = handles.cfg.Blocks;
    bDat(nblocks)  = struct('v',[],'h',[]);
    
+   rc = pb_runPupil; 
+   pb_startPupil(rc);
+   
    %% CORE BODY 
    %  iterate experiment
+   
    
    for iBlck = 1:nblocks
       % Runs blocks of trials with a vestibular condition
@@ -80,6 +84,7 @@ function pb_vRunExp(handles)
       handles = updateCount(handles,'block','count');
    end 
    %% CHECK OUT
+   pb_stopPupil(rc);
    pb_vEndExp(handles.cfg);
    pb_vInitialize(handles,false);
    toc(experimentTime)
