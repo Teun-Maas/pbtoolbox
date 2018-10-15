@@ -7,7 +7,11 @@ function path = pb_userpath
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   path = strrep(which('pb_userpath.m'),'utilities/system/initialize/pb_userpath.m','');
+   if ~isunix
+      path = strrep(which('pb_userpath.m'),'utilities/system/initialize/pb_userpath.m','');
+   else
+      path = strrep(which('pb_userpath.m'),'utilities\system\initialize\pb_userpath.m','');
+   end
  
 end
  
