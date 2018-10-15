@@ -7,7 +7,7 @@ function rc = pb_runPupil(varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
     
-    default.j  = [pb_userpath 'subtools/zeromq/jeromq.jar'];
+    default.j  = [pb_userpath 'subtools' filesep 'zeromq' filesep 'jeromq.jar'];
     default.p  = 'pupil-desktop.local'; 
     
     jpath      = pb_keyval('java', varargin, default.j);
