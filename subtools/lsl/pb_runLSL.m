@@ -16,6 +16,9 @@ function ses = pb_runLSL()
 
    for iStrm = 1:length(streams)
       % Find, select and make streams for LSL.
+      tmp = strrep(streams(iStrm),'type=''','');
+      tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
+      disp([newline 'Looking for ' tmp ' stream...'])
       
       info  = lsl_streaminfos(streams{iStrm});
       l     = info.list();
