@@ -9,7 +9,7 @@ function ses = pb_runLSL()
 
    streams  = {'type=''Digital Events @ lslder00'' and name=''Digital Events 1''', ...
                'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
-               'type=''Optitrack @ MOTIVE'' and name=''Motive Data'''};
+               'type=''OptiTrack Mocap @ DCN19'' and name=''Labeled Markers'''};
          
    ses      = lsl_session();
    str      = lsl_istream.empty(0,3);

@@ -18,7 +18,7 @@ function cfg = pb_vLSCpositions(cfg,varargin)
    
    %% File
    fname		= which('vPrime Measurement.xlsx');
-   N			= xlsread(fname,'Values');
+   N			= xlsread(fname,'Values','basic');
    channel	= N(:,1);
 
    %% Transform to Cartesian
