@@ -24,8 +24,10 @@ function pb_vRunExp(handles)
    nblocks        = handles.cfg.Blocks;
    bDat(nblocks)  = struct('v',[],'h',[]);
    
-   rc = pb_runPupil; 
+   rc    = pb_runPupil; 
    pb_startPupil(rc);
+   
+   ses = pb_runLSL;
    
    %% CORE BODY 
    %  iterate experiment
