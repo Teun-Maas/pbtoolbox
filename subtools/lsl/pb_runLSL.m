@@ -8,13 +8,13 @@ function ses = pb_runLSL()
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    streams  = {'type=''Digital Events @ lslder00'' and name=''Digital Events 1''', ...
-               'type=''Pupil Capture @ pupil-hpdesktop'' and name=''Pupil Primitive Data - Eye 0''', ...
+               'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
                'type=''Optitrack @ MOTIVE'' and name=''Motive Data'''};
          
    ses      = lsl_session();
    str      = lsl_istream.empty(0,3);
 
-   for iStrm = 1:length(streams)
+   for iStrm = 1:1%length(streams)
       % Find, select and make streams for LSL.
       tmp = strrep(streams(iStrm),'type=''','');
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
@@ -33,7 +33,7 @@ function ses = pb_runLSL()
    end
    
    addlistener(str(1),'DataAvailable',@ev_listener);
-   addlistener(str(2),'DataAvailable',@pl_listener);
+   %addlistener(str(2),'DataAvailable',@pl_listener);
    % addlistener(str(3),'DataAvailable',@ot_listener);
 end
 
