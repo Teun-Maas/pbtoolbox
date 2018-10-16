@@ -30,7 +30,6 @@ function pb_vRunExp(handles)
    %% CORE BODY 
    %  iterate experiment
    
-   
    for iBlck = 1:nblocks
       % Runs blocks of trials with a vestibular condition
       
@@ -59,7 +58,6 @@ function pb_vRunExp(handles)
          [stim, cfg]    = pb_vSetupTrial(stim, handles.cfg);
          
          pb_vRunTrial(handles.cfg, stim);
-         % pb_trialclean(stim, cfg);
 
          % pb_vFeedbackGUI();          %% <-- MAYBE NOT NECESSAIRY?
          pb_vTraces(handles);       
