@@ -20,15 +20,15 @@ function ses = pb_runLSL()
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
       disp([newline 'Looking for ' tmp ' stream...'])
       
-      info  = lsl_streaminfos(streams{iStrm});
-      l     = info.list();
+      info  = lsl_streaminfos(streams{iStrm})
+      l     = info.list()
       if isempty(l); error('No streams found'); end
 
       for iList = 1:size(l ,1)
         fprintf('%d: name: ''%s'' type: ''%s''\n',iList,l{iList}.name,l{iList}.type);
       end
 
-      str(iStrm) = lsl_istream(info{1});
+      str(iStrm) = lsl_istream(info{1})
       ses.add_stream(str(iStrm));
    end
    
