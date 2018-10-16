@@ -20,7 +20,7 @@ function ses = pb_runLSL()
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
       disp([newline 'Looking for ' tmp ' stream...'])
       
-      info  = lsl_streaminfos(streams{iStrm});
+      info  = lsl_resolver(streams{iStrm});
       l     = info.list();
       if isempty(l); error('No streams found'); end
 
