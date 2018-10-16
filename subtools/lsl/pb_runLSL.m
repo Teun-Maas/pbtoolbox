@@ -12,7 +12,7 @@ function ses = pb_runLSL()
                'type=''Optitrack @ MOTIVE'' and name=''Motive Data'''};
          
    ses      = lsl_session();
-   str      = double.empty(0,3);
+   str      = lsl_istream.empty(0,3);
 
    for iStrm = 1:length(streams)
       % Find, select and make streams for LSL.
