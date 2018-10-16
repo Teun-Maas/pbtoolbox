@@ -25,7 +25,7 @@ function ses = pb_runLSL()
       if isempty(l); error('No streams found'); end
 
       for iList = 1:size(l ,1)
-        fprintf('%d: name: ''%s'' type: ''%s''\n',iList,l{iList}.name,l{iList}.type);
+        fprintf('%d: name: ''%s'' type: ''%s''\n',iList,l(iList).name,l(iList).type);
       end
 
       str(iStrm) = lsl_istream(info{1});
