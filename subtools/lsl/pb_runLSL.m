@@ -1,20 +1,20 @@
 function ses = pb_runLSL()
 % PB_RUNLSL()
 %
-% PB_RUNLSL()  ...
+% PB_RUNLSL() creates a LSL session for VC.
 %
-% See also ...
+% See also PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    streams  = {'type=''Digital Events @ lslder00'' and name=''Digital Events 1''', ...
-               'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
-               'type=''OptiTrack Mocap @ DCN19'' and name=''Labeled Markers'''};
+               'type=''Pupil Capture @ pupil-desktop.local'' and name=''Pupil Primitive Data - Eye 0''', ...
+               'type=''OptiTrack Mocap @ DCN-VSO3'' and name=''Labeled Markers'''};
          
    ses      = lsl_session();
    str      = lsl_istream.empty(0,3);
 
-   for iStrm = 1:1%length(streams)
+   for iStrm = 1:length(streams)
       % Find, select and make streams for LSL.
       tmp = strrep(streams(iStrm),'type=''','');
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
@@ -32,24 +32,24 @@ function ses = pb_runLSL()
       ses.add_stream(str(iStrm));
    end
    
-   addlistener(str(1),'DataAvailable',@ev_listener);
-   %addlistener(str(2),'DataAvailable',@pl_listener);
-   % addlistener(str(3),'DataAvailable',@ot_listener);
+   addlistener(str(1),'DataAvailable', @ev_listener);
+   addlistener(str(2),'DataAvailable', @pl_listener);
+   addlistener(str(3),'DataAvailable', @ot_listener);
 end
 
 function ev_listener(src, event)
-%    disp('ev_listener called')
+   disp('ev_listener called')
    event
 end
 
 function pl_listener(src, event)
-%    disp('pl_listener called');
-%    event
+   disp('pl_listener called');
+   event
 end
 
 function ot_listener(src, event)
-%    disp('ot_listener called');
-%    event
+   disp('ot_listener called');
+   event
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

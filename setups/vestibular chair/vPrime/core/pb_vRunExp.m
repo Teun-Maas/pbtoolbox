@@ -35,6 +35,8 @@ function pb_vRunExp(handles)
    for iBlck = 1:nblocks
       % Runs blocks of trials with a vestibular condition
       
+      ses.start();
+      
       nTrials                       = length(block(iBlck).trial);
       handles                       = updateCount(handles,'trial','reset');
       [bDat(iBlck),profile,dur]     = pb_vSignalVC(handles);               % reads, checks, creates & plots vestibular signals
