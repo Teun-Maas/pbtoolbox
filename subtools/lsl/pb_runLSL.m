@@ -1,4 +1,4 @@
-function ses = pb_runLSL()
+function ses = pb_runLSL(varargin)
 % PB_RUNLSL()
 %
 % PB_RUNLSL() creates a LSL session for VC.
@@ -7,7 +7,7 @@ function ses = pb_runLSL()
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   streams  = {'type=''Digital Events @ lslder00'' and name=''Digital Events 1''', ...
+   streams  = {'type=''Digital Events @ lslder01'' and name=''Digital Events 1''', ...
                'type=''Pupil Capture @ pupil-desktop.local'' and name=''Pupil Primitive Data - Eye 0''', ...
                'type=''OptiTrack Mocap @ DCN-VSO3'' and name=''Labeled Markers'''};
          

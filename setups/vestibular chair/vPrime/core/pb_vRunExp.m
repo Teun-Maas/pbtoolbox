@@ -11,7 +11,7 @@ function pb_vRunExp(handles)
    %% INITIALIZE
    %  load & read experiment
    
-   debug = false;
+   debug = true;
    experimentTime = tic;
    
    pb_setupShow(handles);
@@ -24,10 +24,11 @@ function pb_vRunExp(handles)
    nblocks        = handles.cfg.Blocks;
    bDat(nblocks)  = struct('v',[],'h',[]);
    
-   % rc    = pb_runPupil; 
-   % pb_startPupil(rc);
+   rc    = pb_runPupil; 
+   pb_startPupil(rc);
    
-   % ses = pb_runLSL;
+   [ses,str] = pb_runLSL;
+   
    
    %% CORE BODY 
    %  iterate experiment
@@ -35,7 +36,7 @@ function pb_vRunExp(handles)
    for iBlck = 1:nblocks
       % Runs blocks of trials with a vestibular condition
       
-      %ses.start();
+      ses.start;
       
       nTrials                       = length(block(iBlck).trial);
       handles                       = updateCount(handles,'trial','reset');
@@ -84,9 +85,24 @@ function pb_vRunExp(handles)
          Dat.pv   = pv;
       end
       handles = updateCount(handles,'block','count');
+      
+      % STOP LSL
+      ses.stop;
+      
+      if ~exist('LSL_Dat','var')
+         LSL_Data  = {};
+      end
+      
+      LSL_Dat.ev_dat = str(1).read;
+      LSL_Dat.pl_dat = str(2).read;
+      LSL_Dat.ot_dat = str(3).read;
+      
+      % SAVE LSL DATA
+      
    end 
    %% CHECK OUT
-   %pb_stopPupil(rc);
+   pb_stopPupil(rc);
+   
    pb_vEndExp(handles.cfg);
    pb_vInitialize(handles,false);
    toc(experimentTime)
