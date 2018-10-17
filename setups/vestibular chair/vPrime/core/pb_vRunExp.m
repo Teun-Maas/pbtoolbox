@@ -29,7 +29,6 @@ function pb_vRunExp(handles)
    
    [ses,str] = pb_runLSL;
    
-   
    %% CORE BODY 
    %  iterate experiment
    
@@ -97,7 +96,7 @@ function pb_vRunExp(handles)
       LSL_Dat.pl_dat = str(2).read;
       LSL_Dat.ot_dat = str(3).read;
       
-      % SAVE LSL DATA
+      % TODO: SAVE LSL DATA
       
    end 
    %% CHECK OUT
