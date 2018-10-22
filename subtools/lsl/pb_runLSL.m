@@ -17,17 +17,18 @@ function [ses,str] = pb_runLSL(varargin)
                'type=''Pupil Capture @ pupil-desktop.local'' and name=''Pupil Primitive Data - Eye 0''', ...
                'type=''OptiTrack Mocap @ DCN-VSO3'' and name=''Labeled Markers'''};
    
-   if de; tmp(end+1) = streams{1}; end
-   if pl; tmp(end+1) = streams{2}; end 
-   if ot; tmp(end+1) = streams{3}; end
+   if de; tmp(end+1) = streams(1); end
+   if pl; tmp(end+1) = streams(2); end 
+   if ot; tmp(end+1) = streams(3); end
    
    streams = tmp;
          
    ses      = lsl_session();
-   str      = lsl_istream.empty(0,3);
+   ls       = length(streams);
+   str      = lsl_istream.empty(0,ls);
    
    clear tmp;
-   for iStrm = 1:length(streams)
+   for iStrm = 1:ls
       % Find, select and make streams for LSL.
       tmp = strrep(streams(iStrm),'type=''','');
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
@@ -37,12 +38,12 @@ function [ses,str] = pb_runLSL(varargin)
       l     = info.list();
       if isempty(l); error('No streams found'); end
 
-      for iList = 1:size(l ,1)
+      for iList = 1:size(l,1)
         fprintf('%d: name: ''%s'' type: ''%s''\n',iList,l(iList).name,l(iList).type);
       end
 
       str(iStrm) = lsl_istream(info{1});
-      ses.add_stream(str(iStrm));
+     ses.add_stream(str(iStrm));
    end
    
    c = 1;
