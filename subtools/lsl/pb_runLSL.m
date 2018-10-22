@@ -1,4 +1,4 @@
-function [ses,str] = pb_runLSL()
+function [ses,str] = pb_runLSL(varargin)
 % PB_RUNLSL()
 %
 % PB_RUNLSL() creates a LSL session for VC.
@@ -7,14 +7,27 @@ function [ses,str] = pb_runLSL()
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   de = pb_keyval('de', varargin, true);
+   pl = pb_keyval('pl', varargin, true);
+   ot = pb_keyval('ot', varargin, true);
+   
+   tmp = {};
+   
    streams  = {'type=''Digital Events @ lslder01'' and name=''Digital Events 1''', ...
                'type=''Pupil Capture @ pupil-desktop.local'' and name=''Pupil Primitive Data - Eye 0''', ...
                'type=''OptiTrack Mocap @ DCN-VSO3'' and name=''Labeled Markers'''};
+   
+   if de; tmp(end+1) = streams{1}; end
+   if pl; tmp(end+1) = streams{2}; end 
+   if ot; tmp(end+1) = streams{3}; end
+   
+   streams = tmp;
          
    ses      = lsl_session();
    str      = lsl_istream.empty(0,3);
-
-   for iStrm = 1:2 %length(streams)
+   
+   clear tmp;
+   for iStrm = 1:length(streams)
       % Find, select and make streams for LSL.
       tmp = strrep(streams(iStrm),'type=''','');
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
@@ -32,9 +45,10 @@ function [ses,str] = pb_runLSL()
       ses.add_stream(str(iStrm));
    end
    
-   addlistener(str(1),'DataAvailable', @ev_listener);
-   addlistener(str(2),'DataAvailable', @pl_listener);
-   %addlistener(str(3),'DataAvailable', @ot_listener);
+   c = 1;
+   if de; addlistener(str(c),'DataAvailable', @ev_listener); c = c+1; end
+   if pl; addlistener(str(c),'DataAvailable', @pl_listener); c = c+1; end
+   if ot; addlistener(str(c),'DataAvailable', @ot_listener); end
 end
 
 function ev_listener(~, event)
