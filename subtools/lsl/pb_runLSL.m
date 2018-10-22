@@ -54,17 +54,17 @@ end
 
 function ev_listener(~, event)
    disp('ev_listener called')
-   disp(event);
+   %disp(event);
 end
 
 function pl_listener(~, event)
    disp('pl_listener called');
-   disp(event);
+   %disp(event);
 end
 
 function ot_listener(~, event)
    disp('ot_listener called');
-   disp(event);
+   %disp(event);
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
