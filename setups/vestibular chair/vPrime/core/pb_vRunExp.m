@@ -27,7 +27,7 @@ function pb_vRunExp(handles)
    rc    = pb_runPupil; 
    pb_startPupil(rc);
    
-   [ses,str] = pb_runLSL;
+   [ses,str] = pb_runLSL('ot',false);
    
    %% CORE BODY 
    %  iterate experiment
