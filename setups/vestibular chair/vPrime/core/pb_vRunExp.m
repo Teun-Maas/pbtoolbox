@@ -34,7 +34,7 @@ function pb_vRunExp(handles)
    for iBlck = 1:nblocks
       % Runs blocks of trials with a vestibular condition
       
-      ses.start;
+      %ses.start;
       pb_startPupil(rc);
       
       
@@ -88,7 +88,7 @@ function pb_vRunExp(handles)
       
       pb_stopPupil(rc);
       % STOP LSL
-      ses.stop;
+      %ses.stop;
       
       if ~exist('LSL_Dat','var')
          LSL_Data  = {};
