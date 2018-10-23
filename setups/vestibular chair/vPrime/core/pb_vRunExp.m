@@ -27,33 +27,33 @@ function pb_vRunExp(handles)
    rc          = pb_runPupil; 
    [ses,str]   = pb_runLSL('ot',false);
    
-   
    %% CORE BODY 
-   %  iterate experiment
+   %  iterate experiment 
    
    for iBlck = 1:nblocks
       % Runs blocks of trials with a vestibular condition
       
-      ses.start;
-      pb_startPupil(rc);
-      
-      
       nTrials                       = length(block(iBlck).trial);
       handles                       = updateCount(handles,'trial','reset');
       [bDat(iBlck),profile,dur]     = pb_vSignalVC(handles);               % reads, checks, creates & plots vestibular signals
+            
+      pb_startLSL(ses);
+      pb_startPupil(rc);
       
-      %  START CHAIR
-      if ~ismac && ~debug                                        
+      if ~ismac && ~debug      
+         %  START CHAIR
          send_profile(profile); 
-         
-         vs = vs_servo;
-         vs.enable;        pause(1); 
-         vs.start;         blockTime = tic;
+         pb_sendServo(vs,profile);
+         pb_startServo(vs);
       end
+      blockTime = tic;
 
-      %%  RUN TRIALS
+      %% RUN TRIALS
+      %  iterate trials
+      
       for iTrl = 1:nTrials
          % Runs all trials within one block
+         
          trialTime = tic;
          
          updateTrial(handles);
@@ -76,19 +76,15 @@ function pb_vRunExp(handles)
          elapsedTime = toc(blockTime);                
          if elapsedTime < dur; pause(dur-floor(elapsedTime)); end          % wait untill chair is finished running before disabling.
 
-         vs.stop;
-         vs.disable;
-         delete(vs);
+         pb_stopServo(vs)
          
-         [sv,pv]  = read_profile;
-         Dat.sv   = sv;
-         Dat.pv   = pv;
+         Dat  = pb_readServo(vs);
+
       end
       handles = updateCount(handles,'block','count');
       
       pb_stopPupil(rc);
-      % STOP LSL
-      ses.stop;
+      pb_stopLSL(ses); 
       
       if ~exist('LSL_Dat','var')
          LSL_Data  = {};
@@ -99,10 +95,11 @@ function pb_vRunExp(handles)
       % LSL_Dat.ot_dat = str(3).read;
       
       % TODO: SAVE LSL DATA
-      
+      % save(lsl_file, 'LSL_Dat');
    end 
-   %% CHECK OUT
    
+   %% CHECK OUT
+   %  finalizes experiment, and resets handles.
    
    pb_vEndExp(handles.cfg);
    pb_vInitialize(handles,false);
@@ -151,19 +148,18 @@ function send_profile(profile)
    
    vs    = vs_servo;
    vs.write_profile(profile.v,profile.h);
-   
-   delete(vs);
 end
 
-function [sv,pv] = read_profile
+function Dat = read_profile(vs)
    % read profile
-   
-   vs    = vs_servo;
    
    [sv.vertical,sv.horizontal] = vs.read_profile_sv;
    [pv.vertical,pv.horizontal] = vs.read_profile_pv;
    
    delete(vs);
+   
+   Dat.sv   = sv;
+   Dat.pv   = pv;
 end
 
 
