@@ -19,12 +19,12 @@ function pb_vRunExp(handles)
    handles	= pb_gethandles(handles);
    handles 	= pb_getblock(handles);
    handles 	= pb_createdir(handles);
-   handles	= pb_vInitialize(handles,true);
+   handles	= pb_vInitialize(handles, true);
    
    %  set block information
    block          = handles.block;  
    nblocks        = handles.cfg.Blocks;
-   Dat(nblocks)   = struct('vestibular_signal',[],'PL',[],'OT',[],'LSL',[]);
+   Dat(nblocks)   = struct('vestibular_signal',[],'EV',[],'PL',[],'OT',[],'LSL',[]);
    
    %  initialize recordings
    rc             = pb_runPupil; 
@@ -72,8 +72,8 @@ function pb_vRunExp(handles)
          pb_vRunTrial(handles.cfg, stim);
          pb_vTraces(handles);       
          
-         %handles        = pb_vStoreData(handles, bDat);
-         handles        = updateCount(handles,'trial','count');
+         handles   = pb_vStoreData(handles, sig);
+         handles   = updateCount(handles,'trial','count');
          toc(trialTime)
       end
       
@@ -86,7 +86,7 @@ function pb_vRunExp(handles)
          if elapsedTime < dur; pause(dur-floor(elapsedTime)); end          % wait untill chair is finished running before disabling.
 
          pb_stopServo(vs);
-         Dat =    pb_readServo;
+         Dat = pb_readServo;
       end
 
       %  stop recording
@@ -94,19 +94,12 @@ function pb_vRunExp(handles)
       pb_stopLSL(ses); 
       
       %  store data
-      if ~exist('LSL_Dat','var')
-         LSL_Data  = {};
-      end
-      
-      LSL_Dat.ev_dat = streams(1).read;
-      LSL_Dat.pl_dat = streams(2).read;
-      % LSL_Dat.ot_dat = str(3).read;
-      
-      % TODO: SAVE LSL DATA
-      % save(lsl_file, 'LSL_Dat');
-      
+      Dat(iBlck).EV = streams(1).read;
+      Dat(iBlck).PL = streams(2).read;
+      %Dat(iBlck).OT = streams(3).read;
+
       %  update block information
-      handles = updateCount(handles,'block','count');
+      handles.cfg = updateCount(handles.cfg,'block','count');
    end 
    
    %% CHECK OUT
@@ -114,28 +107,30 @@ function pb_vRunExp(handles)
    
    %  check out experiment
    pb_vEndExp(handles.cfg);
-   pb_vInitialize(handles,false);
+   pb_vStoreBlockDat(handles.cfg, Dat);
+   pb_vInitialize(handles, false);
    toc(experimentTime)
 end
 
 %-- Feedback functions --%
 function updateTrial(handles)
-   % Updates the trial information to the GUI
+   %  Updates the trial information to the GUI
+   
    tn = handles.cfg.trialnumber;
    handles.figure1.Name = ['vPrime - ' num2str(tn(2)) '/' num2str(handles.cfg.Trials) ' Trials'];       % counting title
 
    str = num2str(tn(1),'%03d');                                                                       % blocktrial
-   set(handles.Tn,'string',str)
+   set(handles.Tn,'string',str);
 end
 
-function handles = updateCount(handles,varargin)
-   % Updates the count of trialnumber and block number during experiment
+function cfg = updateCount(cfg,varargin)
+   %  Updates the count of trialnumber and block number during experiment
    
-   cfg = handles.cfg;
-   
+   %  initializes update information
    trial = pb_keyval('trial',varargin);
    block = pb_keyval('block',varargin);
    
+   %  sets trials
    if ~isempty(trial)
       switch trial
          case 'count'
@@ -145,34 +140,14 @@ function handles = updateCount(handles,varargin)
       end
    end
    
+   %  sets block
    if ~isempty(block)
       switch block
          case 'count'
             cfg.blocknumber      = cfg.blocknumber+1;
       end
    end
-   handles.cfg = cfg;
 end
-
-%-- Run VC functions --%
-% function send_profile(profile)
-%    % writing profile to servo
-%    
-%    vs    = vs_servo;
-%    vs.write_profile(profile.v,profile.h);
-% end
-
-% function Dat = read_profile(vs)
-%    % read profile
-%    
-%    [sv.vertical,sv.horizontal] = vs.read_profile_sv;
-%    [pv.vertical,pv.horizontal] = vs.read_profile_pv;
-%    
-%    delete(vs);
-%    
-%    Dat.sv   = sv;
-%    Dat.pv   = pv;
-% end
 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
