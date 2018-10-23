@@ -9,9 +9,6 @@ function pb_stopServo(vs)
 
    vs.stop;
    vs.disable;
-   
-   Dat  = pb_readServo(vs);
-   
    delete(vs);
 end
  

@@ -1,4 +1,4 @@
-function pb_sendServo(vs,profile)
+function pb_sendServo(profile)
 % PB_SENDSERVO()
 %
 % PB_SENDSERVO()  ...
@@ -6,8 +6,9 @@ function pb_sendServo(vs,profile)
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
-
+   vs   = vs_servo;
    vs.write_profile(profile.v,profile.h);
+   delete(vs);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
