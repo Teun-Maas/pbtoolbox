@@ -1,14 +1,13 @@
-function vs = pb_runServo()
-% PB_RUNSERVO()
+function pb_sendServo(vs,profile)
+% PB_SENDSERVO()
 %
-% PB_RUNSERVO()  ...
+% PB_SENDSERVO()  ...
 %
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-      vs = vs_servo;
-      vs.enable;        
+   vs.write_profile(profile.v,profile.h);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
@@ -17,3 +16,4 @@ end
 %       Written by: Jesse J. Heckman (2018)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+

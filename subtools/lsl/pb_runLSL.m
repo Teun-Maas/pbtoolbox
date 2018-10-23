@@ -32,18 +32,18 @@ function [ses,str] = pb_runLSL(varargin)
       % Find, select and make streams for LSL.
       tmp = strrep(streams(iStrm),'type=''','');
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
-      disp([newline 'Looking for ' tmp ' stream...'])
+      %disp([newline 'Looking for ' tmp ' stream...'])
       
       info  = lsl_resolver(streams{iStrm});
       l     = info.list();
       if isempty(l); error('No streams found'); end
 
       for iList = 1:size(l,1)
-        fprintf('%d: name: ''%s'' type: ''%s''\n',iList,l(iList).name,l(iList).type);
+        %fprintf('%d: name: ''%s'' type: ''%s''\n',iList,l(iList).name,l(iList).type);
       end
 
       str(iStrm) = lsl_istream(info{1});
-     ses.add_stream(str(iStrm));
+      ses.add_stream(str(iStrm));
    end
    
    c = 1;
