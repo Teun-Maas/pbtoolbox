@@ -24,7 +24,7 @@ function pb_vRunExp(handles)
    %  set block information
    block          = handles.block;  
    nblocks        = handles.cfg.Blocks;
-   Dat(nblocks)   = struct('vestibular_signal',[],'EV',[],'PL',[],'OT',[],'LSL',[]);
+   Dat(nblocks)   = struct('vestibular_signals',[],'EV',[],'PL',[],'OT',[],'LSL',[]);
    
    %  initialize recordings
    rc             = pb_runPupil; 
