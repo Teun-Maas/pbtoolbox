@@ -7,8 +7,10 @@ function pb_vStoreBlockDat(cfg, Dat)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   file = [cfg.dname '/block_info.m'];
+   [~,fn] = pb_fext(cfg.fname);
+   file = [cfg.dname filesep 'block_info_' fn '.mat'];
    save(file, 'Dat');
+   
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
