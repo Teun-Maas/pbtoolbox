@@ -24,7 +24,7 @@ function pb_vRunExp(handles)
    %  set block information
    block          = handles.block;  
    nblocks        = handles.cfg.Blocks;
-   Dat(nblocks)   = struct('vestibular_signals',[],'EV',[],'PL',[],'OT',[],'LSL',[]);
+   Dat(nblocks)   = struct('VS',[],'EV',[],'PL',[],'OT',[],'LSL',[]);
    
    %  initialize recordings
    rc             = pb_runPupil; 
@@ -42,8 +42,8 @@ function pb_vRunExp(handles)
       handles  	= updateCount(handles,'trial','reset');
       
       %  store signal data
-      [sig,profile,dur]             = pb_vSignalVC(handles);               % reads, checks, creates & plots vestibular signals
-      Dat(iBlck).vestibular_signals = sig;
+      [sig,profile,dur]       = pb_vSignalVC(handles);               % reads, checks, creates & plots vestibular signals
+      Dat(iBlck).VS           = sig;
       
       %  start recording
       pb_startLSL(ses);
