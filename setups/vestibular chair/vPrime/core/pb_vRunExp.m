@@ -28,7 +28,7 @@ function pb_vRunExp(handles)
    
    %  initialize recordings
 %    rc             = pb_runPupil; 
-   [ses,streams]  = pb_runLSL('ot',false);
+%   [ses,streams]  = pb_runLSL('ot',false);
    experimentTime = tic;
    
    %% START BLOCK 
@@ -46,7 +46,7 @@ function pb_vRunExp(handles)
       Dat(iBlck).VS           = sig;
       
       %  start recording
-      pb_startLSL(ses);
+%      pb_startLSL(ses);
 %       pb_startPupil(rc);
       
       %  start vestibular chair
@@ -91,7 +91,7 @@ function pb_vRunExp(handles)
 
       %  stop recording
 %       pb_stopPupil(rc);
-      pb_stopLSL(ses); 
+%      pb_stopLSL(ses); 
       
       %  store data
       Dat(iBlck).EV = streams(1).read;
