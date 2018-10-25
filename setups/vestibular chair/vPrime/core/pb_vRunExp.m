@@ -27,7 +27,7 @@ function pb_vRunExp(handles)
    Dat(nblocks)   = struct('VS',[],'EV',[],'PL',[],'OT',[],'LSL',[]);
    
    %  initialize recordings
-   rc             = pb_runPupil; 
+%    rc             = pb_runPupil; 
    [ses,streams]  = pb_runLSL('ot',false);
    experimentTime = tic;
    
@@ -47,7 +47,7 @@ function pb_vRunExp(handles)
       
       %  start recording
       pb_startLSL(ses);
-      pb_startPupil(rc);
+%       pb_startPupil(rc);
       
       %  start vestibular chair
       if ~ismac && ~debug      
@@ -90,7 +90,7 @@ function pb_vRunExp(handles)
       end
 
       %  stop recording
-      pb_stopPupil(rc);
+%       pb_stopPupil(rc);
       pb_stopLSL(ses); 
       
       %  store data
