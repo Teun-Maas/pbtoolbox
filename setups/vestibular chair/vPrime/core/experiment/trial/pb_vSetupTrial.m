@@ -56,6 +56,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
             end
          end
       end
+      
       stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07'); %% CORRECT THESE LOCATIONS
       stim(find(selled,1)).ledhandle.write(s);
    end
