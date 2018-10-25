@@ -23,6 +23,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       s		= ledpattern(n);
 
       %%
+      cnt		= 0;
       for iLED = 1:nled
          % TDT RZ6
          % Set timing information on LEDs
@@ -36,27 +37,28 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
          str2 = ['delayLED' num2str(2*iLED)];
          cfg.RZ6_1.SetTagVal(str1,led(iLED).ondelay+1);
          cfg.RZ6_1.SetTagVal(str2,led(iLED).offdelay+1);
-      end
       
-      % PLC
-      if isfield(led,'colour')
-         col = led(iLED).colour;
-      else
-         col = 1;
-      end
-      cnt		= 0;
-      for ii	= 1:2
-         cnt = cnt+1;
-         if ii==1
-            s(cnt).set(led(iLED).Z,cfg.ledcolours{col},1);
-            s(cnt).intensity(cfg.ledcolours{col},led(iLED).intensity); % hoop: range 0-255, sphere range 1-50
+      
+         % PLC
+         if isfield(led,'colour')
+            col = led(iLED).colour;
          else
-            s(cnt).set(led(iLED).Z,cfg.ledcolours{col},0);
+            col = 1;
          end
+         
+         for ii	= 1:2
+            cnt = cnt+1;
+            if ii==1
+               s(cnt).set(led(iLED).Z,cfg.ledcolours{col},1);
+               s(cnt).intensity(cfg.ledcolours{col},led(iLED).intensity); % hoop: range 0-255, sphere range 1-50
+            else
+               s(cnt).set(led(iLED).Z,cfg.ledcolours{col},0);
+            end
+         end
+
+         stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07'); %% CORRECT THESE LOCATIONS
+         stim(find(selled,1)).ledhandle.write(s);
       end
-      
-      stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07'); %% CORRECT THESE LOCATIONS
-      stim(find(selled,1)).ledhandle.write(s);
    end
 
    %% Acquisition
