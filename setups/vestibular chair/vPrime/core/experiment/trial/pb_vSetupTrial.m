@@ -55,10 +55,9 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
                s(cnt).set(led(iLED).Z,cfg.ledcolours{col},0);
             end
          end
-
-         stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07'); %% CORRECT THESE LOCATIONS
-         stim(find(selled,1)).ledhandle.write(s);
       end
+      stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07'); %% CORRECT THESE LOCATIONS
+      stim(find(selled,1)).ledhandle.write(s);
    end
 
    %% Acquisition
