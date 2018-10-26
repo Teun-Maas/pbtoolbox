@@ -1,20 +1,16 @@
-function pb_clean(varargin)
-% PB_CLEAN(varargin)
+function c = pb_pythagoras(a,b)
+% PB_PYTHAGORAS(a,b)
 %
-% PB_CLEAN(varargin) cleans up your matlab. Closes all open figures,
-% empties the command window, and clears all vars in base workspace.
+% PB_PYTHAGORAS(a,b)  ...
 %
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   fig      = pb_keyval('fig',varargin,true);
-   empty    = pb_keyval('clc',varargin,true);
-   clr      = pb_keyval('clr',varargin,true);
+   if mean(a)<0; sign = -1; else; sign = 1; end
+   if mean(b)<0; sign = -1 * sign; end
    
-   if fig; close all; end
-   if empty; clc; end
-   if clr; pb_clear; end
+   c = sqrt(a.^2 + b.^2) * sign;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

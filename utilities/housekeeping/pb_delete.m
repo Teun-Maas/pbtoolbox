@@ -16,7 +16,7 @@ function pb_delete(varargin)
    len = length(h);
    
    for iH = 1:len
-      if contains(h(iH).Type,'Axes') || contains(h(iH).Type,'Figure')
+      if contains(h(iH).Type,'axes') || contains(h(iH).Type,'figure')
          cnt = cnt+1;
       end
    end
