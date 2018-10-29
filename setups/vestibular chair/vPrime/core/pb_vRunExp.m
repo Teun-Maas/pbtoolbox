@@ -24,11 +24,11 @@ function pb_vRunExp(handles)
    %  set block information
    block          = handles.block;  
    nblocks        = handles.cfg.Blocks;
-   Dat(nblocks)   = struct('VS',[],'EV',[],'PL',[],'OT',[],'LSL',[]);
+   Dat(nblocks)   = struct('VS',[],'EV',[],'PL_Gaze',[],'PL_Python',[],'OT',[]);
    
    %  initialize recordings
 %    rc             = pb_runPupil; 
-%   [ses,streams]  = pb_runLSL('ot',false);
+   [ses,streams]  = pb_runLSL('ot',false);
    experimentTime = tic;
    
    %% START BLOCK 
@@ -46,8 +46,8 @@ function pb_vRunExp(handles)
       Dat(iBlck).VS           = sig;
       
       %  start recording
-%      pb_startLSL(ses);
-%       pb_startPupil(rc);
+      pb_startLSL(ses);
+      %pb_startPupil(rc);
       
       %  start vestibular chair
       if ~ismac && ~debug      
