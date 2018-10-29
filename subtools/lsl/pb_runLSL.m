@@ -57,22 +57,22 @@ function [ses,str] = pb_runLSL(varargin)
 end
 
 function ev_listener(~, event)
-   disp('ev_listener called')
+   %disp('ev_listener called')
    %disp(event);
 end
 
 function pl_listener(~, event)
-   disp('pl_listener called');
+   %disp('pl_listener called');
    %disp(event);
 end
 
 function gz_listener(~, event)
-   disp('gz_listener called');
+   %disp('gz_listener called');
    %disp(event);
 end
 
 function ot_listener(~, event)
-   disp('ot_listener called');
+   %disp('ot_listener called');
    %disp(event);
 end
 
