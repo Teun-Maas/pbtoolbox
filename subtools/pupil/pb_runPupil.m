@@ -8,7 +8,7 @@ function rc = pb_runPupil(varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
     
     default.j  = [pb_userpath 'subtools' filesep 'zeromq' filesep 'jeromq.jar'];
-    default.p  = '131.174.140.128'; 
+    default.p  = 'dcn-pl01.science.ru.nl'; 
     
     jpath      = pb_keyval('java', varargin, default.j);
     host       = pb_keyval('host', varargin, default.p);
