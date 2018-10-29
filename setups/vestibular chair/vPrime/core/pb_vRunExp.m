@@ -91,13 +91,13 @@ function pb_vRunExp(handles)
 
       %  stop recording
 %       pb_stopPupil(rc);
-%      pb_stopLSL(ses); 
+      pb_stopLSL(ses); 
       
       %  store data
       Dat(iBlck).EV = streams(1).read;
       Dat(iBlck).PL_Python = streams(2).read;
       Dat(iBlck).PL_Gaze   = streams(3).read;
-      %Dat(iBlck).OT = streams(3).read;
+      %Dat(iBlck).OT = streams(4).read;
 
       %  update block information
       handles.cfg = updateCount(handles.cfg,'block','count');
