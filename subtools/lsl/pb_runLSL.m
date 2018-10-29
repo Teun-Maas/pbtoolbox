@@ -67,7 +67,7 @@ function pl_listener(~, event)
 end
 
 function gz_listener(~, event)
-   disp('pl_listener called');
+   disp('gz_listener called');
    %disp(event);
 end
 
