@@ -10,19 +10,23 @@ function [ses,str] = pb_runLSL(varargin)
    de = pb_keyval('de', varargin, true);
    pl = pb_keyval('pl', varargin, true);
    gz = pb_keyval('gz', varargin, true);
-   ot = pb_keyval('ot', varargin, true);
+   pd = pb_keyval('pd', varargin, true);
+   ot = pb_keyval('ot', varargin, false);
    
    tmp = {};
    
    streams  = {'type=''Digital Events @ lslder01'' and name=''Digital Events 0''', ...
                'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Python Representation - Eye 0''', ...
                'type=''Pupil Capture @ pupil-desktop'' and name=''Gaze Python Representation''', ...
+               'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
                'type=''OptiTrack Mocap @ DCN-VSO3'' and name=''Labeled Markers'''};
+            
    
    if de; tmp(end+1) = streams(1); end
    if pl; tmp(end+1) = streams(2); end 
    if gz; tmp(end+1) = streams(3); end
-   if ot; tmp(end+1) = streams(4); end
+   if pd; tmp(end+1) = streams(4); end
+   if ot; tmp(end+1) = streams(5); end
    
    streams = tmp;
          
@@ -53,6 +57,7 @@ function [ses,str] = pb_runLSL(varargin)
    if de; addlistener(str(c),'DataAvailable', @ev_listener); c = c+1; end
    if pl; addlistener(str(c),'DataAvailable', @pl_listener); c = c+1; end
    if gz; addlistener(str(c),'DataAvailable', @gz_listener); c = c+1; end
+   if pd; addlistener(str(c),'DataAvailable', @pd_listener); c = c+1; end
    if ot; addlistener(str(c),'DataAvailable', @ot_listener); end
 end
 
@@ -68,6 +73,11 @@ end
 
 function gz_listener(~, event)
    %disp('gz_listener called');
+   %disp(event);
+end
+
+function pd_listener(~, event)
+   %disp('pd_listener called');
    %disp(event);
 end
 

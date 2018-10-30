@@ -24,11 +24,11 @@ function pb_vRunExp(handles)
    %  set block information
    block          = handles.block;  
    nblocks        = handles.cfg.Blocks;
-   Dat(nblocks)   = struct('VS',[],'EV',[],'PL_Gaze',[],'PL_Python',[],'OT',[]);
+   Dat(nblocks)   = struct('VS',[],'EV',[],'PL_Gaze',[],'PL_Python',[],'PL_Primitive',[],'OT',[]);
    
    %  initialize recordings
 %    rc             = pb_runPupil; 
-   [ses,streams]  = pb_runLSL('ot',false);
+   [ses,streams]  = pb_runLSL();
    experimentTime = tic;
    
    %% START BLOCK 
@@ -42,7 +42,7 @@ function pb_vRunExp(handles)
       handles  	= updateCount(handles,'trial','reset');
       
       %  store signal data
-      [sig,profile,dur]       = pb_vSignalVC(handles);               % reads, checks, creates & plots vestibular signals
+      [sig,profile,dur]       = pb_vSignalVC(handles);                     % reads, checks, creates & plots vestibular signals
       Dat(iBlck).VS           = sig;
       
       %  start recording
@@ -94,10 +94,11 @@ function pb_vRunExp(handles)
       pb_stopLSL(ses); 
       
       %  store data
-      Dat(iBlck).EV        = streams(1).read;
-      Dat(iBlck).PL_Python = streams(2).read;
-      Dat(iBlck).PL_Gaze   = streams(3).read;
-      %Dat(iBlck).OT = streams(4).read;
+      Dat(iBlck).EV           = streams(1).read;
+      Dat(iBlck).PL_Python    = streams(2).read;
+      Dat(iBlck).PL_Gaze      = streams(3).read;
+      Dat(iBlck).PL_Primitive = streams(4).read;
+      %Dat(iBlck).OT           = streams(5).read;
 
       %  update block information
       handles.cfg = updateCount(handles.cfg,'block','count');

@@ -7,10 +7,10 @@ function pb_delete(varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
-   type  = pb_keyval('Type',varargin,[]);
+   %type  = pb_keyval('Type',varargin,'line');
    ax    = pb_keyval('Axis',varargin,gca);
    
-   h = pb_fobj(ax,'Type',type);
+   h = pb_fobj(ax);
    
    cnt = 0;
    len = length(h);
