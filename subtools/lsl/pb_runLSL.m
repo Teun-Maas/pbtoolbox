@@ -11,7 +11,7 @@ function [ses,str] = pb_runLSL(varargin)
    pl = pb_keyval('pl', varargin, true);
    gz = pb_keyval('gz', varargin, true);
    pd = pb_keyval('pd', varargin, true);
-   ot = pb_keyval('ot', varargin, false);
+   ot = pb_keyval('ot', varargin, true);
    
    tmp = {};
    
@@ -19,7 +19,7 @@ function [ses,str] = pb_runLSL(varargin)
                'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Python Representation - Eye 0''', ...
                'type=''Pupil Capture @ pupil-desktop'' and name=''Gaze Python Representation''', ...
                'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
-               'type=''OptiTrack Mocap @ DCN-VSO3'' and name=''Labeled Markers'''};
+               'type=''OptiTrack Mocap @ DCN-VSO3'' and name=''Rigid Bodies'''};
             
    
    if de; tmp(end+1) = streams(1); end

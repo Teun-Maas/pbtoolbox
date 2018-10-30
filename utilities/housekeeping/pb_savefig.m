@@ -10,10 +10,13 @@ function pb_savefig(varargin)
    n = nargin;
 
    fig     = pb_keyval('fig',varargin);
+   
    fname   = pb_keyval('fname',varargin);
-   dir     = pb_keyval('dir',varargin,[pb_datadir 'PhD/Figure/']);
+   dir     = pb_keyval('dir',varargin,[pb_datadir 'PhD/Figures/']);
+   ext     = pb_keyval('ext',varargin,'pdf');
    cd(dir);
 
+   figure(fig);
    g = groot;
 
    if n == 0 && ~isempty(g.Children)
@@ -26,7 +29,8 @@ function pb_savefig(varargin)
 
    h = get(g,'currentFigure'); 
    path = [path '/' fname];
-   savefig(h,path)
+   savefig(h,path);
+   saveas(h,path,ext);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
