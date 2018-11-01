@@ -18,7 +18,7 @@ function pb_vRunTrial(cfg,stim)
    %   disp('Waiting for RZ6 button press/sound/led/acquisition');
 
    t = tic;
-   while ~cfg.RZ6_1.GetTagVal('Wait')
+   while toc(t)<2.5
    % 	disp('waiting')
       % do nothing
    end % sound is played after this loop exits.
