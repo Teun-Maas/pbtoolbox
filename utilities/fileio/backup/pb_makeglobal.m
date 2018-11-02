@@ -1,9 +1,9 @@
 function pb_makeglobal(varargin)
-% PB_MAKEGLOBAL()
+% PB_MAKEGLOBAL(varargin)
 %
-% PB_MAKEGLOBAL()  ...
+% PB_MAKEGLOBAL(varargin) ...
 %
-% See also ...
+% See also PB_MOUNTSERVER, PB_MAKELOCAL
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
