@@ -4,7 +4,7 @@
 
 %% HEADER
 ITI		0	0
-Blocks  3
+Blocks  2
 Trials	20
 Repeats	1
 Random	0	% 0=no, 1=per set, 2=all trials
@@ -21,7 +21,7 @@ Lab		5
 ~~~
 % Block: 1
 ==>
-HOR		2 	0	60	.1			
+HOR		2 	20	60	.1			
 VER		1	35	60	.1
 
 % Trial: 1
@@ -87,7 +87,7 @@ LED	-25	0	 	5	0	2200	0	2500
 ~~~
 % Block: 2
 ==>
-HOR		2 	0	60	.1			
+HOR		2 	20	60	.1			
 VER		1	35	60	.1
 
 % Trial: 11
@@ -150,9 +150,4 @@ TRG0			1	2	0	0			1
 LED	0	0	 	5	0	200	0	2000
 LED	-25	0	 	5	0	2200	0	2500
 
-~~~
-% Block: 3
-==>
-HOR		2 	0	60	.1			
-VER		1	35	60	.1
 
