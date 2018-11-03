@@ -54,37 +54,17 @@ function [ses,str] = pb_runLSL(varargin)
    end
    
    c = 1;
-   if de; addlistener(str(c),'DataAvailable', @ev_listener); c = c+1; end
-   if pl; addlistener(str(c),'DataAvailable', @pl_listener); c = c+1; end
-   if gz; addlistener(str(c),'DataAvailable', @gz_listener); c = c+1; end
-   if pd; addlistener(str(c),'DataAvailable', @pd_listener); c = c+1; end
-   if ot; addlistener(str(c),'DataAvailable', @ot_listener); end
+   if de; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
+   if pl; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
+   if gz; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
+   if pd; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
+   if ot; addlistener(str(c),'DataAvailable', @listener); end
 end
 
-function ev_listener(~, event)
-   %disp('ev_listener called')
+function listener(~, event)
    %disp(event);
 end
 
-function pl_listener(~, event)
-   %disp('pl_listener called');
-   %disp(event);
-end
-
-function gz_listener(~, event)
-   %disp('gz_listener called');
-   %disp(event);
-end
-
-function pd_listener(~, event)
-   %disp('pd_listener called');
-   %disp(event);
-end
-
-function ot_listener(~, event)
-   %disp('ot_listener called');
-   %disp(event);
-end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
