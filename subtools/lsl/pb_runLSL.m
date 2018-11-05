@@ -20,7 +20,6 @@ function [ses,str] = pb_runLSL(varargin)
                'type=''Pupil Capture @ pupil-desktop'' and name=''Gaze Python Representation''', ...
                'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
                'type=''OptiTrack Mocap @ DCN-VS03'' and name=''Rigid Bodies'''};
-            
    
    if de; tmp(end+1) = streams(1); end
    if pl; tmp(end+1) = streams(2); end 
