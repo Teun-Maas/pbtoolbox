@@ -9,7 +9,7 @@ function pb_mountserver(varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
    srv      = pb_keyval('server',varargin,'mbaudit5');
-   cin      = ['mount -t smbfs //' getcredentials(srv) '@' srv '-srv.science.ru.nl/' srv ' ~/sharename/'];
+   cin      = ['mount -t smbfs //' getcredentials(srv) '@' srv '-srv.science.ru.nl/' srv '/ ~/sharename/'];
    [s,cout] = system(cin);
    
    if s > 0 && s ~= 64; disp(cout); end

@@ -32,7 +32,7 @@ function [Dat,profile,dur] = pb_vSignalVC(handles)
    Dat.v.amplitude   = signal(1).amplitude;
    Dat.h.amplitude   = signal(2).amplitude;
    
-   dur               = max([signal(1).duration signal(2).duration])+10;    % add 10 extra seconds for delay of the system
+%    dur               = max([signal(1).duration signal(2).duration])+10;    % add 10 extra seconds for delay of the system
 
    %% FEEDBACK GUI
    updateBlock(handles, signal);

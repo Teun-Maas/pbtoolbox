@@ -60,6 +60,17 @@ function pb_nicegraph(varargin)
          'Color'         , col(j,:)  , ...
          'LineWidth'     , linewidth         );
       end
+      
+      % FUNCTIONLINE:
+      %
+      % Use as 'primary' data
+      h_fline = pb_fobj(ax(i),'Type','FunctionLine');
+
+      for iFline=1:length(h_fline)
+         set(h_fline(length(h_fline)+1-iFline), ...
+         'Color'         , col(iFline,:)  , ...
+         'LineWidth'     , linewidth         );
+      end
 
       % ERRORBAR:
       %

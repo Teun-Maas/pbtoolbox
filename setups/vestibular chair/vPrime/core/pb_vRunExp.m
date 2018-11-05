@@ -119,9 +119,9 @@ function updateTrial(handles)
    %  Updates the trial information to the GUI
    
    tn = handles.cfg.trialnumber;
-   handles.figure1.Name = ['vPrime - ' num2str(tn(2)) '/' num2str(handles.cfg.Trials) ' Trials'];       % counting title
+   handles.figure1.Name = ['vPrime - ' num2str(tn(2)) '/' num2str(handles.cfg.Trials) ' Trials'];        % counting title
 
-   str = num2str(tn(1),'%03d');                                                                       % blocktrial
+   str = num2str(tn(1),'%03d');                                                                          % blocktrial
    set(handles.Tn,'string',str);
 end
 

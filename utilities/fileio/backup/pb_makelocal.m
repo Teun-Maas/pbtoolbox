@@ -11,7 +11,7 @@ function pb_makelocal(varargin)
    local = pb_keyval('destination',varargin,[pb_datapath filesep user]);
    
    srv   = pb_keyval('server',varargin,'mbaudit5');
-   srv   = ['~/Volumes/' srv];
+   srv   = ['~/sharename/'];
    
    if ~exist(srv,'dir')
       disp('Server cannot be found. Please first mount server (pb_mountserver).');
