@@ -16,7 +16,7 @@ function pb_initializetoolbox()
    clc; disp('Initializing ProgrammeerBeerToolbox...');
    
    pbpath = strrep(which('pb_initializetoolbox.m'),'pb_initializetoolbox.m','');
-   text = fileread([pbpath 'documentation/templates/template_startup.txt']);
+   text = fileread([pbpath 'documentation' filesep 'templates' filesep 'template_startup.txt']);
    
    disp([newline '   - localising startup.m']);
    if isempty(fstartup)

@@ -2,6 +2,6 @@
 %  these lines will add the PBToolbox functions to your userpath 
 %  and initialize your matlab during startup.
 
-pbpath = '/Users/jjheckman/Documents/Code/Gitlab/pbtoolbox';
+pbpath = [PBPATH]
 addpath(genpath(pbpath));
 pb_initialize;
