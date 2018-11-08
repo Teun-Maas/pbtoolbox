@@ -11,8 +11,8 @@ Random	0	% 0=no, 1=per set, 2=all trials
 Motor		n
 Lab		5
 
-% AX 	SIG AMP DUR	
-%			edg	bit	Event	Time	Event	Time
+% AX 	SIG AMP DUR	FREQ
+%			
 
 % MOD	X	Y	ID	INT	On	On	Off	Off	Event
 %			edg	bit	Event	Time	Event	Time

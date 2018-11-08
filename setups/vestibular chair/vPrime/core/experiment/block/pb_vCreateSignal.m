@@ -60,22 +60,18 @@ function [x,t] = VC_sinesignal(dur, SR, freq)
     t = 0:1/SR:dur;
     x = sin(w*t);
     
-    L       =   length(t);
-    x       =   x.* tukeywin(L,0.25)';
+    tsz    	=   length(t);
+    x       =   x .* tukeywin(tsz,0.25)';
 end
 
 function [x,t] = VC_predictedsine(dur, SR, freq) %%% <--- TO DO: FIX THE TRANSFER FUNCTION!!
     % function generates a perfect sine output
     
-    a = 1.39;
-    b = 1.4;
-    w = freq*2*pi;
-    
     t = 0:1/SR:dur;
-    x = (b*sin(w*t) + w*cos(w*t))/a;
+    xfun       = pb_y2x();
     
-    L       =   length(t);
-    x       =   x.* tukeywin(L,0.25)';
+    tsz        =   length(t);
+    x          =   xfun(1,freq,t) .* tukeywin(tsz,0.25)';
 end
 
 function [x,t]  = VC_turnsignal(dur, SR)
@@ -85,6 +81,7 @@ function [x,t]  = VC_turnsignal(dur, SR)
     v = randn(1,1);
     x = v*t;
 end
+
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %

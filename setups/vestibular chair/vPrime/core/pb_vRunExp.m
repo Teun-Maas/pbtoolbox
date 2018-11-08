@@ -61,7 +61,7 @@ function pb_vRunExp(handles)
       
       for iTrl = 1:nTrials
          % Runs all trials within one block
-  
+         
          % setup trial
          updateTrial(handles);
          stim                 = handles.block(iBlck).trial(iTrl).stim;

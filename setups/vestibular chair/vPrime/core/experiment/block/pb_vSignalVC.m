@@ -15,6 +15,10 @@ function [Dat,profile,dur] = pb_vSignalVC(handles)
    signal(1)   = block(bnumber).signal.ver;
    signal(2)   = block(bnumber).signal.hor;     
    signal      = pb_vSafety(signal); 
+   
+   for iSig = 1:2
+      if strcmp(signal(iSig).type,'sine'); signal(iSig).type = 'predictsine'; end
+   end
 
    %% CREATE BASIC SIGNAL
    vSignal     = pb_vCreateSignal(1, signal(1).duration, 10, signal(1).frequency, signal(1).type);
