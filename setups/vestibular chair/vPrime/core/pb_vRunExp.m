@@ -108,7 +108,7 @@ function pb_vRunExp(handles)
    %  finalizes experiment, and resets handles.
    
    %  check out experiment
-   pb_vEndExp(handles.cfg);
+   pb_vEndExp;
    pb_vStoreBlockDat(handles.cfg, Dat);
    pb_vInitialize(handles, false);
    toc(experimentTime)

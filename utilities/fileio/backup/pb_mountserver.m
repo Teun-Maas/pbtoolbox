@@ -1,4 +1,4 @@
-function pb_mountserver(varargin)
+function [sn] = pb_mountserver(varargin)
 % PB_MOUNTSERVER(varargin)
 %
 % PB_MOUNTSERVER(varargin) mounts server for pulling or storing data. TO
@@ -9,11 +9,14 @@ function pb_mountserver(varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
    srv      = pb_keyval('server',varargin,'mbaudit5');
+   prfx     = '';
+   
    cin      = ['mount -t smbfs //' getcredentials(srv) '@' srv '-srv.science.ru.nl/' srv '/ ~/sharename/'];
    [s,cout] = system(cin);
    
    if s > 0 && s ~= 64; disp(cout); end
-   if s == 64; system('umount ~/sharename/'); end
+   if s == 64; system('umount ~/sharename/'); prfx = 'un'; end
+   disp([newline srv ' is ' prfx 'mounted.' newline])
 end
 
 function auth = getcredentials(srv)
