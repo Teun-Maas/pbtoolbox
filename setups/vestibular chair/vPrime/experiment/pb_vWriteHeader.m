@@ -15,6 +15,9 @@ function pb_vWriteHeader(fid,datdir,ITI,Nblcks,Ntrls,Rep,Rnd,Mtr,varargin)
    fprintf(fid,'%s\n','%');
    fprintf(fid,'%s\n',['%% Experiment: C:\DATA\' datdir]);
    fprintf(fid,'%s\n','%');
+   fprintf(fid,'\n');
+   fprintf(fid,'%s %s\n','%%','HEADER');
+   
    fprintf(fid,'%s\t\t%d\t%d\n','ITI',ITI(1),ITI(2));
    fprintf(fid,'%s\t%d\n','Blocks',Nblcks);
    fprintf(fid,'%s\t%d\n','Trials',Ntrls);
@@ -32,7 +35,7 @@ function pb_vWriteHeader(fid,datdir,ITI,Nblcks,Ntrls,Rep,Rnd,Mtr,varargin)
    fprintf(fid,'%s %s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n','%','MOD','X','Y','ID','INT','On','On','Off','Off','Event');
    fprintf(fid,'%s\t\t\t%s\t%s\t%s\t%s\t%s\t%s\n','%','edg','bit','Event','Time','Event','Time');
    fprintf(fid,'\n');
-   fprintf(fid,'%% BODY');
+   fprintf(fid,'%s %s','%%','BODY');
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

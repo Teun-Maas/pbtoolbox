@@ -1,17 +1,17 @@
-function pb_vWriteTrial(fid,trlIdx)
-% PB_VWRITETRIAL(fid, trlIdx)
+function pb_vWriteSignal(fid,block)
+% PB_VWRITESIGNAL(fid,block)
 %
-% PB_VWRITETRIAL(fid, trlIdx) writes trial announcement in expfile.
+% PB_VWRITESIGNAL(fid,block)  ...
 %
-% See also PB_VGENVISEXP, PB_VWRITEBLOCK
+% See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   if nargin < 2; trlIdx = 0; end
+   h  = block.Horizontal;
+   v  = block.Vertical;
    
-   fprintf(fid,'\n');
-   fprintf(fid,'%s\n',['% Trial: ' num2str(trlIdx)]);
-   fprintf(fid,'%s\n','==>');
+   fprintf(fid,'%s\t\t%d\t%d\t%d\t%0.1f\n','HOR',h.Signal,h.Amplitude,h.Duration,h.Frequency);
+   fprintf(fid,'%s\t\t%d\t%d\t%d\t%0.1f\n','VER',v.Signal,v.Amplitude,v.Duration,v.Frequency);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
