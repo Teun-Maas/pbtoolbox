@@ -9,6 +9,8 @@ function signal = pb_vSafety(signal)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   %% TODO: CONTROL SPEED OF EXPERIMENT (DIFF(SIGNAL))
+
    vAx = {'Vertical','Horizontal'};
 
    for iAx = 1:2
