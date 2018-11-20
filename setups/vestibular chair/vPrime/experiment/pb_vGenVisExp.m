@@ -79,7 +79,7 @@ function pb_vGenVisExp(varargin)
    
    modality       = 2;        % 2=VISUAL
    int				= [50];     % w/ [i1, i2, i3...]
-   dur            = [500];    % stim duration in ms
+   dur            = [1 3 5 10 30];    % stim duration in ms
    col            = [1];      % w/ [R,G]
    
    [X,~,~]                 = ndgrid(X,0,col,int,dur);
@@ -142,7 +142,8 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
       pb_vWriteBlock(fid,iBlock);
       pb_vWriteSignal(fid,block(iBlock));
       
-      pl = randperm(trialsz);       % randomize trialorder in blocks
+      pl    = 1:trialsz;
+      %pl    = randperm(trialsz);       % randomize trialorder in blocks
       
       for iTrial = 1:trialsz
          %  Write trials
@@ -159,11 +160,10 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
          VIS.EventOff   = 0; 
          VIS.Offset     = VIS.Onset + dur(pl(iTrial));
          
-         VIS = pb_vFixLed(VIS,fixled,'x',fixled.x,'y',fixled.y,'dur',fixled.dur);
-
-         pb_vWriteStim(fid,2,[],VIS);
+         VIS      = pb_vFixLed(VIS,fixled,'x',fixled.x,'y',fixled.y,'dur',fixled.dur);
+         trlIdx 	= trlIdx+1;
          
-         trlIdx      = trlIdx+1;
+         pb_vWriteStim(fid,2,[],VIS);
       end
    end
    fclose(fid);

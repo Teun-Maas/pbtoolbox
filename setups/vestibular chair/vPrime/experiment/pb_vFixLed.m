@@ -27,11 +27,11 @@ function VIS = pb_vFixLed(VIS,fixled,varargin)
    c = 1;
    for i = length(VIS)-1
       if VIS(c).EventOn == VIS(c+1).EventOn
+         stimdur           = VIS(c+1).Offset-VIS(c+1).Onset;
          VIS(c+1).Onset    = VIS(c).Onset + dur;
-         %VIS(c+1).Offset   = VIS(c).Offset + dur;
       end
       if VIS(c).EventOff == VIS(c+1).EventOff
-         %VIS(c+1).Offset   = VIS(c+1).Offset + dur;
+         VIS(c+1).Offset   = VIS(c+1).Onset + stimdur;
       end
       c=c+1;
    end
@@ -43,4 +43,3 @@ end
 %       Written by: Jesse J. Heckman (2018)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-
