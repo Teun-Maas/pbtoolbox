@@ -27,7 +27,7 @@ function handles = pb_getblock(handles)
    handles.cfg          = cfg;
 end
 
-function td = getduration(block)
+function td = getdurations(block)
    % extracts trial and block dur 
    stimarr = [];
    
