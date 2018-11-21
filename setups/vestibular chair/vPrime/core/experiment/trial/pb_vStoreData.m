@@ -1,4 +1,4 @@
-function handles = pb_vStoreData(handles, data)
+function handles = pb_vStoreData(handles, data,stim)
 % PB_VSTOREDATA(HANDLES, DATA)
 %
 % PB_VSTOREDATA(HANDLES, DATA)  stores all the trial data and configurements 
@@ -15,21 +15,21 @@ function handles = pb_vStoreData(handles, data)
    fname             = [prefix '-' num2str(cfg.trialnumber(2),'%04d') '.vc'];
    
    data = data;                        %% TO DO: <-- FIX: SELECT DATA FOR TRIAL ONLY
-   beta  = setCFG(cfg);                %% TO DO: <-- FIX: SELECT CFGs FOR TRIAL ONLY
+   beta  = setCFG(cfg,stim);                %% TO DO: <-- FIX: SELECT CFGs FOR TRIAL ONLY
    
    save(fname,'data', 'beta', '-mat');
    
    handles.cfg = cfg;
 end
 
-function beta = setCFG(cfg)
+function beta = setCFG(cfg,stim)
    % stores relevant handles into a new trial cfg
    
    beta   = struct('blocknumber',[],...
                   'trialnumber',[],...
                   'vestibularsignal',[],...
                   'nstim',[],...
-                  'stim',[]);
+                  'stim',stim);
                
    beta.blocknumber = cfg.blocknumber;
    beta.trialnumber = cfg.trialnumber;

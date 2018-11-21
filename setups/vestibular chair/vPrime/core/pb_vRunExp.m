@@ -65,14 +65,14 @@ function pb_vRunExp(handles)
          % setup trial
          updateTrial(handles);
          stim                 = handles.block(iBlck).trial(iTrl).stim;
-         handles.cfg          = pb_vClearTrial(stim,handles.cfg); 
+         handles.cfg          = pb_vClearTrial(stim, handles.cfg); 
          [stim, handles.cfg]  = pb_vSetupTrial(stim, handles.cfg);
          trialTime            = tic;
          
-         pb_vRunTrial(handles.cfg, stim);
+         pb_vRunTrial(handles.cfg.zBus, handles.cfg.trialdur);
          pb_vTraces(handles);       
          
-         handles        = pb_vStoreData(handles, sig);
+         handles        = pb_vStoreData(handles, sig, stim);
          handles.cfg    = updateCount(handles.cfg,'trial','count');
          toc(trialTime)
       end

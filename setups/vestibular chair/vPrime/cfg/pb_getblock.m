@@ -20,9 +20,27 @@ function handles = pb_getblock(handles)
    %% Correct Block
    block                = pb_vPrimeZ(block,cfg);
    
+   %% Timing
+   cfg.trialdur         = getdurations(block);                             % sets trialdur
+
    handles.block        = block;
    handles.cfg          = cfg;
 end
+
+function td = getduration(block)
+   % extracts trial and block dur 
+   stimarr = [];
+   
+   blocksz = length(block);
+   for bidx = 1:blocksz
+      trialsz = length(block(bidx).trial);
+      for tidx = 1:trialsz
+         stimarr(end+1) = block(bidx).trial(tidx).stim(end).offdelay;
+      end
+   end
+   td = ceil(max(stimarr)/500)/2;                                          % rounds up max trial duration with .5 precision
+end
+
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
@@ -30,4 +48,5 @@ end
 %       Written by: Jesse J. Heckman (2018)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
 
