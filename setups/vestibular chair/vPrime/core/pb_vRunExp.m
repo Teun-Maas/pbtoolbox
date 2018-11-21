@@ -72,7 +72,7 @@ function pb_vRunExp(handles)
          pb_vRunTrial(handles.cfg.zBus, handles.cfg.trialdur);
          pb_vTraces(handles);       
          
-         handles        = pb_vStoreData(handles, sig, stim);
+         handles        = pb_vStoreData(handles, sig);
          handles.cfg    = updateCount(handles.cfg,'trial','count');
          toc(trialTime)
       end
