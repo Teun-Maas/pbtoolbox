@@ -24,7 +24,7 @@ function pb_vRunExp(handles)
    %  set block information
    block          = handles.block;  
    nblocks        = handles.cfg.Blocks;
-   Dat(nblocks)   = struct('VS',[],'EV',[],'PL_Gaze',[],'PL_Python',[],'PL_Primitive',[],'OT_Rigid',[]);
+   Dat(nblocks)   = struct('VS',[],'EV',[],'PL_Gaze',[],'PL_Python',[],'PL_Primitive',[],'OT_Rigid',[],'BlockInfo',[]);
    
    %  initialize recordings
    rc             = pb_runPupil; 
@@ -99,6 +99,7 @@ function pb_vRunExp(handles)
       Dat(iBlck).PL_Gaze      = streams(3).read;
       Dat(iBlck).PL_Primitive = streams(4).read;
       Dat(iBlck).OT_Rigid     = streams(5).read;
+      Dat(iBlck).BlockInfo    = handles.block(iBlck);
 
       %  update block information
       handles.cfg = updateCount(handles.cfg,'block','count');

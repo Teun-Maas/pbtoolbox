@@ -13,6 +13,7 @@ function VIS = pb_vFixLed(VIS,fixled,varargin)
    x     = pb_keyval('x',varargin,0);
    y     = pb_keyval('y',varargin,0);
    dur   = pb_keyval('dur',varargin,500);
+   ps    = pb_keyval('pause',varargin,200);
    
    VIS(end+1)  = VIS;
    
@@ -28,7 +29,7 @@ function VIS = pb_vFixLed(VIS,fixled,varargin)
    for i = length(VIS)-1
       if VIS(c).EventOn == VIS(c+1).EventOn
          stimdur           = VIS(c+1).Offset-VIS(c+1).Onset;
-         VIS(c+1).Onset    = VIS(c).Onset + dur;
+         VIS(c+1).Onset    = VIS(c).Onset + dur + ps;
       end
       if VIS(c).EventOff == VIS(c+1).EventOff
          VIS(c+1).Offset   = VIS(c+1).Onset + stimdur;

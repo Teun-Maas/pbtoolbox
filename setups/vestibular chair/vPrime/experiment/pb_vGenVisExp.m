@@ -29,7 +29,7 @@ function pb_vGenVisExp(varargin)
    %% Desired azimuth and elevation
    
    %  Select target ranges
-   maxAbsAz       = 5;
+   maxAbsAz       = 45;
    maxAbsEl       = 0;
    
    %  Possible targets
@@ -79,7 +79,7 @@ function pb_vGenVisExp(varargin)
    
    modality       = 2;        % 2=VISUAL
    int				= [50];     % w/ [i1, i2, i3...]
-   dur            = [1 3 5 10 30];    % stim duration in ms
+   dur            = [1];    % stim duration in ms
    col            = [1];      % w/ [R,G]
    
    [X,~,~]                 = ndgrid(X,0,col,int,dur);
@@ -100,7 +100,7 @@ function pb_vGenVisExp(varargin)
    block(1).Horizontal  = struct('Amplitude',15,'Signal',1,'Duration',60,'Frequency',.1);
    block(1).Vertical    = struct('Amplitude',25,'Signal',2,'Duration',60,'Frequency',.1);
    block(2).Horizontal  = struct('Amplitude',50,'Signal',2,'Duration',30,'Frequency',.1);
-   block(2).Vertical    = struct('Amplitude',15,'Signal',1,'Duration',60,'Frequency',.5);
+   block(2).Vertical    = struct('Amplitude',15,'Signal',1,'Duration',60,'Frequency',.1);
 
    %% Save data somewhere
    writeexp(expfile,datdir,X,Y,int,dur,block,fixled); 
