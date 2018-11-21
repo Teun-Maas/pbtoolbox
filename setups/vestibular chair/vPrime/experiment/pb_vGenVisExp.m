@@ -76,6 +76,7 @@ function pb_vGenVisExp(varargin)
    fixled.x       = 0;
    fixled.y       = 0;
    fixled.dur     = 2000;
+   fixled.pause   = 200;
    
    modality       = 2;        % 2=VISUAL
    int				= [50];     % w/ [i1, i2, i3...]
@@ -94,13 +95,25 @@ function pb_vGenVisExp(varargin)
    %% Number and size
    Sz				= size(X);
    N				= Sz(1); % number of trials
+   
+   maxtrialdur    = fixled.bool*(fixled.dur + fixled.pause) + max(dur);
+   maxtrialdur    = ceil(maxtrialdur/500)/2;
 
-   %% Block Information
+   %% Vestibular blocks
+   
+   BD        = 60;                           % block duration in seconds
+   bdureff         = BD-12;                  % start & stop
+   trialsinblock  = bdureff / (maxtrialdur+1);    % trials per block
+   BD             = ceil(N*(maxtrialdur+1) + 12);
+   
+   blockconditions = [];
+   
+   nblockreps      = N/trialsinblock;
 
-   block(1).Horizontal  = struct('Amplitude',15,'Signal',1,'Duration',60,'Frequency',.1);
-   block(1).Vertical    = struct('Amplitude',25,'Signal',2,'Duration',60,'Frequency',.1);
-   block(2).Horizontal  = struct('Amplitude',50,'Signal',2,'Duration',30,'Frequency',.1);
-   block(2).Vertical    = struct('Amplitude',15,'Signal',1,'Duration',60,'Frequency',.1);
+   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
+   block(1).Vertical    = struct('Amplitude', 25, 'Signal', 2, 'Duration',  BD,   'Frequency',.1);
+   block(2).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
+   block(2).Vertical    = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
 
    %% Save data somewhere
    writeexp(expfile,datdir,X,Y,int,dur,block,fixled); 
@@ -108,8 +121,12 @@ function pb_vGenVisExp(varargin)
 
    %% Show the exp-file in Wordpad
    % for PCs
-   if ispc && showexp
-      dos(['"C:\Program Files\Windows NT\Accessories\wordpad.exe" ' expfile ' &']);
+   if showexp
+      if ispc
+         dos(['"C:\Program Files\Windows NT\Accessories\wordpad.exe" ' expfile ' &']);
+      elseif ismac
+         system(['open -a TextWrangler ' cd filesep expfile]);
+      end
    end
 end
 
@@ -142,8 +159,8 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
       pb_vWriteBlock(fid,iBlock);
       pb_vWriteSignal(fid,block(iBlock));
       
-      pl    = 1:trialsz;
-      %pl    = randperm(trialsz);       % randomize trialorder in blocks
+      %pl    = 1:trialsz;
+      pl    = randperm(trialsz);       % randomize trialorder in blocks
       
       for iTrial = 1:trialsz
          %  Write trials
@@ -160,7 +177,7 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
          VIS.EventOff   = 0; 
          VIS.Offset     = VIS.Onset + dur(pl(iTrial));
          
-         VIS      = pb_vFixLed(VIS,fixled,'x',fixled.x,'y',fixled.y,'dur',fixled.dur);
+         VIS      = pb_vFixLed(VIS,fixled,'x',fixled.x,'y',fixled.y,'dur',fixled.dur,'pause',fixled.pause);
          trlIdx 	= trlIdx+1;
          
          pb_vWriteStim(fid,2,[],VIS);

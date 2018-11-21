@@ -13,6 +13,9 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
    D(N) = struct;
    for i = 1:N
       switch type
+         case 'none'
+            [D(i).x,D(i).t] = VC_turnsignal(dur, SR);
+            D(i).x = D(i).x .* 0;
          case 'noise' 
             [D(i).x,D(i).t] = VC_noisesignal(0, dur, SR);
          case 'sine'
@@ -78,8 +81,14 @@ function [x,t]  = VC_turnsignal(dur, SR)
     % function will create turn signal of length dur
     
     t = 0:1/SR:dur;
-    v = randn(1,1);
-    x = v*t;
+    x = t;
+    
+%     dx = diff(x);
+%     
+%     dxsz = length(ds);
+%     
+%     tsz        =   length(t);
+%     x = t .* tukeywin(tsz,0.25)';
 end
 
  
