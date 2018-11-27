@@ -1,7 +1,7 @@
 function handles = pb_vStoreData(handles, data)
-% PB_VSTOREDATA(HANDLES, DATA)
+% PB_VSTOREDATA
 %
-% PB_VSTOREDATA(HANDLES, DATA)  stores all the trial data and configurements 
+% PB_VSTOREDATA(handles, data)  stores all the trial data and configurements 
 % on a trial basis in organized vc-files.
 %
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP, PB_TDTINIT

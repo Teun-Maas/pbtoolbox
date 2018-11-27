@@ -1,7 +1,7 @@
 function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
-% PB_VCREATESIGNAL(N, DUR, SR, FREQ, TYPE, VARARGIN)
+% PB_VCREATESIGNAL
 %
-% PB_VCREATESIGNAL(N, DUR, SR, FREQ, TYPE, VARARGIN) creates an unscaled
+% PB_VCREATESIGNAL(N, dur, SR, freq, type, varargin) creates an unscaled
 % signal for the vestibular chair.
 %
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP, PB_VSIGNALVC.

@@ -1,7 +1,7 @@
 function handles = pb_createdir(handles)
-% PB_CREATEDIR(HANDLES)
+% PB_CREATEDIR
 %
-% PB_CREATEDIR(HANDLES) checks if intended data directory exists, and, 
+% PB_CREATEDIR(handles) checks if intended data directory exists, and, 
 % if not, makes directory. Furthermore, a quick check is done to see if
 % there is already existing data in this folder to prevent loss of data.
 %

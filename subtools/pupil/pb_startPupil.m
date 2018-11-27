@@ -1,9 +1,10 @@
 function rc = pb_startPupil(rc)
-% PB_STARTPUPIL(rc)
+% PB_STARTPUPIL
 %
-% PB_STARTPUPIL(rc) starts recording a remotely controlled pupil object.
+% PB_STARTPUPIL(rc) starts a recording eye data using a remotely controlled 
+% pupil object.
 %
-% See also pb_runPupil
+% See also PB_RUNPUPIL, PB_STOPPUPIL, PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

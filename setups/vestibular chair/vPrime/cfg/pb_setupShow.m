@@ -1,7 +1,7 @@
 function pb_setupShow(handles)
-% PB_SETUPSHOW(HANDLES)
+% PB_SETUPSHOW
 %
-% PB_SETUPSHOW(HANDLES) sets up axes for vPrime GUI.
+% PB_SETUPSHOW(handles) sets up axes for vPrime GUI.
 %
 % See also PB_VPRIMEGUI, PB_VPRIME, PB_VRUNEXP
 

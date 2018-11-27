@@ -1,10 +1,10 @@
 function pb_vTraces(handles)
-% PB_VTRACES(HANDLES)
+% PB_VTRACES
 %
-% PB_VTRACES(HANDLES) updates the trace velocity plots of eye and head in
+% PB_VTRACES(handles) updates the trace velocity plots of eye and head in
 % GUI.
 %
-% See also ...
+% See also PB_VRUNEXP, PB_VPRIMEGUI.
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

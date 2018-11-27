@@ -1,7 +1,7 @@
 function [fname, path] = pb_getfile(varargin)
-% PB_GETFILE(VARARGIN)
+% PB_GETFILE
 %
-% PB_GETFILE(VARARGIN) returns selected file from gui. Default input
+% PB_GETFILE(varargin) returns selected file from gui. Default input
 % for directory is userpath.
 %
 % See also PB_GETDIR

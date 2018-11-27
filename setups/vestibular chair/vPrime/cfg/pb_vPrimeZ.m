@@ -1,7 +1,7 @@
 function block = pb_vPrimeZ(block,cfg)
-% PB_VPRIMEZ(BLOCK, CFG)
+% PB_VPRIMEZ
 %
-% PB_VPRIMEZ(BLOCK, CFG) adds additional fields to 'block' in order to
+% PB_VPRIMEZ(block, cfg) adds additional fields to 'block' in order to
 % allow for TDT control of correct LSCs during experimentation. 
 %
 % See also PB_VPRIME, PB_VPRIME, PB_VRUNEXP, PB_GETBLOCK, PB_VREADEXP

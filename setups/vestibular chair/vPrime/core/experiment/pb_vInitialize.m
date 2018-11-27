@@ -1,7 +1,7 @@
 function handles = pb_vInitialize(handles, initialize)
-% PB_VINITIALIZE(HANDLES, INITIALIZE)
+% PB_VINITIALIZE
 %
-% PB_VINITIALIZE(HANDLES, INITIALIZE) interacts with GUI and command window 
+% PB_VINITIALIZE(handles, initialize) interacts with GUI and command window 
 % during check in/out of experiment. 
 %
 % See also PB_VPRIME, PB_VPRIME, PB_VRUNEXP.

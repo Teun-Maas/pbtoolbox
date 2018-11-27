@@ -1,7 +1,7 @@
 function handles = pb_getblock(handles)
-% PB_GETBLOCK(HANDLES)
+% PB_GETBLOCK
 %
-% PB_GETBLOCK(HANDLES) retracts block info provided by the exp file. 
+% PB_GETBLOCK(handles) retracts block info provided by the exp file. 
 %
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP.
 

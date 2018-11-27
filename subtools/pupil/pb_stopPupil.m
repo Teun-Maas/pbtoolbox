@@ -1,5 +1,5 @@
 function pb_stopPupil(rc)
-% PB_STOPPUPIL(rc)
+% PB_STOPPUPIL
 %
 % PB_STOPPUPIL(rc)  stops the recording of a remotely controlled pupil
 % object.

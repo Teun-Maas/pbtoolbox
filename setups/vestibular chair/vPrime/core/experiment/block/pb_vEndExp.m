@@ -1,9 +1,9 @@
 function pb_vEndExp
-% PB_VENDEXP()
+% PB_VENDEXP
 %
-% PB_VENDEXP()  ...
+% PB_VENDEXP ends experiment, displays lightshow and turns lights off.
 %
-% See also ...
+% See also PB_VRUNEXP.
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

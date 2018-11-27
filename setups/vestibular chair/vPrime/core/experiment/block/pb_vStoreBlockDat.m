@@ -1,9 +1,9 @@
 function pb_vStoreBlockDat(cfg, Dat)
-% PB_VSTOREBLOCKDAT()
+% PB_VSTOREBLOCKDAT
 %
-% PB_VSTOREBLOCKDAT()  ...
+% PB_VSTOREBLOCKDAT(cfg, Dat)  stores 'Dat' Data in files.
 %
-% See also ...
+% See also PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

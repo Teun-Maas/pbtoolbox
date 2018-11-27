@@ -1,7 +1,7 @@
 function path = pb_getdir(varargin)
-% PB_GETDIR(VARARGIN)
+% PB_GETDIR
 %
-% PB_GETDIR(VARARGIN) returns selected directory from gui. Default input
+% PB_GETDIR(varargin) returns selected directory from gui. Default input
 % for directory is userpath
 %
 % See also PB_GETFILE

@@ -1,5 +1,5 @@
 function rc = pb_runPupil(varargin)
-% PB_RUNPUPIL(varargin)
+% PB_RUNPUPIL
 %
 % PB_RUNPUPIL(varargin) sets javaclasspath, and initializes remote control pupillabs. 
 %

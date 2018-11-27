@@ -1,12 +1,23 @@
 function pb_vGenVisExp(varargin)
-% PB_VGENEXP()
+% PB_VGENVISEXP
 %
-% PB_VGENEXP() will generate an EXP-file for a default localization experiment. 
+% PB_VGENVISEXP(varargin) will generate an EXP-file for a default localization experiment. 
 % EXP-files are used for the psychophysical experiments at the
 % Biophysics Department of the Donders Institute for Brain, Cognition and
 % Behavior of the Radboud University Nijmegen, the Netherlands.
 %
-% See also ... See also WRITESND, WRITELED, WRITETRG, GENWAV_DEFAULT, etc
+% VESTIBULAR STIMULATION PARAMETERS:
+%
+% Vestibular signals:      1) none, 
+%                          2) predict sine, 
+%                          3) noise, 
+%                          4) turn, 
+%                          5) VOR-turnstop.
+%
+% Azimuth rotation:        VER
+% Elevation rotation:      HOR
+%
+% See also WRITESND, WRITELED, WRITETRG, GENWAV_DEFAULT, etc
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

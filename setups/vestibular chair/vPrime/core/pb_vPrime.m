@@ -1,9 +1,10 @@
-function pb_vPrime()
-% PB_VPRIME()
+function pb_vPrime
+% PB_VPRIME
 %
-% PB_VPRIME()  ...
+% PB_VPRIME runs the vPrime Graphic User Interface (GUI). In here you can load
+% and run experiments.
 %
-% See also ...
+% See also PB_VPRIMEGUI, PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

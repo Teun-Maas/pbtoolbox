@@ -1,8 +1,10 @@
 function pb_vRunExp(handles)
-% PB_VRUNEXP(HANDLES)
+% PB_VRUNEXP
 %
-% PB_VRUNEXP(HANDLES) forms the core body of experimental paradigms run in 
+% PB_VRUNEXP(handles) forms the core body of experimental paradigms run in 
 % the VC, and will loop over the blocks and trials provided by the exp-file.
+% Note that PB_VRUNEXP is called from the vPrime GUI, from which it
+% receives its experimental handles.
 %
 % See also PB_VPRIME, PB_VPRIMEGUI.
 
@@ -28,7 +30,7 @@ function pb_vRunExp(handles)
    
    %  initialize recordings
    rc             = pb_runPupil; 
-   [ses,streams]  = pb_runLSL();
+   [ses,streams]  = pb_runLSL;
    experimentTime = tic;
    
    %% START BLOCK 
@@ -51,8 +53,8 @@ function pb_vRunExp(handles)
       
       %  start vestibular chair
       if ~ismac && ~debug      
-         pb_sendServo(profile);
-         vs = pb_startServo;
+         vs = pb_sendServo(profile);
+         pb_startServo(vs);
          pause(6);   blockTime   = tic;                                    % allow vestibular chair to get in sync with input signal
       end
 
@@ -84,9 +86,8 @@ function pb_vRunExp(handles)
       if ~ismac && ~debug  
          elapsedTime = toc(blockTime);                
          if elapsedTime < dur; pause(dur-floor(elapsedTime)); end          % wait untill chair is finished running before disabling.
-
          pb_stopServo(vs);
-         Dat = pb_readServo;
+         Dat = pb_readServo(vs);
       end
 
       %  stop recording

@@ -1,7 +1,7 @@
 function handles = pb_gethandles(handles)
-% PB_GETHANDLES(HANDLES)
+% PB_GETHANDLES
 %
-% PB_GETHANDLES(HANDLES) extracts the set parameters from the GUI and stores
+% PB_GETHANDLES(handles) extracts the set parameters from the GUI and stores
 % them into your handles.
 %
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP

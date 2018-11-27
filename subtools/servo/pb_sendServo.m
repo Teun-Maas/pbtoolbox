@@ -1,14 +1,13 @@
-function pb_sendServo(profile)
-% PB_SENDSERVO()
+function vs = pb_sendServo(profile)
+% PB_SENDSERVO
 %
-% PB_SENDSERVO()  ...
+% PB_SENDSERVO(profile) sends profile signals to servo.
 %
-% See also ...
+% See also PB_STARTSERVO, PB_STOPSERVO, PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    vs   = vs_servo;
    vs.write_profile(profile.v,profile.h);
-   delete(vs);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

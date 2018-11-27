@@ -1,7 +1,7 @@
 function [val, remaining] = pb_keyval(key, varargin)
-% PB_KEYVAL(KEY, VARARGIN)
+% PB_KEYVAL
 %
-% PB_KEYVAL(KEY,VARARGIN) returns the value that corresponds to the requested key in a
+% PB_KEYVAL(key, varargin) returns the value that corresponds to the requested key in a
 % key-value pair list of variable input arguments.
 %
 % See also PB_GETDIR

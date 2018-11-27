@@ -1,7 +1,7 @@
 function cfg = pb_vClearTrial(stim, cfg)
-% PB_VCLEARTRIAL(HANDLES)
+% PB_VCLEARTRIAL
 %
-% PB_VCLEARTRIAL(HANDLES) empties previous trial: data, stimuli, GUI, and
+% PB_VCLEARTRIAL(stim, cfg) empties previous trial: data, stimuli, GUI, and
 % updates the command window.
 %
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP

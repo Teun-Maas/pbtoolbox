@@ -1,9 +1,9 @@
 function cfg = pb_vReadCFG(cfg)
-% PB_VREADCFG()
+% PB_VREADCFG
 %
-% PB_VREADCFG()  ...
+% PB_VREADCFG(cfg) reads cfg parameters for experiment.
 %
-% See also ...
+% See also PB_VREADEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

@@ -1,9 +1,9 @@
 function pb_stopLSL(ses)
-% PB_STOPLSL()
+% PB_STOPLSL
 %
-% PB_STOPLSL()  ...
+% PB_STOPLSL(ses) stops a LSL session.
 %
-% See also ...
+% See also PB_RUNLSL, PB_STARTLSL.
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

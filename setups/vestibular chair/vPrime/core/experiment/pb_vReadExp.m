@@ -1,7 +1,7 @@
 function [block,cfg] = pb_vReadExp(cfg)
-% PB_VREADEXP(CFG)
+% PB_VREADEXP
 %
-% PB_VREADEXP(CFG) reads experimental data from expfile and loads it in 
+% PB_VREADEXP(cfg) reads experimental data from expfile and loads it in 
 % 'block' and 'cfg'.
 %
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP, PB_GETBLOCK
@@ -10,9 +10,9 @@ function [block,cfg] = pb_vReadExp(cfg)
 
    %% INITIALIZE
    
-   expfile = cfg.expfname;
+   expfile     = cfg.expfname;
    if ~pb_fexist(expfile); return; end
-   fid = fopen(expfile,'r');
+   fid         = fopen(expfile,'r');
    
    %% HEADER
    

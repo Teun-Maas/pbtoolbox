@@ -1,7 +1,7 @@
 function [Dat,profile,dur] = pb_vSignalVC(handles)
-% PB_VSIGNALVC(HANDLES)
+% PB_VSIGNALVC
 %
-% PB_VSIGNALVC(HANDLES) reads vestibular signal from handles, writes
+% PB_VSIGNALVC(handles) reads vestibular signal from handles, writes
 % profile, and feeds back the signal to the axes in GUI.
 %
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP

@@ -1,7 +1,7 @@
 function [stim, cfg] = pb_vSetupTrial(stim,cfg)
-% PB_VSETUPTRIAL(STIM, CFG)
+% PB_VSETUPTRIAL
 %
-% PB_VSETUPTRIAL(STIM, CFG) sets up experimental parameters for Trial.
+% PB_VSETUPTRIAL(stim, cfg) sets up experimental parameters for Trial.
 %
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP.
 

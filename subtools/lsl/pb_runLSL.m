@@ -1,7 +1,7 @@
 function [ses,str] = pb_runLSL(varargin)
-% PB_RUNLSL()
+% PB_RUNLSL
 %
-% PB_RUNLSL() creates a LSL session for VC.
+% PB_RUNLSL(varargin) creates a LSL session for VC.
 %
 % See also PB_VRUNEXP
 
