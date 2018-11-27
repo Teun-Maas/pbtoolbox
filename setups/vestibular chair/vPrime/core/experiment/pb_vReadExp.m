@@ -223,7 +223,7 @@ end
 function signal = readVest(line)
    % reads VS signal from the expfile
    
-   types = {'none','sine','noise','turn'};
+   types = {'none','sine','noise','turn','vor'};
    n = str2num(erase(sscanf(line,'%s',2),sscanf(line,'%s',1)));
    type  = types{n};
    signal.type = type;
@@ -231,7 +231,7 @@ function signal = readVest(line)
    if ~strcmp(type,'none')
       signal.amplitude  = str2double(erase(sscanf(line,'%s',3),sscanf(line,'%s',2)));
       signal.duration   = str2double(erase(sscanf(line,'%s',4),sscanf(line,'%s',3)));
-      signal.frequency   = str2double(erase(sscanf(line,'%s',5),sscanf(line,'%s',4)));
+      signal.frequency  = str2double(erase(sscanf(line,'%s',5),sscanf(line,'%s',4)));
    else 
       signal.amplitude  = 0;
       signal.duration   = 0;

@@ -24,6 +24,8 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
             [D(i).x,D(i).t] = VC_predictedsine(dur, SR, freq);
          case 'turn'
             [D(i).x,D(i).t] = VC_turnsignal(dur, SR);
+         case 'vor'
+            [D(i).x,D(i).t] = VC_VOR(dur, SR);
          otherwise
             error('False type specification');
       end
@@ -82,13 +84,17 @@ function [x,t]  = VC_turnsignal(dur, SR)
     
     t = 0:1/SR:dur;
     x = t;
+end
+
+function [x,t]  = VC_VOR(dur, SR)
+    % function will create turn signal of length dur
     
-%     dx = diff(x);
-%     
-%     dxsz = length(ds);
-%     
-%     tsz        =   length(t);
-%     x = t .* tukeywin(tsz,0.25)';
+    t = 0:1/SR:dur;
+    x = t;
+    
+    tsz = length(t);
+    ind = floor(tsz/2);
+    x(ind+1:end) = x(ind);
 end
 
  
