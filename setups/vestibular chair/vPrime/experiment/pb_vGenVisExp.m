@@ -107,7 +107,6 @@ function pb_vGenVisExp(varargin)
    BD             = ceil(N*(maxtrialdur+1)) + 12;
    
    blockconditions = [];
-   
    nblockreps      = N/trialsinblock;
 
    block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
