@@ -104,7 +104,7 @@ function pb_vGenVisExp(varargin)
    BD        = 60;                           % block duration in seconds
    bdureff         = BD-12;                  % start & stop
    trialsinblock  = bdureff / (maxtrialdur+1);    % trials per block
-   BD             = ceil(N*(maxtrialdur+1) + 12);
+   BD             = ceil(N*(maxtrialdur+1)) + 12;
    
    blockconditions = [];
    
@@ -117,10 +117,10 @@ function pb_vGenVisExp(varargin)
    block(2).Vertical    = struct('Amplitude', 25, 'Signal', 2, 'Duration',  BD,   'Frequency',.1);
    
    block(3).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
-   block(3).Vertical    = struct('Amplitude', 25, 'Signal', 2, 'Duration',  BD,   'Frequency',.1);
+   block(3).Vertical    = struct('Amplitude', 25, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
    
    block(4).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
-   block(4).Vertical    = struct('Amplitude', 25, 'Signal', 2, 'Duration',  BD,   'Frequency',.1);
+   block(4).Vertical    = struct('Amplitude', 25, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
 
    %% Save data somewhere
    writeexp(expfile,datdir,X,Y,int,dur,block,fixled); 
