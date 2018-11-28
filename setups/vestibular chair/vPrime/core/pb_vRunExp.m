@@ -53,9 +53,10 @@ function pb_vRunExp(handles)
       
       %  start vestibular chair
       if ~ismac && ~debug      
-         vs = pb_sendServo(profile);
+         vs          = pb_sendServo(profile);
+         blockTime   = tic; 
          pb_startServo(vs);
-         pause(6);   blockTime   = tic;                                    % allow vestibular chair to get in sync with input signal
+         pause(6);                                                         % allow vestibular chair to get in sync with input signal
       end
 
       %% RUN TRIALS
@@ -68,7 +69,7 @@ function pb_vRunExp(handles)
          updateTrial(handles);
          stim                 = handles.block(iBlck).trial(iTrl).stim;
          handles.cfg          = pb_vClearTrial(stim, handles.cfg); 
-         [stim, handles.cfg]  = pb_vSetupTrial(stim, handles.cfg);
+         [~, handles.cfg]     = pb_vSetupTrial(stim, handles.cfg);
          trialTime            = tic;
          
          pb_vRunTrial(handles.cfg.zBus, handles.cfg.trialdur);
@@ -76,7 +77,7 @@ function pb_vRunExp(handles)
          
          handles        = pb_vStoreData(handles, sig);
          handles.cfg    = updateCount(handles.cfg,'trial','count');
-         toc(trialTime)
+         toc(trialTime);
       end
       
       %% END BLOCK

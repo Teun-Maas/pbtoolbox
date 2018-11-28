@@ -12,9 +12,17 @@ function pb_clean(varargin)
    empty    = pb_keyval('clc',varargin,true);
    clr      = pb_keyval('clr',varargin,true);
    
+   if ~islogical(clr)
+      disp('hi')
+   end
+   
    if fig; close all; end
    if empty; clc; end
-   if clr; pb_clear; end
+   if islogical(clr)
+      if clr; pb_clear(); end
+   else
+      pb_clear(clr);
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

@@ -9,14 +9,15 @@ function [sn] = pb_mountserver(varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
    srv      = pb_keyval('server',varargin,'mbaudit5');
+   force    = pb_keyval('force',varargin,false);
    prfx     = '';
-   
+
    cin      = ['mount -t smbfs //' getcredentials(srv) '@' srv '-srv.science.ru.nl/' srv '/ ~/sharename/'];
    [s,cout] = system(cin);
    
    if s > 0 && s ~= 64; disp(cout); end
-   if s == 64; system('umount ~/sharename/'); prfx = 'un'; end
-   disp([newline srv ' is ' prfx 'mounted.' newline])
+   if s == 64 && ~force; system('umount ~/sharename/'); prfx = 'un'; end
+   disp([srv ' is ' prfx 'mounted.' newline])
 end
 
 function auth = getcredentials(srv)
