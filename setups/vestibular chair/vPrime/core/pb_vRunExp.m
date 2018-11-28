@@ -99,9 +99,9 @@ function pb_vRunExp(handles)
       %  store data
       Dat(iBlck).EV           = streams(1).read;
       Dat(iBlck).PL_Python    = streams(2).read;
-      Dat(iBlck).PL_Gaze      = streams(3).read;
-      Dat(iBlck).PL_Primitive = streams(4).read;
-      Dat(iBlck).OT_Rigid     = streams(5).read;
+      %Dat(iBlck).PL_Gaze      = streams(3).read;
+      %Dat(iBlck).PL_Primitive = streams(4).read;
+      Dat(iBlck).OT_Rigid     = streams(3).read;
       Dat(iBlck).BlockInfo    = handles.block(iBlck);
 
       %  update block information

@@ -9,8 +9,8 @@ function [ses,str] = pb_runLSL(varargin)
 
    de = pb_keyval('de', varargin, true);
    pl = pb_keyval('pl', varargin, true);
-   gz = pb_keyval('gz', varargin, true);
-   pd = pb_keyval('pd', varargin, true);
+   gz = pb_keyval('gz', varargin, false);
+   pd = pb_keyval('pd', varargin, false);
    ot = pb_keyval('ot', varargin, true);
    
    tmp = {};
