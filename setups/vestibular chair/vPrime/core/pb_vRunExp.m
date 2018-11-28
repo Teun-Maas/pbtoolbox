@@ -89,6 +89,7 @@ function pb_vRunExp(handles)
          if elapsedTime < dur; pause(dur-floor(elapsedTime)); end          % wait untill chair is finished running before disabling.
          pb_stopServo(vs);
          Dat = pb_readServo(vs);
+         delete(vs);
       end
 
       %  stop recording

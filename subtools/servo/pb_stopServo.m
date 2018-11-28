@@ -9,7 +9,6 @@ function pb_stopServo(vs)
 
    vs.stop;
    vs.disable;
-   delete(vs);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
