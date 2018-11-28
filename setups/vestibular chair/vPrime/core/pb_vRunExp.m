@@ -86,7 +86,7 @@ function pb_vRunExp(handles)
       %  stop vestibular chair
       if ~ismac && ~debug  
          elapsedTime = toc(blockTime);                
-         if elapsedTime < dur; pause(dur-floor(elapsedTime)); end          % wait untill chair is finished running before disabling.
+         if elapsedTime < dur; pause(dur-floor(elapsedTime)+6); end          % wait untill chair is finished running before disabling.
          pb_stopServo(vs);
          Dat = pb_readServo(vs);
          delete(vs);
