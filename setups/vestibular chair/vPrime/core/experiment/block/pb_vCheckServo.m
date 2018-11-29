@@ -1,13 +1,13 @@
-function vs = pb_startServo(vs)
-% PB_STARTSERVO
+function pb_vCheckServo
+% PB_VCHECKSERVO()
 %
-% PB_STARTSERVO(vs) enables and starts the vestibular chair.
+% PB_VCHECKSERVO()  ...
 %
-% See also PB_SENDSERVO, PB_STOPSERVO, PB_READSERVO, PB_VRUNEXP
+% See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   vs.start;
+   answer = questdlg('Please enable Servo before you continue...','Continue');
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

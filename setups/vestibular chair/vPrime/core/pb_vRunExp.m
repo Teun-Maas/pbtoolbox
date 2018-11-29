@@ -52,7 +52,8 @@ function pb_vRunExp(handles)
       pb_startPupil(rc);
       
       %  start vestibular chair
-      if ~ismac && ~debug      
+      if ~ismac && ~debug     
+         pb_vCheckServo;
          vs          = pb_sendServo(profile);
          blockTime   = tic; 
          pb_startServo(vs);
