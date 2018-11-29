@@ -120,16 +120,16 @@ function pb_vGenVisExp(varargin)
    blockconditions = [];
    nblockreps      = N/trialsinblock;
 
-   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
-   block(1).Vertical    = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
+   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
+   block(1).Vertical    = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
    
-   block(2).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
-   block(2).Vertical    = struct('Amplitude', 25, 'Signal', 2, 'Duration',  BD,   'Frequency',.1);
+   block(2).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
+   block(2).Vertical    = struct('Amplitude', 35, 'Signal', 2, 'Duration',  BD,   'Frequency',.1);
    
-   block(3).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
+   block(3).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
    block(3).Vertical    = struct('Amplitude', 25, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
    
-   block(4).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  BD,   'Frequency',.1);
+   block(4).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
    block(4).Vertical    = struct('Amplitude', 25, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
 
    %% Save data somewhere
