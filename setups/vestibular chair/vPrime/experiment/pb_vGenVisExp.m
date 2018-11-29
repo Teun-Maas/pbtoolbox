@@ -86,12 +86,12 @@ function pb_vGenVisExp(varargin)
    fixled.bool    = true;    % do you want a fixation light?
    fixled.x       = 0;
    fixled.y       = 0;
-   fixled.dur     = 2000;
-   fixled.pause   = 200;
+   fixled.dur     = 1000;
+   fixled.pause   = 1000;
    
    modality       = 2;        % 2=VISUAL
    int				= [50];     % w/ [i1, i2, i3...]
-   dur            = [1];    % stim duration in ms
+   dur            = [5];      % stim duration in ms
    col            = [1];      % w/ [R,G]
    
    [X,~,~]                 = ndgrid(X,0,col,int,dur);
@@ -157,7 +157,7 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
 %  Write exp-file with file-name FNAME.
 
    expfile		= fcheckext(expfile,'.exp');  % check whether the extension exp is included
-   fid         = fopen(expfile,'w');         % this is the way to write date to a new file
+   fid         = fopen(expfile,'wt+');         % this is the way to write date to a new file
    
    trialsz     = numel(theta);   	% number of trials
    blocksz     = length(block);     % xnumber of blocks
