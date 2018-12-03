@@ -26,8 +26,8 @@ function pb_vRunExp(handles)
    %  set block information
    block          = handles.block;  
    nblocks        = handles.cfg.Blocks;
-   Dat(nblocks)   = struct('VS',[],'EV',[],'PL_Gaze',[],'PL_Python',[],'PL_Primitive',[],'OT_Rigid',[],'BlockInfo',[]);
-   
+   Dat            = pb_dataobj(nblocks);
+    
    %  initialize recordings
    rc             = pb_runPupil; 
    [ses,streams]  = pb_runLSL;
@@ -44,8 +44,8 @@ function pb_vRunExp(handles)
       handles  	= updateCount(handles,'trial','reset');
       
       %  store signal data
-      [sig,profile,dur]       = pb_vSignalVC(handles);                     % reads, checks, creates & plots vestibular signals
-      Dat(iBlck).VS           = sig;
+      [sig,profile,dur]             = pb_vSignalVC(handles);                     % reads, checks, creates & plots vestibular signals
+      %Dat(iBlck).vestibular_signal  = sig;
       
       %  start recording
       pb_startLSL(ses);
@@ -89,7 +89,7 @@ function pb_vRunExp(handles)
          elapsedTime = toc(blockTime);                
          if elapsedTime < dur; pause(dur-floor(elapsedTime)+6); end          % wait untill chair is finished running before disabling.
          pb_stopServo(vs);
-         Dat = pb_readServo(vs);
+         Dat(iBlck) = pb_readServo(vs, Dat(iBlck));
          delete(vs);
       end
 
@@ -98,12 +98,10 @@ function pb_vRunExp(handles)
       pb_stopLSL(ses); 
       
       %  store data
-      Dat(iBlck).EV           = streams(1).read;
-      Dat(iBlck).PL_Python    = streams(2).read;
-      %Dat(iBlck).PL_Gaze      = streams(3).read;
-      %Dat(iBlck).PL_Primitive = streams(4).read;
-      Dat(iBlck).OT_Rigid     = streams(3).read;
-      Dat(iBlck).BlockInfo    = handles.block(iBlck);
+      Dat(iBlck).event_data    = streams(1).read;
+      Dat(iBlck).pupil_labs    = streams(2).read;
+      Dat(iBlck).optitrack     = streams(3).read;
+      Dat(iBlck).block_info    = handles.block(iBlck);
 
       %  update block information
       handles.cfg = updateCount(handles.cfg,'block','count');

@@ -1,4 +1,4 @@
-function D = pb_readServo(vs)
+function Dat = pb_readServo(vs, Dat)
 % PB_READSERVO
 %
 % PB_READSERVO(vs) reads vestibular in- and output profiles and stores
@@ -11,8 +11,8 @@ function D = pb_readServo(vs)
    [sv.vertical,sv.horizontal] = vs.read_profile_sv;
    [pv.vertical,pv.horizontal] = vs.read_profile_pv;
    
-   D.sv   = sv;
-   D.pv   = pv;
+   Dat.vestibular_signal.sv   = sv;
+   Dat.vestibular_signal.pv   = pv;
    delete(vs);
 end
  
