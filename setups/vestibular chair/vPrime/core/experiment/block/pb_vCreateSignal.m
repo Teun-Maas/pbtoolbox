@@ -44,13 +44,13 @@ function [x,t] = VC_noisesignal(mu, dur, SR)
     x       =   x+randn(length(t),1);
 
     % cheby filtered signal
-    n       =   12; 
+    n       =   10; 
     Ws      =   1;
     Rs      =   80; 
     LPfil   =   designfilt('lowpassiir', 'FilterOrder', n,...
                            'StopbandFrequency', Ws,...
                            'StopbandAttenuation', Rs,...
-                           'SampleRate', 10);                   
+                           'SampleRate', SR);                   
     x  =   filtfilt(LPfil,x);
 
     % tukey window 
