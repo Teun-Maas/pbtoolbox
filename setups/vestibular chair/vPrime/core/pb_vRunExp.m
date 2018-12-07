@@ -24,9 +24,9 @@ function pb_vRunExp(handles)
    handles	= pb_vInitialize(handles, true);
    
    %  set block information
-   block          = handles.block;  
-   nblocks        = handles.cfg.Blocks;
-   Dat            = pb_dataobj(nblocks);
+   block       = handles.block;  
+   nblocks     = handles.cfg.Blocks;
+   Dat         = pb_dataobj(nblocks);
     
    %  initialize recordings
    rc             = pb_runPupil; 
@@ -40,12 +40,9 @@ function pb_vRunExp(handles)
       %  Runs blocks of trials with a vestibular condition
       
       %  set block information
-      nTrials  	= length(block(iBlck).trial);
-      handles  	= updateCount(handles,'trial','reset');
-      
-      %  store signal data
-      [sig,profile,dur]             = pb_vSignalVC(handles);                     % reads, checks, creates & plots vestibular signals
-      %Dat(iBlck).vestibular_signal  = sig;
+      nTrials              = length(block(iBlck).trial);
+      handles              = updateCount(handles,'trial','reset');
+      [sig,profile,dur]    = pb_vSignalVC(handles);
       
       %  start recording
       pb_startLSL(ses);
@@ -117,7 +114,7 @@ function pb_vRunExp(handles)
    toc(experimentTime)
 end
 
-%-- Feedback functions --%
+%-- GUI feedback functions --%
 function updateTrial(handles)
    %  Updates the trial information to the GUI
    

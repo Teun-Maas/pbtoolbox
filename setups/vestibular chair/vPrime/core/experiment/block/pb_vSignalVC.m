@@ -36,8 +36,16 @@ function [Dat,profile,dur] = pb_vSignalVC(handles)
    Dat.v.amplitude   = signal(1).amplitude;
    Dat.h.amplitude   = signal(2).amplitude;
    
-%    dur               = max([signal(1).duration signal(2).duration])+10;    % add 10 extra seconds for delay of the system
-
+   %% CHECK SAFETY FINAL SIGNAL
+   
+   [hSafe,~]      = pb_vCheckVelSignal(Dat.h.x);
+   [vSafe,mvel]   = pb_vCheckVelSignal(Dat.v.x);
+   
+   if ~hSafe || ~vSafe
+      error(['Vestibular signals were not safe! (velocity exceeds ' num2str(mvel) ')']);
+   end
+   
+   
    %% FEEDBACK GUI
    updateBlock(handles, signal);
    
@@ -48,18 +56,21 @@ function [Dat,profile,dur] = pb_vSignalVC(handles)
    cla; hold on; 
    handles.signals.YLim    = [-50 50];
    handles.signals.XLim    = [0 dur];
-
-   plot(Dat.v.t,Dat.v.x,'k');
-   plot(Dat.h.t,Dat.h.x,'b');
+   
+   dv = 10 * [0 diff(Dat.v.x)];
+   dh = 10 * [0 diff(Dat.h.x)];
+   
+   plot(Dat.v.t,dv,'k');
+   plot(Dat.h.t,dh,'b');
 end
 
 function updateBlock(handles, signal)
    % Updates the block information to the GUI
    
-   bn = num2str(handles.cfg.blocknumber,'%03d');                           % count block
+   bn = num2str(handles.cfg.blocknumber,'%03d');
    set(handles.Bn,'string',bn);
    
-   vs = ['V = ' pb_sentenceCase(signal(1).type) ...                        % VC stim
+   vs = ['V = ' pb_sentenceCase(signal(1).type) ...
          ', H = ' pb_sentenceCase(signal(2).type)];
       
    set(handles.Vs,'string',vs);
