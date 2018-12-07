@@ -18,10 +18,10 @@ function pb_vRunExp(handles)
    
    %  set handles
    pb_setupShow(handles);
-   handles	= pb_gethandles(handles);
-   handles 	= pb_getblock(handles);
-   handles 	= pb_createdir(handles);
-   handles	= pb_vInitialize(handles, true);
+   handles     = pb_gethandles(handles);
+   handles     = pb_getblock(handles);
+   handles     = pb_createdir(handles);
+   handles     = pb_vInitialize(handles, true);
    
    %  set block information
    block       = handles.block;  
@@ -29,20 +29,19 @@ function pb_vRunExp(handles)
    Dat         = pb_dataobj(nblocks);
     
    %  initialize recordings
-   rc             = pb_runPupil; 
-   [ses,streams]  = pb_runLSL;
-   experimentTime = tic;
+   rc          = pb_runPupil; 
+   [ses,str]   = pb_runLSL;
+   expTime     = tic;
    
    %% START BLOCK 
    %  iterate experimental blocks 
    
    for iBlck = 1:nblocks
-      %  Runs blocks of trials with a vestibular condition
       
       %  set block information
-      nTrials              = length(block(iBlck).trial);
-      handles              = updateCount(handles,'trial','reset');
-      [sig,profile,dur]    = pb_vSignalVC(handles);
+      nTrials          	= length(block(iBlck).trial);
+      handles          	= updateCount(handles,'trial','reset');
+      [profile,dur]    	= pb_vSignalVC(handles);
       
       %  start recording
       pb_startLSL(ses);
@@ -51,8 +50,9 @@ function pb_vRunExp(handles)
       %  start vestibular chair
       if ~ismac && ~debug     
          pb_vCheckServo;
-         vs          = pb_sendServo(profile);
-         blockTime   = tic; 
+         
+         vs            	= pb_sendServo(profile);
+         blockTime    	= tic; 
          pb_startServo(vs);
          pause(6);                                                         % allow vestibular chair to get in sync with input signal
       end
@@ -61,19 +61,20 @@ function pb_vRunExp(handles)
       %  iterate over trials per block
       
       for iTrl = 1:nTrials
-         % Runs all trials within one block
          
-         % setup trial
+         %  setup trial
          updateTrial(handles);
          stim                 = handles.block(iBlck).trial(iTrl).stim;
          handles.cfg          = pb_vClearTrial(stim, handles.cfg); 
          [~, handles.cfg]     = pb_vSetupTrial(stim, handles.cfg);
          trialTime            = tic;
          
+         %  run trial
          pb_vRunTrial(handles.cfg.zBus, handles.cfg.trialdur);
          pb_vTraces(handles);       
          
-         handles        = pb_vStoreData(handles, sig);
+         %  save trial
+         handles        = pb_vStoreData(handles, profile);
          handles.cfg    = updateCount(handles.cfg,'trial','count');
          toc(trialTime);
       end
@@ -95,9 +96,9 @@ function pb_vRunExp(handles)
       pb_stopLSL(ses); 
       
       %  store data
-      Dat(iBlck).event_data    = streams(1).read;
-      Dat(iBlck).pupil_labs    = streams(2).read;
-      Dat(iBlck).optitrack     = streams(3).read;
+      Dat(iBlck).event_data    = str(1).read;
+      Dat(iBlck).pupil_labs    = str(2).read;
+      Dat(iBlck).optitrack     = str(3).read;
       Dat(iBlck).block_info    = handles.block(iBlck);
 
       %  update block information
@@ -111,7 +112,7 @@ function pb_vRunExp(handles)
    pb_vEndExp;
    pb_vStoreBlockDat(handles.cfg, Dat);
    pb_vInitialize(handles, false);
-   toc(experimentTime)
+   toc(expTime)
 end
 
 %-- GUI feedback functions --%

@@ -14,7 +14,6 @@ function handles = pb_vStoreData(handles, data)
    [~,prefix]        = pb_fext(cfg.fname);
    fname             = [prefix '-' num2str(cfg.trialnumber(2),'%04d') '.vc'];
    
-   data = data;                        %% TO DO: <-- FIX: SELECT DATA FOR TRIAL ONLY
    beta  = setCFG(cfg);                %% TO DO: <-- FIX: SELECT CFGs FOR TRIAL ONLY
    
    save(fname,'data', 'beta', '-mat');
