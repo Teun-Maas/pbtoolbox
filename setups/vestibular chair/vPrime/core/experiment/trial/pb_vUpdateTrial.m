@@ -6,16 +6,15 @@ function handles = pb_vUpdateTrial(handles)
 % See also PB_VPRIME, PB_VPRIMEGUI, PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
-
-
-   %  Updates the trial information to the GUI
    
-   tn = handles.cfg.trialnumber;
-   handles.figure1.Name = ['vPrime - ' num2str(tn(2)) '/' num2str(handles.cfg.Trials) ' Trials'];        % counting title
-
-   str = num2str(tn(1),'%03d');                                                                          % blocktrial
+   cfg   = handles.cfg;
+   fig   = handles.figure1.Name;
+   tn    = cfg.trialnumber;
+   
+   fig   = ['vPrime - ' num2str(tn(2)) '/' num2str(cfg.Trials) ' Trials']; % counting title
+   str   = num2str(tn(1),'%03d');                                          % blocktrial
+   
    set(handles.Tn,'string',str);
- 
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
