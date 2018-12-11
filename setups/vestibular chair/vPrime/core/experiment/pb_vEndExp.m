@@ -27,7 +27,8 @@ function pb_vEndExp
 
    %% Let's run some LEDs instead
 
-   pb_lightshow;
+   leds = ledcontroller_pi('dcn-led06','dcn-led07');
+   pb_lightshow(leds);
 
    %% Mop up
    % Turn off the lights

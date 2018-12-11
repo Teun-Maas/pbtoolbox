@@ -1,7 +1,7 @@
-function pb_lightshow
+function pb_lightshow(leds)
 % PB_LIGHTSHOW
 %
-% PB_LIGHTSHOW turns on the spectecular lightshow.
+% PB_LIGHTSHOW(leds) turns on the spectecular lightshow.
 %
 % See also PB_VENDEXP
 
@@ -16,7 +16,7 @@ function pb_lightshow
    seq1 = [0:2:9 fliplr(16:2:24)];
    seq2 = [1:2:9 fliplr(17:2:24)];
 
-   ir=50;
+   ir=100;
    ig=ir;
    
    for i=1:n
@@ -28,8 +28,7 @@ function pb_lightshow
        s(i).intensity('r', ir);
        s(i).intensity('g', ig);
    end
-
-   leds = ledcontroller_pi('dcn-led06','dcn-led07');
+   
    leds.write(s);
    
    for i=1:n
