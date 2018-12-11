@@ -37,7 +37,7 @@ function pb_vEndExp
    leds.write(t);
    leds.trigger;
    
-   delete([leds,t]);
+   pb_delobj(leds,t);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

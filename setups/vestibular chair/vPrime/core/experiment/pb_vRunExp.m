@@ -113,7 +113,7 @@ function pb_vRunExp(handles)
    pb_vStoreData(handles.cfg, Dat);
    pb_vInitialize(handles, false);
    
-   delete([ses, rc, str]);
+   pb_delobj(ses, rc, str);
    toc(expTime);
 end
 
