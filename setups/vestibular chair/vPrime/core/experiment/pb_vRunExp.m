@@ -110,7 +110,7 @@ function pb_vRunExp(handles)
    
    %  check out experiment
    pb_vEndExp;
-   pb_vStoreBlockDat(handles.cfg, Dat);
+   pb_vStoreData(handles.cfg, Dat);
    pb_vInitialize(handles, false);
    
    delete([ses, rc, str]);
