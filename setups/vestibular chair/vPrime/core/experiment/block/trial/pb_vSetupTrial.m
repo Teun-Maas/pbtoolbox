@@ -22,7 +22,6 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       n		= nled*2; % LEDs need to be turned on and off
       s		= ledpattern(n);
 
-      %%
       cnt		= 0;
       for iLED = 1:nled
          % TDT RZ6
@@ -50,7 +49,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
             cnt = cnt+1;
             if ii==1
                s(cnt).set(led(iLED).Z,cfg.ledcolours{col},1);
-               s(cnt).intensity(cfg.ledcolours{col},led(iLED).intensity); % hoop: range 0-255, sphere range 1-50
+               s(cnt).intensity(cfg.ledcolours{col},led(iLED).intensity); % Vestibular range 0-100;
             else
                s(cnt).set(led(iLED).Z,cfg.ledcolours{col},0);
             end
@@ -89,10 +88,10 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    cfg.maxSamples = maxSamples;
 
    %% Wait for?
-   % This needs some tweaking
    % search for latest event with longest offset
    % which should also include sampling period and sound although this does not have an
    % offevent
+   
    e				= [stim.offevent];
    d				= [stim.offdelay];
    mxevent			= max(e);

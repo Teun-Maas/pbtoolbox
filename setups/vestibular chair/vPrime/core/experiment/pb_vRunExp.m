@@ -74,8 +74,8 @@ function pb_vRunExp(handles)
          pb_vTraces(handles);       
          
          %  save trial
-         handles        = pb_vStoreData(handles, profile);
-         handles.cfg    = pb_updatecount(handles.cfg,'trial','count');
+         handles              = pb_vStoreData(handles, profile);
+         handles.cfg          = pb_updatecount(handles.cfg,'trial','count');
          toc(trialTime);
       end
       
@@ -112,6 +112,8 @@ function pb_vRunExp(handles)
    pb_vEndExp;
    pb_vStoreBlockDat(handles.cfg, Dat);
    pb_vInitialize(handles, false);
+   
+   delete([ses, rc, str]);
    toc(expTime);
 end
 

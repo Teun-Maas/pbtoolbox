@@ -1,4 +1,4 @@
-function pb_vStoreBlockDat(cfg, Dat)
+function pb_vStoreData(cfg, Dat)
 % PB_VSTOREBLOCKDAT
 %
 % PB_VSTOREBLOCKDAT(cfg, Dat)  stores 'Dat' Data in files.
@@ -10,7 +10,6 @@ function pb_vStoreBlockDat(cfg, Dat)
    [~,fn] = pb_fext(cfg.fname);
    file = [cfg.dname filesep 'block_info_' fn '.mat'];
    save(file, 'Dat');
-   
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

@@ -82,10 +82,7 @@ function [block,cfg] = pb_vReadExp(cfg)
             block(bn).trial(tn).stim(sn).modality		= 'LED';
 				block(bn).trial(tn).stim(sn).X            = par(1);
 				block(bn).trial(tn).stim(sn).Y            = par(2);
-
-				block(bn).trial(tn).stim(sn).intensity    = par(3);
-
-				block(bn).trial(tn).stim(sn).intensity    = par(3);  % hoop: range 0-255, sphere range 1-50
+				block(bn).trial(tn).stim(sn).intensity    = par(3);  % vestibular 0-100
 
 				block(bn).trial(tn).stim(sn).onevent		= par(4);
 				block(bn).trial(tn).stim(sn).ondelay		= par(5);

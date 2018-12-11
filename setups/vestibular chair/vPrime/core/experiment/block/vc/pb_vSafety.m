@@ -9,8 +9,6 @@ function signal = pb_vSafety(signal)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   %% TODO: CONTROL SPEED OF EXPERIMENT (DIFF(SIGNAL))
-
    vAx = {'Vertical','Horizontal'};
 
    for iAx = 1:2
@@ -19,9 +17,9 @@ function signal = pb_vSafety(signal)
             warning(['Detected unsafe signal. ' vAx{iAx} ' duration too long!']);
             signal(iAx).duration = 300;
          end
-         if signal(iAx).amplitude > 40/iAx
+         if signal(iAx).amplitude > 100/iAx
             warning(['Detected unsafe signal. ' vAx{iAx} ' amplitude too large!']);
-            signal(iAx).amplitude = 40/iAx;
+            signal(iAx).amplitude = 100/iAx;
          end
         	if signal(iAx).frequency > .3
             warning(['Detected unsafe signal. ' vAx{iAx} ' frequency too high!']);
