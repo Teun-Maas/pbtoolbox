@@ -40,7 +40,7 @@ function pb_vRunExp(handles)
       
       %  set block information
       nTrials          	= length(block(iBlck).trial);
-      handles          	= updateCount(handles,'trial','reset');
+      handles          	= pb_updatecount(handles,'trial','reset');
       [profile,dur]    	= pb_vSignalVC(handles);
       
       %  start recording
@@ -63,7 +63,7 @@ function pb_vRunExp(handles)
       for iTrl = 1:nTrials
          
          %  setup trial
-         updateTrial(handles);
+         handles              = pb_vUpdateTrial(handles);
          stim                 = handles.block(iBlck).trial(iTrl).stim;
          handles.cfg          = pb_vClearTrial(stim, handles.cfg); 
          [~, handles.cfg]     = pb_vSetupTrial(stim, handles.cfg);
@@ -75,7 +75,7 @@ function pb_vRunExp(handles)
          
          %  save trial
          handles        = pb_vStoreData(handles, profile);
-         handles.cfg    = updateCount(handles.cfg,'trial','count');
+         handles.cfg    = pb_updatecount(handles.cfg,'trial','count');
          toc(trialTime);
       end
       
@@ -85,7 +85,7 @@ function pb_vRunExp(handles)
       %  stop vestibular chair
       if ~ismac && ~debug  
          elapsedTime = toc(blockTime);                
-         if elapsedTime < dur; pause(dur-floor(elapsedTime)+6); end          % wait untill chair is finished running before disabling.
+         if elapsedTime < dur; pause(dur-floor(elapsedTime)+6); end        % wait untill chair is finished running before disabling.
          pb_stopServo(vs);
          Dat(iBlck) = pb_readServo(vs, Dat(iBlck));
          delete(vs);
@@ -102,7 +102,7 @@ function pb_vRunExp(handles)
       Dat(iBlck).block_info    = handles.block(iBlck);
 
       %  update block information
-      handles.cfg = updateCount(handles.cfg,'block','count');
+      handles.cfg = pb_updatecount(handles.cfg,'block','count');
    end 
    
    %% CHECK OUT
@@ -112,44 +112,7 @@ function pb_vRunExp(handles)
    pb_vEndExp;
    pb_vStoreBlockDat(handles.cfg, Dat);
    pb_vInitialize(handles, false);
-   toc(expTime)
-end
-
-%-- GUI feedback functions --%
-function updateTrial(handles)
-   %  Updates the trial information to the GUI
-   
-   tn = handles.cfg.trialnumber;
-   handles.figure1.Name = ['vPrime - ' num2str(tn(2)) '/' num2str(handles.cfg.Trials) ' Trials'];        % counting title
-
-   str = num2str(tn(1),'%03d');                                                                          % blocktrial
-   set(handles.Tn,'string',str);
-end
-
-function cfg = updateCount(cfg,varargin)
-   %  Updates the count of trialnumber and block number during experiment
-   
-   %  initializes update information
-   trial = pb_keyval('trial',varargin);
-   block = pb_keyval('block',varargin);
-   
-   %  sets trials
-   if ~isempty(trial)
-      switch trial
-         case 'count'
-            cfg.trialnumber      = cfg.trialnumber+1;
-         case 'reset'
-            cfg.trialnumber(1)   = 1;
-      end
-   end
-   
-   %  sets block
-   if ~isempty(block)
-      switch block
-         case 'count'
-            cfg.blocknumber      = cfg.blocknumber+1;
-      end
-   end
+   toc(expTime);
 end
 
 
