@@ -1,4 +1,4 @@
-function pb_vStoreData(cfg, data)
+function handles = pb_vStoreTrial(handles, data)
 % PB_VSTOREDATA
 %
 % PB_VSTOREDATA(handles, data)  stores all the trial data and configurements 
@@ -8,6 +8,7 @@ function pb_vStoreData(cfg, data)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   cfg = handles.cfg;
    cd([cfg.dname filesep 'trial'])
 
    [~,prefix]        = pb_fext(cfg.fname);
@@ -16,6 +17,8 @@ function pb_vStoreData(cfg, data)
    beta  = setCFG(cfg);                %% TO DO: <-- FIX: SELECT CFGs FOR TRIAL ONLY
    
    save(fname,'data', 'beta', '-mat');
+   
+   handles.cfg = cfg;
 end
 
 function beta = setCFG(cfg)
