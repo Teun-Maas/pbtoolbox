@@ -56,8 +56,8 @@ function [profile,dur] = pb_vSignalVC(handles)
    handles.signals.XLim    = [0 dur];
    
    %  Plot signals
-   dv    = 10 * [0 diff(profile.v)];
-   dh    = 10 * [0 diff(profile.h)];
+   dv    = 10 * [0 diff(profile.v)'];
+   dh    = 10 * [0 diff(profile.h)'];
    t     = sigData.v.t;
    
    plot(t,dv,'k');
