@@ -1,0 +1,55 @@
+%
+%% Experiment: C:\DATA\DEFAULT
+%
+
+%% HEADER
+ITI		0	0
+Blocks	6
+Trials	0
+Repeats	1
+Random	0	% 0=no, 1=per set, 2=all trials
+Motor		n
+Lab		5
+
+% AX	SIG	AMP	DUR	FREQ
+%
+
+% MOD	X	Y	ID	INT	On	On	Off	Off	Event
+%			edg	bit	Event	Time	Event	Time
+
+%% BODY
+~~~
+% Block: 1
+==>
+HOR		3	0	60	0.1
+VER		3	10	60	0.1
+
+~~~
+% Block: 2
+==>
+HOR		5	0	60	0.1
+VER		5	20	60	0.1
+
+~~~
+% Block: 3
+==>
+HOR		3	0	60	0.1
+VER		3	20	60	0.1
+
+~~~
+% Block: 4
+==>
+HOR		5	0	60	0.1
+VER		5	30	60	0.1
+
+~~~
+% Block: 5
+==>
+HOR		3	0	60	0.1
+VER		3	30	60	0.1
+
+~~~
+% Block: 6
+==>
+HOR		5	0	60	0.1
+VER		5	40	60	0.1

@@ -31,7 +31,7 @@ function pb_vGenVisExp(varargin)
    cfn = 0;
 
    showexp     = pb_keyval('showexp',varargin,true);
-   expfile     = pb_keyval('fname',varargin,'default_vc.exp'); 
+   expfile     = pb_keyval('fname',varargin,'VOR.exp'); 
    datdir      = pb_keyval('datdir',varargin,'DEFAULT');
    cdir        = pb_keyval('cdir',varargin,userpath);
    
