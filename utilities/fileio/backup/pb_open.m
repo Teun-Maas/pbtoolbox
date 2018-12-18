@@ -1,9 +1,9 @@
 function cout = pb_open(folder, varargin)
 % PB_OPEN()
 %
-% PB_OPEN()  ...
+% PB_OPEN() opens directory.
 %
-% See also ...
+% See also PB_MOUNTSERVER
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
@@ -12,7 +12,8 @@ function cout = pb_open(folder, varargin)
    end
    
    if exist(folder,'dir')
-      system(['open ' folder])
+      cin = ['open ' folder];
+      cout = system(cin);
    end
 end
  

@@ -10,6 +10,8 @@ function [sn] = pb_mountserver(varargin)
    
    srv      = pb_keyval('server',varargin,'mbaudit5');
    force    = pb_keyval('force',varargin,false);
+   flag     = pb_keyval('flag',varargin,true);
+   
    prfx     = '';
 
    cin      = ['mount -t smbfs //' getcredentials(srv) '@' srv '-srv.science.ru.nl/' srv '/ ~/sharename/'];
@@ -17,7 +19,8 @@ function [sn] = pb_mountserver(varargin)
    
    if s > 0 && s ~= 64; disp(cout); end
    if s == 64 && ~force; system('umount ~/sharename/'); prfx = 'un'; end
-   disp([srv ' is ' prfx 'mounted.' newline])
+   if s == 0 && flag; pb_open; end
+   disp([srv ' is ' prfx 'mounted.' newline]);
 end
 
 function auth = getcredentials(srv)

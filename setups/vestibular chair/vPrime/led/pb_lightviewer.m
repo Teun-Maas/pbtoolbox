@@ -30,10 +30,10 @@ function pb_lightviewer(varargin)
    end
          
    
-   run_show(h,ls,leds,freq);
+   run_show(ls,leds,freq);
 end
 
-function run_show(h,ls,leds,freq)
+function run_show(ls,leds,freq)
    n = 8;
    for idx = 1:n
       if mod(idx,length(ls)) == 0

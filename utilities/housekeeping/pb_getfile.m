@@ -9,9 +9,9 @@ function [fname, path] = pb_getfile(varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
 
-   cdir    = pb_keyval('dir',varargin,userpath);
-   ext     = pb_keyval('ext',varargin,'*.*');
-   title 	= pb_keyval('title',varargin,'Open file...'); % titles have been removed from matlab ui's in OS X - El capitain
+   cdir     = pb_keyval('dir',varargin,cd);
+   ext      = pb_keyval('ext',varargin,'*.*');
+   title    = pb_keyval('title',varargin,'Open file...'); % titles have been removed from matlab ui's in OS X - El capitain
 
    cd(cdir);
 
