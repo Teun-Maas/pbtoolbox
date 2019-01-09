@@ -159,6 +159,19 @@ function pb_nicegraph(varargin)
          'EdgeColor'         , [0 0 0]  , ...
          'FaceAlpha'         , 0.3);
       end
+      
+      % STEM:
+      %
+      % Use as 'primary' data
+      h_stem = pb_fobj(ax(i),'Type','Stem');
+
+      for iStem=1:length(h_stem)
+         set(h_stem(length(h_stem)+1-iStem), ...
+         'Color'         , col(iStem,:)  , ...
+         'MarkerFaceColor', col(iStem,:)  , ...
+         'LineWidth'     , linewidth*1.5         );
+      end
+      
    end
 end
 
