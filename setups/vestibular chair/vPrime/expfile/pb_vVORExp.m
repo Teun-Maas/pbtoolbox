@@ -37,7 +37,6 @@ function pb_vVORExp(varargin)
    
    cd(cdir);
 
-
    %% Vestibular blocks
    
    BD        = 60;                           % block duration in seconds
