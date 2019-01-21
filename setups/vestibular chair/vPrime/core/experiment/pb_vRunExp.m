@@ -42,6 +42,7 @@ function pb_vRunExp(handles)
       nTrials          	= length(block(iBlck).trial);
       handles          	= pb_updatecount(handles,'trial','reset');
       [profile,dur]    	= pb_vSignalVC(handles);
+      pb_vInitBlock();
       
       %  start recording
       pb_startLSL(ses);
