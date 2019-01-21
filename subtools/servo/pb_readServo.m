@@ -13,7 +13,6 @@ function Dat = pb_readServo(vs, Dat)
    
    Dat.vestibular_signal.sv   = sv;
    Dat.vestibular_signal.pv   = pv;
-   delete(vs);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

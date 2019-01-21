@@ -1,4 +1,4 @@
-function pb_vVORExp(varargin)
+function pb_vVestExp(varargin)
 % PB_VGENVISEXP
 %
 % PB_VGENVISEXP(varargin) will generate an EXP-file for a default localization experiment. 
@@ -26,13 +26,14 @@ function pb_vVORExp(varargin)
 
    pb_clean;
    disp('>> GENERATING VC EXPERIMENT <<');
+   pause(.4)
    disp('   ...')
 
    cfn = 0;
 
    showexp     = pb_keyval('showexp',varargin,true);
-   expfile     = pb_keyval('fname',varargin,'VOR.exp'); 
-   datdir      = pb_keyval('datdir',varargin,'DEFAULT');
+   expfile     = pb_keyval('fname',varargin,'vestDiracExp.exp'); 
+   datdir      = pb_keyval('datdir',varargin,'JJH');
    cdir        = pb_keyval('cdir',varargin,userpath);
    
    cd(cdir);
@@ -41,23 +42,39 @@ function pb_vVORExp(varargin)
    
    BD        = 60;                           % block duration in seconds
    
-   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 3, 'Duration',  BD,   'Frequency',.1);
-   block(1).Vertical    = struct('Amplitude', 10, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
+   %% Sine
+   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
+   block(1).Vertical    = struct('Amplitude', 13, 'Signal', 2, 'Duration',  BD,   'Frequency',.3);
    
-   block(2).Horizontal  = struct('Amplitude', 0,  'Signal', 5, 'Duration',  BD,   'Frequency',.1);
-   block(2).Vertical    = struct('Amplitude', 20, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
+   block(2).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.0);
+   block(2).Vertical    = struct('Amplitude', 20, 'Signal', 2, 'Duration',  BD,   'Frequency',.2);
    
-   block(3).Horizontal  = struct('Amplitude', 0,  'Signal', 3, 'Duration',  BD,   'Frequency',.1);
-   block(3).Vertical    = struct('Amplitude', 20, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
+   block(3).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
+   block(3).Vertical    = struct('Amplitude', 40, 'Signal', 2, 'Duration',  BD,   'Frequency',.1);
    
+   %% Turnstop
    block(4).Horizontal  = struct('Amplitude', 0,  'Signal', 5, 'Duration',  BD,   'Frequency',.1);
-   block(4).Vertical    = struct('Amplitude', 30, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
-   
-   block(5).Horizontal  = struct('Amplitude', 0,  'Signal', 3, 'Duration',  BD,   'Frequency',.1);
-   block(5).Vertical    = struct('Amplitude', 30, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
+   block(4).Vertical    = struct('Amplitude', 20, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
+
+   block(5).Horizontal  = struct('Amplitude', 0,  'Signal', 5, 'Duration',  BD,   'Frequency',.1);
+   block(5).Vertical    = struct('Amplitude', 30, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
    
    block(6).Horizontal  = struct('Amplitude', 0,  'Signal', 5, 'Duration',  BD,   'Frequency',.1);
    block(6).Vertical    = struct('Amplitude', 40, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
+   
+   block(7).Horizontal  = struct('Amplitude', 0,  'Signal', 5, 'Duration',  BD,   'Frequency',.1);
+   block(7).Vertical    = struct('Amplitude', 50, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
+   
+   %% Noise
+   
+   block(8).Horizontal  = struct('Amplitude', 0,  'Signal', 3, 'Duration',  BD,   'Frequency',.1);
+   block(8).Vertical    = struct('Amplitude', 20, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);   
+
+   block(9).Horizontal  = struct('Amplitude', 0,  'Signal', 3, 'Duration',  BD,   'Frequency',.1);
+   block(9).Vertical    = struct('Amplitude', 30, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
+   
+   block(10).Horizontal  = struct('Amplitude', 0,  'Signal', 5, 'Duration',  BD,   'Frequency',.1);
+   block(10).Vertical    = struct('Amplitude', 40, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
 
    %% Save data somewhere
    writeexp(expfile,datdir,block); 
