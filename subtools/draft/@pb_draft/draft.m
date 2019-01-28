@@ -11,7 +11,7 @@ function draft(obj)
    % 	Select/make figure
    if isempty(obj(1).parent)
       for iObj = 1:numel(obj)
-      	obj(iObj).parent     = gcf;
+      	obj(iObj).parent = gcf;
       end
    end
    

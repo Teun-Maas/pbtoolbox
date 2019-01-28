@@ -1,37 +1,16 @@
 %% Example code 'draft'
 pb_clean;
-load example_data;
+load('exD_saccade');
 
 % construct
-d(1,1) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',8,'subtitle','Color1');
-d(1,1).set_labels('x','Displacement','y','Weight');
+for i=1:3
+   d(1,i) = pb_draft('x',Saccades.GazeLatency(Saccades.Subject==i)*1000,'y',Saccades.HeadLatency(Saccades.Subject==i)*1000,'color',Saccades.Modality(Saccades.Subject==i),'def',2,'subtitle',['s00' num2str(i)]);
+   d(1,i).set_labels('x','Gaze Latency (ms)','y','Head Latency (ms)');
+   %d(1,i).plot_dline
+end
 
-% d(1,2) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',9,'subtitle','Color2');
-% d(1,2).set_labels('x','Displacement','y','Weight');
-% 
-% d(1,3) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',10,'subtitle','Color3');
-% d(1,3).set_labels('x','Displacement','y','Weight');
-
-% d(2,1) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',4,'subtitle','Color4');
-% d(2,1).set_labels('x','Displacement','y','Weight');
-% 
-% d(2,2) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',5,'subtitle','Color5');
-% d(2,2).set_labels('x','Displacement','y','Weight');
-% 
-% d(2,3) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',6,'subtitle','Color6');
-% d(2,3).set_labels('x','Displacement','y','Weight');
-% 
-% d(3,1) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',7,'subtitle','Color4');
-% d(3,1).set_labels('x','Displacement','y','Weight');
-% 
-% d(3,2) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',8,'subtitle','Color5');
-% d(3,2).set_labels('x','Displacement','y','Weight');
-% 
-% d(3,3) = pb_draft('x',cars.Displacement,'y',cars.Weight,'color',cars.Cylinders,'def',9,'subtitle','Color6');
-% d(3,3).set_labels('x','Displacement','y','Weight');
-
-d.set_title('Car Data');
+d.set_title('Saccade Latencies');
 d.draft;
-d.print('disp',true);
+%d.print('disp',true);
 
 % plotting order is wrong?

@@ -1,9 +1,10 @@
 function parse_va(obj,varargin)
-% WRITETITLE()
+% PB_DRAFT>PARSE_VA
 %
-% WRITETITLE()  ...
+% OBJ.PARSE_VA(varargin) will parse varargin from the draft-object when 
+% it is constructed.
 %
-% See also ...
+% See also PB_DRAFT
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 

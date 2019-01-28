@@ -10,11 +10,10 @@ clear all hidden;
 close all;
 cfn = 0;
 
-cdir = '/Users/jjheckman/Documents/Data/PhD/';
-[fname, path] = pb_getfile('dir',cdir,'ext','*.mat');
-if ~isempty(fname); load([path fname]); end
-
-clear path fname cdir
+% cdir = '/Users/jjheckman/Documents/Data/PhD/';
+% [fname, path] = pb_getfile('dir',cdir,'ext','*.mat');
+% if ~isempty(fname); load([path fname]); end
+%load('/Users/jjheckman/Documents/Data/PhD/Experiment/DDS/Einddata/006/DDS01_180615/Head_data/results1.mat');
 
 %% Convert MSI Stim
 
@@ -22,21 +21,21 @@ S = pb_stim2MSstim(Stim);                       % convert 'Stim' to contain mult
 
 %% Extract modality-specific supersac data
 
-V = pa_supersac(Sac, Stim,1);                    % visual
-A = pa_supersac(Sac, Stim,2);                    % auditory
-B = pa_supersac(Sac,Stim,3);                     % bimodal
+V = pa_supersac(Sac, S, 1);                     % visual
+A = pa_supersac(Sac, S, 2);                     % auditory
+B = pa_supersac(Sac, S, 3);                     % bimodal
 M = [V;A;B];                                    % all
 
-
-%%
-V = pa_supersac(Sac, Stim);                    % auditory
+if isempty(V); clear V; end
+if isempty(A); clear A; end
+if isempty(B); clear B; end
 
 %% Evaluate stimulus duration
 
 
-cfn=cfn+1; figure(cfn); clf; 
+cfn = pb_newfig(cfn);
 
-uDur = unique(V(:,30));
+uDur = unique(A(:,30));
 for indD = 1:length(uDur)
     
     for j = 1:2
@@ -55,7 +54,7 @@ pb_nicegraph
 
 
 % Azimuth
-y = V(:,8); x = V(:,23);
+y = M(:,8); x = M(:,23);
 subplot(2,4,1); pb_regplot(x,y);
 title('Azimuth accuracy for 1ms');
 ylabel('Saccade Offset (\alpha degrees)');

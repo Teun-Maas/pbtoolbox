@@ -20,8 +20,11 @@ classdef pb_draft < matlab.mixin.Copyable
    %  Set protected properties
    properties (Access=protected,Hidden=true)
       parent      = [];
-      pva
-      labels
+      
+      pva;
+      labels;
+      
+      dplot       = {};
       
       % title
       title       = '';
@@ -46,9 +49,10 @@ classdef pb_draft < matlab.mixin.Copyable
       set_labels(obj,varargin);
       set_grid(obj,varargin);
       
-      plot_hline(obj,varargin);
-      plot_vline(obj,varargin);
-      plot_dline(obj,varargin);
+      plot_rawdata(obj,varargin);               % plot the rawdata
+      plot_hline(obj,varargin);                 % plot horizontal lines
+      plot_vline(obj,varargin);                 % plot vertical lines
+      plot_dline(obj,varargin);                 % plot diagonal lines
       
       stat_regres(obj,varargin);                % transform regression
       stat_probit(obj,varargin);                % transform probit
