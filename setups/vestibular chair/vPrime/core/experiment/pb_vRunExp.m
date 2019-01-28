@@ -42,7 +42,7 @@ function pb_vRunExp(handles)
       nTrials          	= length(block(iBlck).trial);
       handles          	= pb_updatecount(handles,'trial','reset');
       [profile,dur]    	= pb_vSignalVC(handles);
-      pb_vInitBlock();
+      pb_vCheckServo(~ismac && ~debug);
       
       %  start recording
       pb_startLSL(ses);
@@ -50,8 +50,6 @@ function pb_vRunExp(handles)
       
       %  start vestibular chair
       if ~ismac && ~debug     
-         pb_vCheckServo;
-         
          vs            	= pb_sendServo(profile);
          blockTime    	= tic; 
          pb_startServo(vs);
@@ -101,19 +99,18 @@ function pb_vRunExp(handles)
       Dat(iBlck).pupil_labs    = str(2).read;
       Dat(iBlck).optitrack     = str(3).read;
       Dat(iBlck).block_info    = handles.block(iBlck);
+      pb_vStoreData(handles.cfg, Dat);
 
       %  update block information
       handles.cfg = pb_updatecount(handles.cfg,'block','count');
-   end 
+   end
    
    %% CHECK OUT
    %  finalizes experiment, and resets handles.
    
    %  check out experiment
    pb_vEndExp;
-   pb_vStoreData(handles.cfg, Dat);
    pb_vInitialize(handles, false);
-   
    pb_delobj(ses, rc, str);
    toc(expTime);
 end

@@ -1,4 +1,4 @@
-function obj = set_title(obj)
+function set_title(obj,title,varargin)
 % WRITETITLE()
 %
 % WRITETITLE()  ...
@@ -7,8 +7,8 @@ function obj = set_title(obj)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-title = 'Default Title';
-obj.title = title;
+   obj(1).title   	= title;
+   obj(1).title_O    = varargin;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

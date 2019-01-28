@@ -74,7 +74,7 @@ function pb_vVestExp(varargin)
    block(9).Vertical    = struct('Amplitude', 20, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
    
    block(10).Horizontal  = struct('Amplitude', 0,  'Signal', 3, 'Duration',  BD,   'Frequency',.1);
-   block(10).Vertical    = struct('Amplitude', 25, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
+   block(10).Vertical    = struct('Amplitude', 20, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
 
    %% Save data somewhere
    writeexp(expfile,datdir,block); 

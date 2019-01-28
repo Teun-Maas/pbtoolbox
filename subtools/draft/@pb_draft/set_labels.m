@@ -1,4 +1,4 @@
-function obj = set_title(obj, title)
+function set_labels(obj,varargin)
 % WRITETITLE()
 %
 % WRITETITLE()  ...
@@ -7,8 +7,12 @@ function obj = set_title(obj, title)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   v = varargin;
+   
+   labels.xlab = pb_keyval('x',v,'');
+   labels.ylab = pb_keyval('y',v,'');
 
-obj.title = title;
+   obj.labels = labels;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
