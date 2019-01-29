@@ -10,8 +10,6 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
 
    %% Set TDT parameters
    selled		= strcmpi({stim.modality},'LED');
-   selacq		= strcmpi({stim.modality},'data acquisition');
-   % seltrg = strcmpi({stim.modality},'trigger');
    selsnd		= strcmpi({stim.modality},'sound');
    
       %% LED
@@ -69,16 +67,18 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    end
 
    %% Sound
-   % 			[RP2tag1,RP2tag2,~,MUXind,MUXbit1,SpeakerChanNo] = GvB_SoundSpeakerLookUp(azrnd(ii),elrnd(ii),RP2_1,RP2_2,LedLookUpTable);
-   % 			GvB_MUXSet(RP2tag1,RP2tag2,MUXind,MUXbit1,'set');
 
    if any(selsnd)
       snd		= stim(selsnd);
-      nsnd	= numel(snd);
+      nsnd     = numel(snd);
       for sndIdx = 1:nsnd
-         %% FOR NOW I LEAVE THIS OUT!! 
-         %pb_vSetSound(snd(sndIdx),cfg,'RZ6_1');
-         %% FOR NOW I LEAVE THIS OUT!!
+         sndsetup	= cfg.lookup(snd(sndIdx).Z+1,2:4);
+         switch sndsetup(1)
+            case 1
+               maxSamples = setSound(snd(sndIdx),cfg,'RP2_1');
+            case 2
+               maxSamples = setSound(snd(sndIdx),cfg,'RP2_2');
+         end
       end
    end
 

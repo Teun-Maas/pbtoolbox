@@ -26,7 +26,7 @@ end
 function auth = getcredentials(srv)
    % obtains authentication credentials for server
    
-   doi = [userpath '.credentials'];
+   doi = [userpath filesep '.credentials'];
    if ~isfolder(doi); mkdir(doi); end
    
    fn = [doi filesep srv '.crd'];
