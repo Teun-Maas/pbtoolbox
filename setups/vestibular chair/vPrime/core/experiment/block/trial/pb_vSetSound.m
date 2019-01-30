@@ -49,5 +49,3 @@ end
 %       Written by: Jesse J. Heckman (2018)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-
-a

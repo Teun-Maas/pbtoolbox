@@ -24,7 +24,6 @@ function block = pb_vPrimeZ(block,cfg)
                block(iBlck).trial(iTrl).stim(iStm).Z           = ZI;
                block(iBlck).trial(iTrl).stim(iStm).azimuth   	= cfg.lookup(ZI+1,4);
                block(iBlck).trial(iTrl).stim(iStm).elevation	= cfg.lookup(ZI+1,5);
-               
             end
          end
       end

@@ -7,28 +7,46 @@ function handles = pb_getblock(handles)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   %% INITIALIZE
+   %  Get handles and read experiment.
+   
    cfg                  = handles.cfg;
    [block, cfg]         = pb_vReadExp(cfg);
 
-   %% CFG file
-   cfg.cfgfname         = which('HumanNH.cfg');
-   cfg						= pb_vReadCFG(cfg); % read cfg cfile
-   cfg.acqdur				= cfg.humanv1.ADC(1).samples / cfg.humanv1.ADC(1).rate * 1000; % TODO: HumanV1/duration of data acquisition (ms)
-   cfg.nsamples			= round(cfg.acqdur/1000*cfg.RZ6Fs); % length data acquisition (samples)
-   cfg.nchan				= 3;
+   %% FILTER PARAMETERS
+   %  Will select the appriopriate filter setting for GWN sounds, default is expname else
+   %  soundParameters.mat is loaded.
    
-   %% Correct Block
-   block                = pb_vPrimeZ(block,cfg);
+   fn   	= fullfile(cfg.expdir,cfg.expfname);
+   fn  	= fcheckext(fn,'mat');
+   par 	= 'parameters';
+   if exist(fn,'file')
+      load(fn,par);
+   else
+      load(which('soundParameters.mat'),par)
+   end
+   cfg.parameters    = parameters;
    
-   %% Timing
-   cfg.trialdur         = getdurations(block);                             % sets trialdur
+   %% CFG FILE
+   %  Will extract the correct cfg settings. Current default is set to
+   %  HumanNH.cfg. 
+   
+   cfg.cfgfname    	= which('HumanNH.cfg');
+   cfg					= pb_vReadCFG(cfg);  % read cfg cfile
+   cfg.acqdur			= cfg.humanv1.ADC(1).samples / cfg.humanv1.ADC(1).rate * 1000; % TODO: HumanV1/duration of data acquisition (ms)
+   cfg.nsamples		= round(cfg.acqdur/1000*cfg.RZ6Fs); % length data acquisition (samples)
+   cfg.nchan			= 3;
+   
+   %% CHECK-OUT
+   %  Define trial duration, correct stimulus positions, and store handles. 
 
-   handles.block        = block;
-   handles.cfg          = cfg;
+   cfg.trialdur    	= getdurations(block);
+   handles.block    	= pb_vPrimeZ(block,cfg);
+   handles.cfg      	= cfg;
 end
 
 function td = getdurations(block)
-   % extracts trial and block dur 
+   %  Extracts trial and block dur 
    stimarr = [];
    
    blocksz = length(block);

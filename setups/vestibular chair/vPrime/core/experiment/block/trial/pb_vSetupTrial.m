@@ -8,7 +8,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
 
-   %% Set TDT parameters
+   %% SET TDT PARAMETERS
    selled		= strcmpi({stim.modality},'LED');
    selsnd		= strcmpi({stim.modality},'sound');
    
@@ -57,7 +57,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       stim(find(selled,1)).ledhandle.write(s);
    end
 
-   %% Sound
+   %% SOUND
 
    if any(selsnd)
       snd		= stim(selsnd);
@@ -78,7 +78,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    end
    cfg.maxSamples = maxSamples;
 
-   %% Wait
+   %% WAIT
    
    ev             = stim.offevent;
    de             = stim.offdelay;
