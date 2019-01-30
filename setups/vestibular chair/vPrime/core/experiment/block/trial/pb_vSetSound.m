@@ -1,9 +1,9 @@
 function pb_vSetSound(snd,cfg,RZ6str)
-% PB_VSETSOUND()
+% PB_VSETSOUND
 %
-% PB_VSETSOUND()  ...
+% PB_VSETSOUND(snd,cfg,RZ6str) sets sound parameters for modulated GWNs.
 %
-% See also ...
+% See also PB_VPRIME, PB_VRUNEXP,PB_VSETUPTRIAL
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
@@ -15,15 +15,12 @@ function pb_vSetSound(snd,cfg,RZ6str)
    %% Filter properties
    % The filter properties are set in the parameter file, which has the same
    % name as the exp file, but with the extensenion .mat
-   id             = snd.parameters;
-   par				= cfg.parameters(id);
-   snd				= addfields(snd,par);
+   
+   id  	= snd.parameters;
+   par	= cfg.parameters(id);
+   snd	= addfields(snd,par);
 
    %% 
-   % cfg.(RZ6str).SetTagVal('delaySND1',snd.ondelay);  %
-   % cfg.(RZ6str).SetTagVal('delaySND2',snd.ondelay);  %
-   % cfg.(RZ6str).SetTagVal('soundDur1',dur);  % default?
-   % cfg.(RZ6str).SetTagVal('soundDur2',dur);  % default?
 
    cfg.RZ6_1.SetTagVal('eventSND',snd.onevent+1);
    cfg.RZ6_1.SetTagVal('delaySND',snd.ondelay);
@@ -53,3 +50,4 @@ end
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
+a

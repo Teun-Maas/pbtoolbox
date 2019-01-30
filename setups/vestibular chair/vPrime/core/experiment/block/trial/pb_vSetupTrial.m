@@ -21,24 +21,23 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       s		= ledpattern(n);
 
       cnt		= 0;
-      for iLED = 1:nled
-         % TDT RZ6
-         % Set timing information on LEDs
-         % Note that in RZ6 circuit, event 1 = start of experiment
-         str1 = ['eventLED' num2str(2*iLED-1)];
-         str2 = ['eventLED' num2str(2*iLED)];
-         cfg.RZ6_1.SetTagVal(str1,led(iLED).onevent+1);
-         cfg.RZ6_1.SetTagVal(str2,led(iLED).offevent+1);
+      for iLed = 1:nled
+         %  TDT RZ6
+         %  Set timing information on LEDs
+         %  Note that in RZ6 circuit, event 1 = start of experiment
+         str1 = ['eventLED' num2str(2*iLed-1)];
+         str2 = ['eventLED' num2str(2*iLed)];
+         cfg.RZ6_1.SetTagVal(str1,led(iLed).onevent+1);
+         cfg.RZ6_1.SetTagVal(str2,led(iLed).offevent+1);
          
-         str1 = ['delayLED' num2str(2*iLED-1)];
-         str2 = ['delayLED' num2str(2*iLED)];
-         cfg.RZ6_1.SetTagVal(str1,led(iLED).ondelay+1);
-         cfg.RZ6_1.SetTagVal(str2,led(iLED).offdelay+1);
+         str1 = ['delayLED' num2str(2*iLed-1)];
+         str2 = ['delayLED' num2str(2*iLed)];
+         cfg.RZ6_1.SetTagVal(str1,led(iLed).ondelay+1);
+         cfg.RZ6_1.SetTagVal(str2,led(iLed).offdelay+1);
       
-      
-         % PLC
+         %  PLC
          if isfield(led,'colour')
-            col = led(iLED).colour;
+            col = led(iLed).colour;
          else
             col = 1;
          end
@@ -46,24 +45,16 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
          for ii	= 1:2
             cnt = cnt+1;
             if ii==1
-               s(cnt).set(led(iLED).Z,cfg.ledcolours{col},1);
-               s(cnt).intensity(cfg.ledcolours{col},led(iLED).intensity); % Vestibular range 0-100;
+               s(cnt).set(led(iLed).Z,cfg.ledcolours{col},1);
+               s(cnt).intensity(cfg.ledcolours{col},led(iLed).intensity); % Vestibular range 0-100;
             else
-               s(cnt).set(led(iLED).Z,cfg.ledcolours{col},0);
+               s(cnt).set(led(iLed).Z,cfg.ledcolours{col},0);
             end
          end
       end
       
-      stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07'); %% CORRECT THESE LOCATIONS
+      stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07');
       stim(find(selled,1)).ledhandle.write(s);
-   end
-
-   %% Acquisition
-   if any(selacq)
-      acq	= stim(selacq);
-      cfg.RZ6_1.SetTagVal('eventAcq',acq.onevent+1);
-      cfg.RZ6_1.SetTagVal('delayAcq',acq.ondelay);
-      cfg.RZ6_1.SetTagVal('acqSamples',cfg.nsamples); % amount of DA samples
    end
 
    %% Sound
@@ -87,18 +78,14 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    end
    cfg.maxSamples = maxSamples;
 
-   %% Wait for?
-   % search for latest event with longest offset
-   % which should also include sampling period and sound although this does not have an
-   % offevent
+   %% Wait
    
-   e				= [stim.offevent];
-   d				= [stim.offdelay];
-   mxevent			= max(e);
-   sel				= ismember(e,mxevent);
-   mxdelay			= max([d(sel) ceil(1000*cfg.nsamples./cfg.RZ6Fs) ]);
-
-   %%
+   ev             = stim.offevent;
+   de             = stim.offdelay;
+   mxevent			= max(ev);
+   sel				= ismember(ev,mxevent);
+   mxdelay			= max([de(sel) ceil(1000*cfg.nsamples./cfg.RZ6Fs) ]);
+   
    cfg.RZ6_1.SetTagVal('eventWait',mxevent+1);
    cfg.RZ6_1.SetTagVal('delayWait',mxdelay);
 end

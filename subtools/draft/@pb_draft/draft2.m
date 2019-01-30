@@ -1,4 +1,4 @@
-function draft(obj)
+function draft2(obj)
 % PB_DRAFT>DRAFT
 %
 % OBJ.DRAFT will draw a figure from a pb_draft-object.
@@ -35,7 +35,22 @@ function draft(obj)
       hold on;
       
       %  Plot data
-      
+      if ~isempty(obj(iAx).pva.y)
+         uC    = unique(obj(iAx).pva.color);
+         nc    = length(uC);
+         p     = gobjects(0);
+         col   = pb_selectcolor(nc,obj(iAx).pva.def);
+         
+         %  Group data
+         for iPl = 1:nc
+            x     = obj(iAx).pva.x;
+            y     = obj(iAx).pva.y;
+            ind   = obj(iAx).pva.color == uC(iPl);
+            
+            p(iPl)         = plot(x(ind),y(ind),obj(iAx).pva.ls);
+            p(iPl).Color   = col(iPl,:);
+         end
+      end
       
       %  Set proper labels
       xlabel(obj(iAx).labels.xlab);

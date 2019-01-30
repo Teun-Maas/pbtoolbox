@@ -12,5 +12,3 @@ end
 d.set_title('Saccade Latencies');
 d.draft;
 %d.print('disp',true);
-
-% plotting order is wrong?
