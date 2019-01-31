@@ -56,23 +56,16 @@ function [block,cfg] = pb_vReadExp(cfg)
          case {'SND','SND1','SND2'}
             % Updates count and writes stimulus
             sn    = sn+1;
-            par   = sscanf(tline(nchar+1:end),'%d%d%d%f%d%d',[6,1]);
+            par   = sscanf(tline(nchar+1:end),'%d%d%d%f%d%d',[7,1]);
             
             block(bn).trial(tn).stim(sn).modality		= 'sound';
             block(bn).trial(tn).stim(sn).X            = par(1);
             block(bn).trial(tn).stim(sn).Y            = par(2);
-            block(bn).trial(tn).stim(sn).matfile		= ['snd' num2str(par(3),'%03i') '.mat']; % for sphere
-            block(bn).trial(tn).stim(sn).wavfile		= ['snd' num2str(par(3),'%03i') '.wav']; % double, for hoop
-            block(bn).trial(tn).stim(sn).parameters	= par(3); % for sphereMinor
-
-            block(bn).trial(tn).stim(sn).matfile		= ['snd' num2str(par(3),'%03i') '.mat'];
-            block(bn).trial(tn).stim(sn).wavfile		= ['snd' num2str(par(3),'%03i') '.wav'];	 % double
-
+            block(bn).trial(tn).stim(sn).parameters	= par(3);
             block(bn).trial(tn).stim(sn).intensity    = par(4);
             block(bn).trial(tn).stim(sn).onevent		= par(5);
             block(bn).trial(tn).stim(sn).ondelay		= par(6);
-            block(bn).trial(tn).stim(sn).offevent		= par(5); % default duration
-            block(bn).trial(tn).stim(sn).offdelay		= par(6)+150; % default duration
+            block(bn).trial(tn).stim(sn).duration		= par(7);
             
          case {'LED','LED1','LED2'}
             % Updates count and writes stimulus
