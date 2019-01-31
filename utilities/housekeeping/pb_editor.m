@@ -37,12 +37,14 @@ function pb_editor(varargin)
                   quest    = 'Do you want to empty all current files in editor?';
                   title    = 'Editor Action';
                   answer   = questdlg(quest, title,'Yes','No','Cancel','Cancel');
+                  
+                  if strcmp(answer,'Yes')
+                     pb_closeedit('which','all');
+                  elseif strcmp(answer,'Cancel')
+                     return
+                  end
                end
-               if strcmp(answer,'Yes')
-                  h.close;
-               elseif strcmp(answer,'Cancel')
-                  return
-               end
+               
                load(fn,'fns');
                for idx = 1:length(fns)
                   edit(fns{idx})
@@ -61,5 +63,3 @@ end
 %       Written by: Jesse J. Heckman (2019)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-
-% com.mathworks.mlservices.MLEditorServices.closeAll

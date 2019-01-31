@@ -36,6 +36,7 @@ spheretrial2complete(); % creates 2 .sphere files: calibration "0000" block, and
 sphere2hoopdat(fname); % calibration 
 sphere2hoopcsv(fname)
 
+
 %% Calibrate experiment data
 
 [fname,~] = pb_getfile('ext',[bname '*.sphere'],'dir',cdir);
