@@ -8,8 +8,8 @@ function pb_vSetSound(snd,cfg,RZ6str)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    Z           = snd.Z;
-   warning('Are you using calibrated attenuation values???');
-   atten       = max(snd.intensity,0); % For sphereMinor, the 'intensity' parameter is the attenuation
+   %warning('Are you using calibrated attenuation values???');
+   atten       = max(snd.intensity,0); % the 'intensity' parameter is the attenuation
    sndsetup    = cfg.lookup(Z+1,2:3);
 
    %% Filter properties
