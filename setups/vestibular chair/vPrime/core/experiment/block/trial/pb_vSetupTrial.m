@@ -63,20 +63,11 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
       snd		= stim(selsnd);
       nsnd     = numel(snd);
       for sndIdx = 1:nsnd
-         sndsetup	= cfg.lookup(snd(sndIdx).Z+1,2:4);
-         switch sndsetup(1)
-            case 1
-               maxSamples = pb_vSetSound(snd(sndIdx),cfg,'RP2_1');
-            case 2
-               maxSamples = pb_vSetSound(snd(sndIdx),cfg,'RP2_2');
-         end
+         pb_vSetSound(snd(sndIdx),cfg,'RZ6_1');
       end
    end
 
-   if ~exist('maxSamples','var')
-      maxSamples = 0;
-   end
-   cfg.maxSamples = maxSamples;
+   cfg.maxSamples = 0;
 
    %% WAIT
    
