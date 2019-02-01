@@ -66,9 +66,9 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
          sndsetup	= cfg.lookup(snd(sndIdx).Z+1,2:4);
          switch sndsetup(1)
             case 1
-               maxSamples = setSound(snd(sndIdx),cfg,'RP2_1');
+               maxSamples = pb_vSetSound(snd(sndIdx),cfg,'RP2_1');
             case 2
-               maxSamples = setSound(snd(sndIdx),cfg,'RP2_2');
+               maxSamples = pb_vSetSound(snd(sndIdx),cfg,'RP2_2');
          end
       end
    end
