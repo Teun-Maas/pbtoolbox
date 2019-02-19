@@ -15,24 +15,24 @@ function h = pb_dline(varargin)
 
    %% Initialization
 
-   style = pb_keyval('style',varargin,'k--');
-   visibility = pb_keyval('visibility',varargin,'off');
+   style       = pb_keyval('style',varargin,'k--');
+   visibility  = pb_keyval('visibility',varargin,'off');
+   position    = pb_keyval('position',varargin);
 
    ho = ishold;
    if ~ho; hold on; end
 
-   %% Set axis
-   axxes		= axis;
-   if axxes(1) ~= axxes(3)
+   %% Obtain axis for empty plot
+   if isempty(position)
+      axxes		= axis;
       min_x = min(axxes([1 3])); axxes([1 3]) = min_x;
-   end
-   if axxes(2) ~= axxes(4)
       max_x = max(axxes([2 4])); axxes([2 4]) = max_x;
+      position = [min_x, max_x];
    end
-
+   
    %% Plot diagonal
-
-   h = plot([axxes(1) axxes(2)],[axxes(1) axxes(2)],style);
+   
+   h = plot([position(1) position(2)],[position(1) position(2)],style);
    set(h,'Tag','graphical aid: diagonal');
    set(h,'HandleVisibility',visibility); % set handle visibility
 

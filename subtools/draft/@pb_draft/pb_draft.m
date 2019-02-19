@@ -12,7 +12,9 @@ classdef pb_draft < matlab.mixin.Copyable
    %  Set public properties
    properties (Access = public)
       h_title
-      h_legend
+      h_ax_legend
+      h_ax_labels
+      h_ax_plot
       results
       ...
    end
@@ -46,6 +48,7 @@ classdef pb_draft < matlab.mixin.Copyable
       end
       
       set_title(obj,title,varargin);
+      set_legend(obj,varargin);
       set_labels(obj,varargin);
       set_grid(obj,varargin);
       
@@ -53,6 +56,7 @@ classdef pb_draft < matlab.mixin.Copyable
       plot_hline(obj,varargin);                 % plot horizontal lines
       plot_vline(obj,varargin);                 % plot vertical lines
       plot_dline(obj,varargin);                 % plot diagonal lines
+      plot_bubble(obj,varargin);
       
       stat_regres(obj,varargin);                % transform regression
       stat_probit(obj,varargin);                % transform probit
@@ -73,7 +77,7 @@ end
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %
-%       Written by: Jesse J. Heckman (2018)                 %
+%       Written by: Jesse J. Heckman (2019)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 

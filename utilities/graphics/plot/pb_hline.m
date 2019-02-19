@@ -19,21 +19,21 @@ function h = pb_hline(y, varargin)
 
    style      = pb_keyval('style',varargin,'k--');
    visibility = pb_keyval('visibility',varargin,'off');
+   
+   ho       = ishold; hold on;
+   len      = length(y);
+   h        = gobjects(len);
 
    %% Plot
 
-   y       = y(:)'; 
-   ho = ishold; hold on;
-   x_lim   = get(gca,'XLim');
+   y        = y(:)'; 
+   x_lim    = get(gca,'XLim');
 
-   for i = 1:length(y)
-      h(i)       = plot(x_lim, [y(i);y(i)], style);
+   for i = 1:len
+      h(i)  = plot(x_lim, [y(i);y(i)], style);
+      set(h(i),'Tag','graphical aid: horizonal');
+      set(h(i),'HandleVisibility',visibility); % set handle visibility
    end
-
-   %% Checkout
-
-   set(h,'Tag','graphical aid: horizonal');
-   set(h,'HandleVisibility',visibility); % set handle visibility
    if ~ho; hold off; end
 end
 

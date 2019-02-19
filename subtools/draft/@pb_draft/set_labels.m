@@ -1,7 +1,7 @@
 function set_labels(obj,varargin)
-% WRITETITLE()
+% PB_DRAFT>SET_LABELS
 %
-% WRITETITLE()  ...
+% OBJ.SET_LABELS()  ...
 %
 % See also ...
 
@@ -9,8 +9,9 @@ function set_labels(obj,varargin)
 
    v = varargin;
    
-   labels.xlab = pb_keyval('x',v,'');
-   labels.ylab = pb_keyval('y',v,'');
+   labels.xlab       = pb_keyval('x',v,'');
+   labels.ylab       = pb_keyval('y',v,'');
+   labels.suplabel   = pb_keyval('suplabels',v);
 
    obj.labels = labels;
 end

@@ -20,9 +20,9 @@ function h = pb_vline(x, varargin)
    style      = pb_keyval('style',varargin,'k--');
    visibility = pb_keyval('visibility',varargin,'off');
 
-   ho  	= ishold; hold on;
-   len   = length(x);
-   h     = gobjects(len);
+   ho       = ishold; hold on;
+   len      = length(x);
+   h        = gobjects(len);
 
    %% Plot
 
@@ -31,12 +31,9 @@ function h = pb_vline(x, varargin)
 
    for i = 1:len
       h(i)  = plot([x(i);x(i)], y_lim, style);
+      set(h(i),'Tag','graphical aid: vertical');
+      set(h(i),'HandleVisibility',visibility); % set handle visibility
    end
-
-   %% Checkout
-
-   %set(h,'Tag','graphical aid: vertical');
-   set(h,'HandleVisibility',visibility); % set handle visibility
    if ~ho; hold off; end
 end
 
