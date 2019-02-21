@@ -21,6 +21,8 @@ function parse_va(obj,varargin)
    pva.axis          = pb_keyval('axis',v,'square');
    pva.subtitle      = pb_keyval('subtitle',v);
    
+   pva.colscheme     = pb_selectcolor(length(unique(pva.color)),pva.def);
+   
    obj.labels.xlab   = pb_keyval('xlab',v,'');
    obj.labels.ylab   = pb_keyval('ylab',v,'');
    

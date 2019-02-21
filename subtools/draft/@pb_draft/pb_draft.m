@@ -56,7 +56,7 @@ classdef pb_draft < matlab.mixin.Copyable
       plot_hline(obj,varargin);                 % plot horizontal lines
       plot_vline(obj,varargin);                 % plot vertical lines
       plot_dline(obj,varargin);                 % plot diagonal lines
-      plot_bubble(obj,varargin);
+      plot_bubble(obj,varargin);                % plot bubblr histoplot
       
       stat_regres(obj,varargin);                % transform regression
       stat_probit(obj,varargin);                % transform probit

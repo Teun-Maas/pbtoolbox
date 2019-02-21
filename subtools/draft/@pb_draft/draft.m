@@ -49,21 +49,25 @@ function draft(obj)
       axis(obj(iAx).pva.axis);
       hold on;
       
+      % Set colors
       nCol = 1;
       if ~obj(iObj).pva.continious 
          nCol = length(unique(obj(iObj).pva.color));
       end
       
-      %  Plot data
+      %  FIX COLOR REPEAT ONLY FOR COLOR SPLITTING DATA
       colors   = pb_selectcolor(nCol,obj(iAx).pva.def);
       uD       = unique(obj(iAx).pva.color);
       for iCol = 1:nCol
          d        = obj(iAx).pva;
          d.ind    = d.color == uD(iCol);
          d.color  = colors(iCol,:);
-         for iDP = 1:length(obj(iObj).dplot)
-            obj(iObj).dplot{iDP}(obj,d);
-         end
+      end
+      
+      %  Plot all graphs
+      for iDP = 1:length(obj(iObj).dplot)
+         d 	= obj(iAx).pva;
+         obj(iObj).dplot{iDP}(obj,d);
       end
       
       %  Set labels
