@@ -20,7 +20,7 @@ classdef pb_draft < matlab.mixin.Copyable
    end
 
    %  Set protected properties
-   properties (Access=protected,Hidden=true)
+   properties (Access = protected, Hidden = true)
       parent      = [];
       
       pva;
@@ -44,28 +44,34 @@ classdef pb_draft < matlab.mixin.Copyable
       % Constructor function
       function obj = pb_draft(varargin)
          % read and parse varargin
-         parse_va(obj,varargin{:}); 
+         parse_va(obj,varargin{:});             % read parse keys
       end
       
-      set_title(obj,title,varargin);
-      set_legend(obj,varargin);
-      set_labels(obj,varargin);
-      set_grid(obj,varargin);
+      %  Set functions
+      set_title(obj,title,varargin);            % set title
+      set_legend(obj,varargin);                 % set legend               /// NOT YET DONE
+      set_labels(obj,varargin);                 % set labels
+      set_grid(obj,varargin);                   % set grid
+      set_axcomp(obj,feature,varargin);         % set comparision axe      /// WORKING ON IT
       
+      %  Plot functions
       plot_rawdata(obj,varargin);               % plot the rawdata
       plot_hline(obj,varargin);                 % plot horizontal lines
       plot_vline(obj,varargin);                 % plot vertical lines
       plot_dline(obj,varargin);                 % plot diagonal lines
-      plot_bubble(obj,varargin);                % plot bubblr histoplot
+      plot_bubble(obj,varargin);                % plot bubble histoplot
       
-      stat_regres(obj,varargin);                % transform regression
+      %  Statistical functions
+      stat_regres(obj,varargin);                % transform regression     // NOT YET DONE
       stat_probit(obj,varargin);                % transform probit
       
+      %  Fitting functions
       fit_ellipse(obj,varargin);                % make ellipse fit
       fit_sigmoid(obj,varargin);                % make sigmoidal fit
       fit_polyn(obj,varargin);                  % make polynomial fit
       
-      draft(obj);                               % make plot
+      %  Core functions
+      draft(obj);                               % draw figure
       print(obj,varargin);                      % make file
 
       function obj = set_parent(obj,parent)
