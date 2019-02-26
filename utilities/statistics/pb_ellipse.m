@@ -7,6 +7,8 @@ function [MU,SD,A,x,y] = pb_ellipse(x,y,varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   if isempty(x) || isempty(y); MU = []; SD = []; A = []; x = []; y = []; return; end
+
    v     = varargin;
    out   = pb_keyval('outlier',v,[]);
 

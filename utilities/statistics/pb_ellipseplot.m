@@ -7,6 +7,8 @@ function h = pb_ellipseplot(Mu,SD,Phi,varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   if isempty(Mu) || isempty(SD) || isempty(Phi); h = []; return; end
+
    v        = varargin;
    col      = pb_keyval('color',v,'k');
    alpha    = pb_keyval('alpha',v,.33);

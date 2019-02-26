@@ -25,6 +25,7 @@ classdef pb_draft < matlab.mixin.Copyable
       
       pva;
       labels;
+      grid;
       
       dplot       = {};
       

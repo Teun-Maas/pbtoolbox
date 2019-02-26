@@ -17,8 +17,9 @@ function h = pb_vline(x, varargin)
 
    if nargin < 1; x = 0; end
 
-   style      = pb_keyval('style',varargin,'k--');
-   visibility = pb_keyval('visibility',varargin,'off');
+   style       = pb_keyval('style',varargin,'k--');
+   visibility  = pb_keyval('visibility',varargin,'off');
+   lim         = pb_keyval('lim',varargin,get(gca,'YLim'));
 
    ho       = ishold; hold on;
    len      = length(x);
@@ -27,10 +28,9 @@ function h = pb_vline(x, varargin)
    %% Plot
 
    x        = x(:)'; 
-   y_lim    = get(gca,'YLim');
-
+   
    for i = 1:len
-      h(i)  = plot([x(i);x(i)], y_lim, style);
+      h(i)  = plot([x(i);x(i)], lim, style);
       set(h(i),'Tag','graphical aid: vertical');
       set(h(i),'HandleVisibility',visibility); % set handle visibility
    end

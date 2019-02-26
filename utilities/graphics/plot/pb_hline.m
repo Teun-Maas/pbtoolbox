@@ -19,6 +19,7 @@ function h = pb_hline(y, varargin)
 
    style      = pb_keyval('style',varargin,'k--');
    visibility = pb_keyval('visibility',varargin,'off');
+   lim        = pb_keyval('lim',varargin,get(gca,'XLim'));
    
    ho       = ishold; hold on;
    len      = length(y);
@@ -27,10 +28,9 @@ function h = pb_hline(y, varargin)
    %% Plot
 
    y        = y(:)'; 
-   x_lim    = get(gca,'XLim');
 
    for i = 1:len
-      h(i)  = plot(x_lim, [y(i);y(i)], style);
+      h(i)  = plot(lim, [y(i);y(i)], style);
       set(h(i),'Tag','graphical aid: horizonal');
       set(h(i),'HandleVisibility',visibility); % set handle visibility
    end

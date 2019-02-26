@@ -17,22 +17,14 @@ function h = pb_dline(varargin)
 
    style       = pb_keyval('style',varargin,'k--');
    visibility  = pb_keyval('visibility',varargin,'off');
-   position    = pb_keyval('position',varargin);
+   lim         = pb_keyval('lim',varargin,[get(gca,'XLim') get(gca,'YLim')]);
 
    ho = ishold;
    if ~ho; hold on; end
-
-   %% Obtain axis for empty plot
-   if isempty(position)
-      axxes		= axis;
-      min_x = min(axxes([1 3])); axxes([1 3]) = min_x;
-      max_x = max(axxes([2 4])); axxes([2 4]) = max_x;
-      position = [min_x, max_x];
-   end
    
    %% Plot diagonal
    
-   h = plot([position(1) position(2)],[position(1) position(2)],style);
+   h = plot([min(lim) max(lim)],[min(lim) max(lim)],style);
    set(h,'Tag','graphical aid: diagonal');
    set(h,'HandleVisibility',visibility); % set handle visibility
 

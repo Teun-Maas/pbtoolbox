@@ -1,7 +1,7 @@
 function make_suplabel(obj,varargin)
 % PB_DRAFT>MAKE_SUPLABEL
 %
-% OBJ.SET_LEGEND(varargin) Make superlabels handle.
+% OBJ.MAKE_SUPLABEL(varargin) make superlabels handle.
 %
 % See also PB_DRAFT
 

@@ -22,7 +22,7 @@ function draft(obj)
    set(t,'FontSize',20);
    
    ax       = gobjects(0);
-   objsz    = size(obj);
+   dsz      = size(obj);
    
    %% Super labels
    %  Check if labels are the same, and prep super labels
@@ -34,50 +34,34 @@ function draft(obj)
    end
    obj(1).labels.supx = lab_x;
    obj(1).labels.supy = lab_y;
+      
+   %% Create (sub)plots
+   %  Draft each subplot
    
-   
-   %%  Set Compare axis
-   cmp      = length(unique(obj(1).pva.axcomp.feature));
-   cmpsz    = [1 1];
-   nObj     = numel(obj)*cmp;
-   
-   if min(objsz)>1 
+   %  Create comparing axis
+   cmp   = length(unique(obj(1).pva.axcomp.feature));
+   if min(dsz)>1 
       cmp = 1; 
-   else
-      if objsz(1)<objsz(2)
-         % horizontal direction
-         cmpsz(1) = cmp;
+      if dsz(1)>dsz(2)
+         obj(1).pva.axcomp.orientation = 'vertical'; 
       else
-         % vertical direction
-         cmpsz(2) = cmp;
+         obj(1).pva.axcomp.orientation = 'horizontal';  
       end
    end
-   
-      %% Create (sub)plots
-   %  Draft each subplot
+   nObj  = numel(obj)*cmp;
    
    for iObj = 1:numel(obj)
       % Repeat for comparing axis
       for iCmp = 1:cmp
-         cObj    = (iObj-1)*cmp + iCmp;
          
          %  Make Axes 
-         Ax       = pb_invidx([objsz(1)*cmpsz(1), objsz(2)*cmpsz(2)],cObj);   % reverse get axes index
-         Ax2Obj   = pb_invidx([objsz(1), objsz(2)],iObj);                     % reverse get object index
-         ax(Ax)   = subplot(objsz(1)*cmpsz(1),objsz(2)*cmpsz(2),cObj);        % make axis
+         iAx      = pb_invidx([dsz(1), dsz(2)],iObj);
+         ax(iAx)  = subplot(dsz(1),dsz(2),iObj);
 
-         if obj(iObj).pva.subtitle; title(obj(Ax2Obj).pva.subtitle); end         
-         axis(obj(Ax2Obj).pva.axis);
+         if obj(iAx).pva.subtitle; title(obj(iAx).pva.subtitle); end
+         axis(obj(iAx).pva.axis);
          hold on;
-         
-         % Select data
-         uFeat    = unique(obj(1).pva.axcomp.feature);
-         sel      = obj(1).pva.axcomp.feature == uFeat(iCmp);
-         D        = obj(Ax2Obj).pva;
-         D.x      = D.x(sel);
-         D.y      = D.y(sel);
-         D.color  = D.color(sel);
-         
+
          % Set colors
          nCol = 1;
          if ~obj(iObj).pva.continious 
@@ -86,16 +70,17 @@ function draft(obj)
 
          %  Plot all graphs
          for iDP = 1:length(obj(iObj).dplot)
-            obj(iObj).dplot{iDP}(obj,D);
+            d 	= obj(iAx).pva;
+            obj(iObj).dplot{iDP}(obj,d);
          end
 
          %  Set labels
-         if ~obj(1).labels.supx; xlabel(obj(Ax2Obj).labels.xlab); end
-         if ~obj(1).labels.supy; ylabel(obj(Ax2Obj).labels.ylab); end
+         if ~obj(1).labels.supx; xlabel(obj(iAx).labels.xlab); end
+         if ~obj(1).labels.supy; ylabel(obj(iAx).labels.ylab); end
 
          %  Make scientific notations on the axes.
-         ax(Ax).YAxis.Exponent = length(num2str(max(abs(round(ax(Ax).YLim)))))-1;
-         ax(Ax).XAxis.Exponent = length(num2str(max(abs(round(ax(Ax).XLim)))))-1;
+         ax(iAx).YAxis.Exponent = length(num2str(max(abs(round(ax(iAx).YLim)))))-1;
+         ax(iAx).XAxis.Exponent = length(num2str(max(abs(round(ax(iAx).XLim)))))-1;
       end
    end
    
@@ -105,8 +90,8 @@ function draft(obj)
    %  TO DO:
    %  1. Optionalize subplots to have squared/linked/fixed axis
    %  2. Scale and move axis to make graph nice, pleasing and non-overlapping
-   obj.make_axes(ax);
-   obj.make_suplabel;
+   make_axes(obj,ax);
+   make_suplabel(obj);
 end
 
 

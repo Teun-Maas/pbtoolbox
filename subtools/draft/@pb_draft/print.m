@@ -14,11 +14,12 @@ function print(obj,varargin)
    fn       = pb_keyval('fn',v,defaultname(cdir));
    fit      = pb_keyval('fit',v,'-bestfit');
    format   = pb_keyval('format',v,'-dpdf'); 
+   render   = pb_keyval('render',v,'-painters');
    disp     = pb_keyval('disp',v,false);
    
    figure(h);
    loc = [cdir fn];
-   print(fit,loc,format);
+   print(fit,loc,format,render);
    
    if disp 
       open([loc '.' format(3:end)]);

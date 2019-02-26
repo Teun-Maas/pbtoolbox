@@ -5,9 +5,10 @@ function plot_hline(obj,varargin)
 %
 % See also PB_DRAFT
 
-% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
+% PBToolbox (2019): JJH: j.heckman@donders.ru.nl
    
    p.v         = varargin;
+   p.lim       = obj(1).pva.limits.x;
    obj.dplot   = vertcat(obj.dplot,{@(dobj,data)hline(dobj,data,p)});
 end
 
@@ -28,7 +29,7 @@ function h = hline(~,data,p)
             point = mode(data.y);
       end
    end
-   h = pb_hline(point,'style',style);
+   h = pb_hline(point,'lim',p.lim,'style',style);
 end
 
  

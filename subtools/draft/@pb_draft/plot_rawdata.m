@@ -29,9 +29,9 @@ function h = rawdata(~,data,p,colorindex)
    
    %% MAKE SELECTION FOR COLOR!
    
-   sel = data.color == colorindex;
-   x = data.x(sel);
-   y = data.y(sel);
+   sel   = data.color == colorindex;
+   x     = data.x(sel);
+   y     = data.y(sel);
    
    color = pb_selectcolor(length(p.ncol),data.def);
    

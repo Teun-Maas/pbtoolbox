@@ -63,7 +63,7 @@ function h = bubble_plot(~,data,p)
    x     = x(sel);
    y     = y(sel);
 
-   SZ          = ceil(100*M);
+   SZ          = ceil(50*M);
    [~,~,idx]	= unique(M);
    col			= statcolor(max(idx),[],[],[],'def',p.def);
    C           = col(idx,:);

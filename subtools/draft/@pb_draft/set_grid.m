@@ -1,19 +1,34 @@
 function set_grid(obj,varargin)
 % PB_DRAFT>SET_GRID
 %
-% SET_TITLE(obj,title,varargin)  ...
+% SET_GRID(obj,title,varargin) will set grid parameters.
 %
-% See also ...
+% See also PB_DRAFT
 
-% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
+% PBToolbox (2019): JJH: j.heckman@donders.ru.nl
 
-   
+   v  = varargin;
+   f.Box           = pb_keyval('box',v,'off');
+   f.TickDir       = pb_keyval('tickdir',v,'in');
+   f.TickLength    = pb_keyval('ticklength',v,[.02 .02]);
+   f.XMinorTick    = pb_keyval('XMinorTick',v,'on');
+   f.YMinorTick    = pb_keyval('YMinorTick',v,'on');
+   f.YGrid         = pb_keyval('YGrid',v,'on');
+   f.XGrid         = pb_keyval('XGrid',v,'on');
+   f.YColor        = pb_keyval('YColor',v,[.3 .3 .3]);
+   f.XColor        = pb_keyval('XColor',v,[.3 .3 .3]);
+   f.FontSize      = 10;
+   f.YDir          = 'normal';
+   f.LineWidth     = .1;
+
+   obj(1).grid.bool     = true;
+   obj(1).grid.features = f;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %
-%       Written by: Jesse J. Heckman (2018)                 %
+%       Written by: Jesse J. Heckman (2019)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
