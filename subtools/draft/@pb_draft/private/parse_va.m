@@ -7,29 +7,38 @@ function parse_va(obj,varargin)
 % See also PB_DRAFT
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
-
-   %% READ DATA
-   %  Read Data, and set keyvals
    
+   %% Initialize
    %  Read keyvals
+   
    v = varargin;
    pva.x             = pb_keyval('x',v,[]);
    pva.y             = pb_keyval('y',v,[]);
    pva.z             = pb_keyval('z',v,[]);
    pva.def           = pb_keyval('def',v,1);
-   pva.color         = pb_keyval('color',v,ones(length(pva.x),1));
+   pva.color         = pb_keyval('color',v,ones(length(pva.y),1));
    pva.axis          = pb_keyval('axis',v);
    pva.subtitle      = pb_keyval('subtitle',v);
    pva.linkax        = pb_keyval('link',v,true);
+   pva.setAxes       = pb_keyval('setaxes',v,true);
+   
+   %% Set Core
+   %  Read, check and set data.
    
    %  Check data limits
-   [x,y]             = setlim(pva); 
+   if isempty(pva.x); s = size(pva.y); pva.x = zeros(s(1),s(2)); end
+   
+   [x,y]   = setlim(pva);
+   if strcmp(pva.axis,'square') &&  x ~= y
+      x = [min([x y]) max([x y])];    
+      y = x;
+   end
    pva.limits.x      = x;
    pva.limits.y      = y;
    
    %  Check square axis
    if isempty(pva.axis)
-      if abs(max(x)-max(y)) / max([x,y])<.5
+      if abs(max(x)-max(y)) / max([x,y]) < 0.5
          pva.axis = 'square';
       end
    end
@@ -38,28 +47,33 @@ function parse_va(obj,varargin)
    pva.colscheme     = pb_selectcolor(length(unique(pva.color)),pva.def);
    pva.axcomp        = axcmp(pva.x);
    
+   %  Set Labels
    obj.labels.xlab   = pb_keyval('xlab',v,'');
    obj.labels.ylab   = pb_keyval('ylab',v,'');
    obj.grid.bool     = false;
    
    %  Check data continuity for colouring
    pva.continious = false;
-   if length(unique(pva.color))>5 && ~prod(floor(pva.color) == pva.color)
+   if length(unique(pva.color)) > 5 && ~prod(floor(pva.color) == pva.color)
       pva.continious = true;
    end
    
    obj.pva = pva;
 end
 
-function ac = axcmp(data)
+function axc = axcmp(data)
    %  Writes empty axcomp data struct
-   ac.prefix      = '';
-   ac.feature     = ones(1,length(data));
-   ac.n           = length(unique(ac.feature));
+   
+   axc.prefix      = '';
+   axc.feature     = ones(1,length(data));
+   axc.n           = length(unique(axc.feature));
 end
 
 function [x,y] = setlim(data)
    % Sets the limits for axes
+   
+   x = []; y = [];
+   
    x = [min(data.x) max(data.x)];
    y = [min(data.y) max(data.y)];
    
@@ -71,19 +85,19 @@ function [x,y] = setlim(data)
    if abs(min(y))/yr < .1; y(1) = 0; end
    
    % maximum
-   tmp      = max([x,y]);
+   maxD      = max([x,y]);
    order    = 0;
    scale    = .1;
    
-   if tmp<1; scale = 10; end
+   if maxD < 1; scale = 10; end
    
-   while tmp < .1 || tmp > 1
-      tmp = tmp*scale; 
+   while maxD < .1 || maxD > 1
+      maxD = maxD*scale; 
       order = order+1;
    end
-   tmp   = round(tmp*100)/100;
-   x(2)  = tmp * inv(scale)^order;
-   y(2)  = tmp * inv(scale)^order;
+   maxD   = round(maxD*100)/100;
+   x(2)  = maxD * inv(scale)^order;
+   y(2)  = maxD * inv(scale)^order;
 end
 
 

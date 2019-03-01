@@ -22,7 +22,7 @@ function [h,D] = pb_probit(D, varargin)
    pb_selectaxis(ax);
    hold on;
 
-   D = fixArgIn(D); len = length(D); 
+   len = length(D); 
 	rd = gobjects(len); rl = gobjects(len); h = gobjects(len);
 
 	%% Rawdata
@@ -32,10 +32,10 @@ function [h,D] = pb_probit(D, varargin)
       x     = -1./sort(D(i).rt);
       n     = numel(iRT);
       y     = probitscale((1:n)./n);
-      rd(i) = scatter(x,y);
+      rd(i) = plot(x,y,'Marker','o','Color',[.66 .66 .66],'MarkerFaceColor',[.66 .66 .66]);
    end
 
-   set(rd,'Tag','rawdata');
+   %set(rd,'Tag','rawdata');
 
 	%% Quantiles & regression
 
@@ -73,25 +73,11 @@ function [h,D] = pb_probit(D, varargin)
 end
 
 function chi = probitscale(cdf)
-   % creates a probitscale
+   % Creates a probitscale
    
    myerf       = 2*cdf - 1;
    myerfinv    = sqrt(2)*erfinv(myerf);
    chi         = myerfinv;    
-end
-
-function D = fixArgIn(tmp)
-   % checks /correct datatype and orientation of input data
-   
-   D = struct;
-   if isnumeric(tmp)
-      D.rt = tmp;
-   end
-   
-   s = size(D.rt);
-   if s(1) < s(2)
-      D.rt = D.rt';
-   end
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

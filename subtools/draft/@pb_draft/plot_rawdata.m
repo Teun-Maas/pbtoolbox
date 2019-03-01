@@ -27,8 +27,6 @@ end
 function h = rawdata(~,data,p,colorindex)
    %  Plots rawdata
    
-   %% MAKE SELECTION FOR COLOR!
-   
    sel   = data.color == colorindex;
    x     = data.x(sel);
    y     = data.y(sel);

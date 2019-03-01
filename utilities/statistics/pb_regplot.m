@@ -1,9 +1,9 @@
 function [h,b,r] = pb_regplot(X,Y,varargin)
-% PB_REGPLOT()
+% PB_REGPLOT
 %
 % plots data, and linear regression.
 %
-% PA_REGPLOT(,Y) plots X vs Y, and performs linear regression on X and Y.
+% PA_REGPLOT(X,Y,varargin) plots X vs Y, and performs linear regression on X and Y.
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  
@@ -36,6 +36,7 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    if data; h(1) = plot(X, Y, ['k' marker]); end
    axxes = axis;
    h(end+1) = plot(axxes([1 2]),gain*axxes([1 2])+bias,'Color',color,'LineStyle',linestyle,'LineWidth',linewidth);
+   if ~hs; hold off; end
 end
 
 

@@ -50,21 +50,21 @@ classdef pb_draft < matlab.mixin.Copyable
       
       %  Set functions
       set_title(obj,title,varargin);            % set title
-      set_legend(obj,varargin);                 % set legend               /// NOT YET DONE
+      set_legend(obj,varargin);                 % set legend               
       set_labels(obj,varargin);                 % set labels
       set_grid(obj,varargin);                   % set grid
-      set_axcomp(obj,feature,varargin);         % set comparision axe      /// WORKING ON IT
+      set_axcomp(obj,feature,varargin);         % set comparision axe
       
       %  Plot functions
       plot_rawdata(obj,varargin);               % plot the rawdata
+      plot_bubble(obj,varargin);                % plot bubble histoplot
       plot_hline(obj,varargin);                 % plot horizontal lines
       plot_vline(obj,varargin);                 % plot vertical lines
-      plot_dline(obj,varargin);                 % plot diagonal lines
-      plot_bubble(obj,varargin);                % plot bubble histoplot
+      plot_dline(obj,varargin);                 % plot diagonal lines    
       
       %  Statistical functions
       stat_regres(obj,varargin);                % transform regression     // NOT YET DONE
-      stat_probit(obj,varargin);                % transform probit
+      stat_probit(obj,varargin);                % transform probit         // MADE NOT FINISHED
       
       %  Fitting functions
       fit_ellipse(obj,varargin);                % make ellipse fit

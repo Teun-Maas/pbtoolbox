@@ -4,48 +4,79 @@
 pb_clean;                  % Empty
 load('exD_saccade');       % load example data
 cfn = 0;                   % Initialize current figure number
-run = 2;                   % Set # of blocks to run
+run = 3;                   % Set # of blocks to run
 
-%% Block1:
-%  Make figure 1: Plot rawdata + bubbleplot
+%% Block 1:
+%  Make figure 1: Plot data
 
 if run>cfn
-   cfn = pb_newfig(cfn,'size',[0 0 17 12],'resize','off'); 
-   for i = 1:1
-      for j = 1:2
-         d(j,i) = pb_draft('x',Saccades.GazeLatency,'y',Saccades.HeadLatency,'color',Saccades.Modality);
-         d(j,i).set_labels('x','Gaze Latency (ms)','y','Head Latency (ms)');
-         if ~iseven(i*j)
-            d(j,i).plot_rawdata;
-         else
-            d(j,i).plot_bubble;  
-            d(j,i).fit_ellipse;
-         end
-         d(j,i).plot_dline;
-         d(j,i).plot_vline('type','mode');
-         d(j,i).plot_hline('type','mode');
-      end
-   end
-
+   %  Make figure & draft-obj
+   cfn   = pb_newfig(cfn,'size',[0 0 17 17],'ws','Docked'); 
+   d     = pb_draft('x',Saccades.GazeLatency,'y',Saccades.HeadLatency,'color',Saccades.Modality);
+   
+   %  Plots
+   d.plot_rawdata
+   d.plot_vline('type','mode');
+   d.plot_hline('type','mode');
+   
+   %  Layout
    d.set_title('Saccade Latencies');
-   d.set_axcomp(Saccades.Subject);
+   d.set_labels('x','Gaze Latency (ms)','y','Head Latency (ms)');
    d.set_grid;
-   d.draft;
-   d.print('disp',true);
+   
+   %  Build
+   d.draft
+   %d.print
 end
 
-%% Block2:
+
+%% Block 2:
 %  Make figure 2: Plot rawdata + bubbleplot
 
 if run>cfn
-   cfn   = pb_newfig(cfn,'size',[0 0 17 17],'resize','off'); 
-   d     = pb_draft('x',Saccades.GazeLatency,'y',Saccades.HeadLatency,'color',Saccades.Modality);
+   %  Make figure
+   cfn = pb_newfig(cfn,'size',[0 0 17 12],'ws','Docked'); 
+   for iR = 1:2
+      %  Build draft-objs
+      d(iR,1) = pb_draft('x',Saccades.GazeLatency,'y',Saccades.HeadLatency,'color',Saccades.Modality);
+
+      %  Plots
+      if ~iseven(iR)
+         d(iR,1).plot_rawdata;
+      else
+         d(iR,1).plot_bubble;  
+         d(iR,1).fit_ellipse;
+      end
+      d(iR,1).plot_dline;
+
+      %  Axis Layout
+      d(iR,1).set_labels('x','Gaze Latency (ms)','y','Head Latency (ms)');
+   end
+
+   %  Figure Layout
+   d.set_title('Saccade Latencies');
+   d.set_axcomp(Saccades.Subject);
+   d.set_grid;
+   
+   %  Build
+   d.draft;
+   %d.print
 end
 
-
-%% Block3:
+%% Block 3:
 
 if run>cfn
-   cfn   = pb_newfig(cfn,'size',[0 0 17 17],'resize','off'); 
-   d     = pb_draft('x',Saccades.GazeLatency,'y',Saccades.HeadLatency,'color',Saccades.Modality);
+   %  Make figure & draft-obj
+   cfn   = pb_newfig(cfn,'size',[0 0 17 17],'ws','Docked');
+   d     = pb_draft('y',Saccades.HeadLatency); %,'color',Saccades.Modality);
+   
+   d.stat_probit;
+   
+   d.set_title('Probit plot');
+   d.set_labels('x','Reaction Times (ms)','y','Cumulative Probability');
+   d.set_grid;
+   
+   %  Build
+   d.draft;
+   %d.print
 end

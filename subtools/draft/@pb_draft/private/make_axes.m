@@ -8,19 +8,20 @@ function make_axes(obj,ax,varargin)
 % PBToolbox (2019): JJH: j.heckman@donders.ru.nl
    
    linkaxes(ax,'xy');
-   
    positions = zeros(length(ax),4);
    
    for iAx = 1:length(ax)
+      
       axis(ax(iAx));
-      xt    = xticks;
-      yt    = yticks;
+
+      % Set Limits
+      if obj(1).pva.setAxes
+         xlim(obj(1).pva.limits.x);
+         ylim(obj(1).pva.limits.y);
+      end
+
+      % Set Grids
       setAx = ax(iAx);
-      
-      xlim(ax(iAx),[xt(1) xt(end)]);
-      ylim(ax(iAx),[yt(1) yt(end)]);
-      positions(iAx,:) = ax(iAx).Position(:);
-      
       if obj(1).grid.bool
          f = obj(1).grid.features;
          setAx.Box           = f.Box;
@@ -36,12 +37,15 @@ function make_axes(obj,ax,varargin)
          setAx.YDir          = f.YDir;
          setAx.LineWidth     = f.LineWidth;
       end
+      positions(iAx,:) = ax(iAx).Position(:);
    end
    
+   % Set Label Positions
+   % TODO: THIS MUST BE DONE WAY BETTER!!
    obj(1).labels.ypos   = min(positions(:,2));
    obj(1).labels.xpos   = min(positions(:,1));
    obj(1).labels.pos    = [min(positions(:,1))/1.33 min(positions(:,2))/1.33 max(positions(:,1)+positions(:,3)) max(positions(:,2)+positions(:,4))];
-   obj(1).h_ax_plot = ax;
+   obj(1).h_ax_plot     = ax;
 end
 
  

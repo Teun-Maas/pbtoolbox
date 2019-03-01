@@ -7,7 +7,8 @@ function draft(obj)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   %% Create figure
+   %% Initialize Draft
+   %  Make figure, select parents, and set layouts
    
    % 	Select parent/make figure
    if isempty(obj(1).parent)
@@ -19,47 +20,47 @@ function draft(obj)
    %  Set figure settings
    set(obj(1).parent,'color','w');
    t = sgtitle(obj(1).parent,obj(1).title);
-   set(t,'FontSize',20);
+   set(t,'FontSize',18);
    
    ax       = gobjects(0);
    objsz    = size(obj);
    
    %% Super labels
-   %  Check if labels are the same, and prep super labels
+   %  Check and prepare superlabels
    
-   lab_x = true; lab_y = true;
+   %  Check labels
+   bool = true; if numel(obj) == 1; bool = false; end
+   lab_x = bool; lab_y = bool;
    for iObj = 1:numel(obj) 
       if ~strcmp(obj(1).labels.xlab, obj(iObj).labels.xlab); lab_x = false; end
       if ~strcmp(obj(1).labels.ylab, obj(iObj).labels.ylab); lab_y = false; end
    end
+   
+   %  Set superlabels
    obj(1).labels.supx = lab_x;
    obj(1).labels.supy = lab_y;
    
    
-   %%  Set Compare axis
-   cmp      = length(unique(obj(1).pva.axcomp.feature));
+   %%  Set Compare Axis
+   %  Check and set comparing axis
+   
+   nCmp     = length(unique(obj(1).pva.axcomp.feature));
+   if min(objsz) > 1; nCmp = 1; end
+   
    cmpsz    = [1 1];
-   nObj     = numel(obj)*cmp;
+   nObj     = numel(obj) * nCmp;
+
+   [~,cmpInd]     = max(cmpsz);
+   cmpsz(cmpInd)  = nCmp; 
+   cmpsz          = fliplr(cmpsz);
    
-   if min(objsz)>1 
-      cmp = 1; 
-   else
-      if objsz(1)<objsz(2)
-         % horizontal direction
-         cmpsz(1) = cmp;
-      else
-         % vertical direction
-         cmpsz(2) = cmp;
-      end
-   end
-   
-      %% Create (sub)plots
+   %% Create Plots
    %  Draft each subplot
    
    for iObj = 1:numel(obj)
       % Repeat for comparing axis
-      for iCmp = 1:cmp
-         cObj    = (iObj-1)*cmp + iCmp;
+      for iCmp = 1:nCmp
+         cObj    = (iObj-1)*nCmp + iCmp;
          
          %  Make Axes 
          Ax       = pb_invidx([objsz(1)*cmpsz(1), objsz(2)*cmpsz(2)],cObj);   % reverse get axes index
@@ -70,19 +71,15 @@ function draft(obj)
          axis(obj(Ax2Obj).pva.axis);
          hold on;
          
-         % Select data
-         uFeat    = unique(obj(1).pva.axcomp.feature);
-         sel      = obj(1).pva.axcomp.feature == uFeat(iCmp);
+         %  Select data
+         features = unique(obj(1).pva.axcomp.feature);
+         sel      = obj(1).pva.axcomp.feature == features(iCmp);
+         
          D        = obj(Ax2Obj).pva;
          D.x      = D.x(sel);
          D.y      = D.y(sel);
          D.color  = D.color(sel);
          
-         % Set colors
-         nCol = 1;
-         if ~obj(iObj).pva.continious 
-            nCol = length(unique(obj(iObj).pva.color));
-         end
 
          %  Plot all graphs
          for iDP = 1:length(obj(iObj).dplot)
@@ -99,12 +96,11 @@ function draft(obj)
       end
    end
    
-   %% Adjust axis handles
+   %% Adjust Axis Handles
    %  Set super labels
    
    %  TO DO:
-   %  1. Optionalize subplots to have squared/linked/fixed axis
-   %  2. Scale and move axis to make graph nice, pleasing and non-overlapping
+   %  1. Scale and move axis to make graph nice, pleasing and non-overlapping
    obj.make_axes(ax);
    obj.make_suplabel;
 end
