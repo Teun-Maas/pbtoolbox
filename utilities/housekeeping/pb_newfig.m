@@ -22,8 +22,7 @@ function [cfn,f] = pb_newfig(cfn, varargin)
    set(f,'Units',units);
    set(f,'Resize',rsz)
    
-   if ~strcmp(ws,'Docked');set(f, 'Position',sz); end
-   
+   if ~strcmp(ws,'Docked'); set(f, 'Position',sz); end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

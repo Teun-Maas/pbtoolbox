@@ -7,7 +7,15 @@ function set_legend(obj,varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
-
+   v  = varargin;
+   f.marker          = pb_keyval('Marker',v,'o');
+   f.entries         = pb_keyval('Entries',v,[]);
+   f.fontsize        = pb_keyval('Fontsize',v,9);
+   f.fontname        = pb_keyval('Fontname',v,'Helvetica');
+   
+   obj(1).h_ax_legend.bool       = true;
+   obj(1).h_ax_legend.handles    = {};
+   obj(1).h_ax_legend.features   = f;
 end
 
  

@@ -49,27 +49,32 @@ classdef pb_draft < matlab.mixin.Copyable
       end
       
       %  Set functions
-      set_title(obj,title,varargin);            % set title
-      set_legend(obj,varargin);                 % set legend               
+      set_title(obj,title,varargin);            % set title             
       set_labels(obj,varargin);                 % set labels
       set_grid(obj,varargin);                   % set grid
-      set_axcomp(obj,feature,varargin);         % set comparision axe
+      set_axcomp(obj,feature,varargin);         % set comparision axe      
+      set_legend(obj,varargin);                 % set legend  
       
       %  Plot functions
       plot_rawdata(obj,varargin);               % plot the rawdata
-      plot_bubble(obj,varargin);                % plot bubble histoplot
+      plot_bubble(obj,varargin);                % make bubbleplot
       plot_hline(obj,varargin);                 % plot horizontal lines
       plot_vline(obj,varargin);                 % plot vertical lines
-      plot_dline(obj,varargin);                 % plot diagonal lines    
+      plot_dline(obj,varargin);                 % plot diagonal lines 
+%       plot_polar(obj,varargin);                 % make polarplot
       
       %  Statistical functions
-      stat_regres(obj,varargin);                % transform regression     // NOT YET DONE
-      stat_probit(obj,varargin);                % transform probit         // MADE NOT FINISHED
+      stat_probit(obj,varargin);                % make probitplot
+%       stat_boxplot(obj,varargin);               % make boxplot
+%       stat_regres(obj,varargin);                % plot regression
+%       stat_shade(obj,varargin);                 % plot shaded area
       
       %  Fitting functions
       fit_ellipse(obj,varargin);                % make ellipse fit
-      fit_sigmoid(obj,varargin);                % make sigmoidal fit
-      fit_polyn(obj,varargin);                  % make polynomial fit
+%       fit_sigmoid(obj,varargin);                % make sigmoidal fit
+%       fit_polyn(obj,varargin);                  % make polynomial fit
+%       fit_exp(obj,varargin);                    % make exponential fit
+%       fit_custom(obj,varargin);                 % make custom fit
       
       %  Core functions
       draft(obj);                               % draw figure

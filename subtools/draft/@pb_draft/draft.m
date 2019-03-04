@@ -47,12 +47,12 @@ function draft(obj)
    nCmp     = length(unique(obj(1).pva.axcomp.feature));
    if min(objsz) > 1; nCmp = 1; end
    
-   cmpsz    = [1 1];
-   nObj     = numel(obj) * nCmp;
-
+   cmpsz          = [1 1];
    [~,cmpInd]     = max(cmpsz);
    cmpsz(cmpInd)  = nCmp; 
    cmpsz          = fliplr(cmpsz);
+   
+   obj(1).h_ax_plot.sz = cmpsz .* size(obj);
    
    %% Create Plots
    %  Draft each subplot
@@ -63,8 +63,8 @@ function draft(obj)
          cObj    = (iObj-1)*nCmp + iCmp;
          
          %  Make Axes 
-         Ax       = pb_invidx([objsz(1)*cmpsz(1), objsz(2)*cmpsz(2)],cObj);   % reverse get axes index
-         Ax2Obj   = pb_invidx([objsz(1), objsz(2)],iObj);                     % reverse get object index
+         Ax       = pb_invidx(objsz.*cmpsz,cObj);   % reverse get axes index
+         Ax2Obj   = pb_invidx(objsz,iObj);                     % reverse get object index
          ax(Ax)   = subplot(objsz(1)*cmpsz(1),objsz(2)*cmpsz(2),cObj);        % make axis
 
          if obj(iObj).pva.subtitle; title(obj(Ax2Obj).pva.subtitle); end         
@@ -101,7 +101,10 @@ function draft(obj)
    
    %  TO DO:
    %  1. Scale and move axis to make graph nice, pleasing and non-overlapping
+
+ 
    obj.make_axes(ax);
+   obj.make_legend;
    obj.make_suplabel;
 end
 

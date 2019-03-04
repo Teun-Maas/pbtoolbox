@@ -52,6 +52,9 @@ function parse_va(obj,varargin)
    obj.labels.ylab   = pb_keyval('ylab',v,'');
    obj.grid.bool     = false;
    
+   %  Set legend
+   obj(1).h_ax_legend.bool = false;
+   
    %  Check data continuity for colouring
    pva.continious = false;
    if length(unique(pva.color)) > 5 && ~prod(floor(pva.color) == pva.color)

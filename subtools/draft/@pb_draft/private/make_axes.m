@@ -1,18 +1,47 @@
 function make_axes(obj,ax,varargin)
 % PB_DRAFT>MAKE_AXES
 %
-% OBJ.SET_LEGEND(varargin) rescale, size and store axes handles..
+% OBJ.MAKE_AXES(varargin) rescale, size and store axes handles..
 %
 % See also PB_DRAFT
 
 % PBToolbox (2019): JJH: j.heckman@donders.ru.nl
    
    linkaxes(ax,'xy');
-   positions = zeros(length(ax),4);
+   positions   = zeros(length(ax),4);
+   nAx         = length(ax);
    
-   for iAx = 1:length(ax)
+
+   
+   for iAx = 1:nAx
       
-      axis(ax(iAx));
+      sz 	= obj(1).h_ax_plot.sz;
+      cAx   = pb_invidx(sz,iAx);                                           % align axes and objects
+      ax(cAx);
+      
+      %  Scale for legend
+      if obj(1).h_ax_legend.bool 
+         scale       = [0.8 1]; 
+         szfl         = fliplr(sz);
+         
+         [xN,yN]     = pb_mod(iAx,sz(2)); if xN == 0; xN = sz(2); end
+         N           = [xN,yN+1];
+         ax(cAx).OuterPosition(3:4) = ax(cAx).OuterPosition(3:4)*scale(1);
+         
+         for iDir = 1:2
+            width    = ax(cAx).OuterPosition(2+iDir);
+            spacing(iDir)  = (scale(iDir)-(width*szfl(iDir)))/(szfl(iDir)+1);
+            if iDir == 1; ax(cAx).OuterPosition(1) = (N(1)-1)*width + N(1)*spacing(iDir); end
+            if iDir == 2
+               if spacing(2)>spacing(1)*1.5
+                   spacing(2) = spacing(1)*1.5;
+               end
+               margin = (1-(sz(1)*width + (sz(1)-1)*spacing(2)))/2;
+               ax(cAx).OuterPosition(2) = 1-margin-(N(2)*width) - (N(2)-1)*spacing(iDir);
+            end
+         end
+      end
+      
 
       % Set Limits
       if obj(1).pva.setAxes
@@ -21,7 +50,7 @@ function make_axes(obj,ax,varargin)
       end
 
       % Set Grids
-      setAx = ax(iAx);
+      setAx = ax(cAx);
       if obj(1).grid.bool
          f = obj(1).grid.features;
          setAx.Box           = f.Box;
@@ -37,7 +66,7 @@ function make_axes(obj,ax,varargin)
          setAx.YDir          = f.YDir;
          setAx.LineWidth     = f.LineWidth;
       end
-      positions(iAx,:) = ax(iAx).Position(:);
+      positions(cAx,:) = ax(cAx).Position(:);
    end
    
    % Set Label Positions

@@ -17,40 +17,34 @@ function [h,D] = pb_probit(D, varargin)
 	ho          = pb_keyval('ho',varargin,ishold);
 	fig         = pb_keyval('fig',varargin, gcf);
 	ax          = pb_keyval('ax',varargin, gca);
+   col         = pb_keyval('color',varargin,[0 0 0]);
+	gcol        = pb_keyval('gcolor',varargin,[.66 .66 .66]);
+   linestyle   = pb_keyval('linestyle',varargin,'none');
    
    pb_selectfig(fig);
    pb_selectaxis(ax);
    hold on;
 
-   len = length(D); 
-	rd = gobjects(len); rl = gobjects(len); h = gobjects(len);
-
 	%% Rawdata
    
-	for i = 1:len
-      iRT   = 1/D(i).rt;
-      x     = -1./sort(D(i).rt);
-      n     = numel(iRT);
-      y     = probitscale((1:n)./n);
-      rd(i) = plot(x,y,'Marker','o','Color',[.66 .66 .66],'MarkerFaceColor',[.66 .66 .66]);
-   end
-
-   %set(rd,'Tag','rawdata');
+   iRT   = 1/D;
+   x     = -1./sort(D);
+   n     = numel(iRT);
+   y     = probitscale((1:n)./n);
+   h(1)  = plot(x,y,'Marker','o','Color',gcol,'MarkerFaceColor',gcol,'Linestyle','None');
+   set(h(1),'Tag','rawdata');
 
 	%% Quantiles & regression
 
-   p       = [1,2,5,10,25,50,75,90 95 98 99]/100;
-   xtick	= sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
+   p        = [1,5,10,25,50,75,90, 95, 99]/100;
+   xtick    = sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
 
-   for j = 1:len
-      prob	= probit(p);
-      q		= -1./quantile(D(j).rt,p);
-      b    = regstats(prob,q);
+   prob	= probitscale(p);
+   q		= -1./quantile(D,p);
+   b     = regstats(prob,q);
 
-      D(j).stats = b;
-      rl(j) = regline(b.beta,'k--');
-      h(j) = plot(q,prob,'o');
-   end
+   rl    = regline(b.beta,'k--');
+   h(2)  = plot(q,prob,'color',col,'Marker','o','MarkerFaceColor',col,'LineStyle',linestyle);
 
    set(h,'Tag','probit model');
    set(rl,'Tag','graphical aid: regline');
@@ -67,7 +61,11 @@ function [h,D] = pb_probit(D, varargin)
    axis square;
    box off
 
-   pb_hline();
+   f = pb_fobj(gca,'Tag','horline');
+   if isempty(f)
+      f = pb_hline(0,'visibility','on');
+      set(f,'Tag','horline');
+   end
 
    if ~ho; hold off; end
 end
