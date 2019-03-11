@@ -16,12 +16,12 @@ function cfg = pb_vLookup(cfg,varargin)
    % [Azimuth (deg) Elevation (deg) LED #]
    % azimuths and elevations were measured by Sebastian Ausili in June 2015
    cfg					= pb_vLSCpositions(cfg);
-   cfg.nstimchan		= 2^5; % number of PLC and MUX channels
-   cfg.nspeakers		= 17; % actual number of speakers
+   cfg.nstimchan		= 2^6; % number of PLC and MUX channels
+   cfg.nspeakers		= 63; % actual number of speakers
    cfg.stimchan		= (1:cfg.nstimchan)-1;
 
    %% Add missing channels
-   n					= size(cfg.lookup,1);
+   n                 = size(cfg.lookup,1);
    cfg.lookup			= [cfg.lookup; NaN(cfg.nstimchan-n,3)]; % add missing channel data as NaNs
    sel					= ismember(cfg.stimchan,cfg.lookup(:,3)); % lookup existing channels
    cfg.missingchan		= cfg.stimchan(~sel); % get missing channels
@@ -31,12 +31,12 @@ function cfg = pb_vLookup(cfg,varargin)
 
    %% Speakers
 
-   cfg.nMUX          = 2; % 2 multiplexers
+   cfg.nMUX          = 4; % 2 multiplexers
    cfg.nMUXbit			= 16; % 16 bits per MUX
    cfg.MUXind			= 1:cfg.nMUX;
    cfg.MUXbit			= 1:cfg.nMUXbit;
 
-   LookUp(:,1)			= cfg.stimchan; % Stimulus channel 0-31
+   LookUp(:,1)			= cfg.stimchan; % Stimulus channel 0-63
    idx					= LookUp(:,1)+1;
    LookUp(:,2)			= ceil(idx/(2^4));% MUX number
    idx					= mod(idx,2^4);
