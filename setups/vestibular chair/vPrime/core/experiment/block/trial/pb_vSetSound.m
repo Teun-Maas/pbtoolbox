@@ -24,7 +24,7 @@ function pb_vSetSound(snd,cfg,RZ6str)
 
    cfg.RZ6_1.SetTagVal('eventSND',snd.onevent+1);
    cfg.RZ6_1.SetTagVal('delaySND',snd.ondelay);
-   cfg.RZ6_1.SetTagVal('soundDur',snd.duration);  %
+   cfg.RZ6_1.SetTagVal('soundDur',snd.duration);
 
    cfg.RZ6_1.SetTagVal('AttenuationA',atten); % Note: sounds are set for 2 channels, but only 1 sound is played (see MUX below)
    cfg.RZ6_1.SetTagVal('AttenuationB',atten);

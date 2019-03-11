@@ -9,37 +9,24 @@ function make_legend(obj,varargin)
    
    lgnd = obj(1).h_ax_legend;
    if lgnd.bool
-      h = axes('Units','Normal','Position',[.8 .3 .15 .4],'Visible','off','tag','legend');
+      h = axes('Units','Normal','Position',[.85 .3 .15 .4],'tag','legend','Visible','off');
       hold on;
-      t = text(0,0.5,'LEGEND1','Visible','on');
-      p = plot(0,0.5,'o','Visible','on');
-      xlim = [0 1];
-      ylim = [0 1];
-
-
-      %[n,m] = readlegend(lgnd.features.entries,lgnd.features.fontsize);
+      
+      ncol = length(unique(obj(1).pva.color));
+      col = pb_selectcolor(ncol,obj(1).pva.def);
+      move = 0;
+      for iCol = 1:ncol
+         pos = 0.575 - (iCol-1)*.075;
+         t(iCol) = text(0.1,pos,lgnd.features.entries{iCol},'Visible','on','FontSize',lgnd.features.fontsize);
+         p(iCol) = plot(0,pos,'Marker','o','Visible','on','Color',col(iCol,:),'MarkerFaceColor',col(iCol,:));
+         xlim([0 1]);
+         ylim([0 1]);
+         
+         if move<t(iCol).Extent(3); move = t(iCol).Extent(3); end
+      end
+      move           = (.95-move)*0.15;
+      h.Position(1)  = h.Position(1)+move;
    end
-end
-
-
-function [n,m] = readlegend(entries,fontsize)
-   % returns the size of the legend
-   
-   if isempty(entries)
-      n = 0; m = 0;
-      return
-   end
-   
-   n        = length(entries);
-   n        = (n+1)*0.04;
-
-   
-   z = axes();
-   set(z,units,'centimeters');
-   
-   
-   
-   
 end
 
  

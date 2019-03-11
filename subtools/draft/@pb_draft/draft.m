@@ -98,13 +98,9 @@ function draft(obj)
    
    %% Adjust Axis Handles
    %  Set super labels
-   
-   %  TO DO:
-   %  1. Scale and move axis to make graph nice, pleasing and non-overlapping
 
- 
-   obj.make_axes(ax);
    obj.make_legend;
+   obj.make_axes(ax);
    obj.make_suplabel;
 end
 

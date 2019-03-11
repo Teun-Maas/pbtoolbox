@@ -52,7 +52,6 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
             end
          end
       end
-      
       stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07');
       stim(find(selled,1)).ledhandle.write(s);
    end
@@ -71,8 +70,12 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
 
    %% WAIT
    
-   ev             = stim.offevent;
-   de             = stim.offdelay;
+   ev = 0;
+   de = 2500;
+   
+   if isfield(stim,'offevent'); ev = stim.offevent; end
+   if isfield(stim,'offdelay'); de = stim.offdelay; end
+   
    mxevent			= max(ev);
    sel				= ismember(ev,mxevent);
    mxdelay			= max([de(sel) ceil(1000*cfg.nsamples./cfg.RZ6Fs) ]);
