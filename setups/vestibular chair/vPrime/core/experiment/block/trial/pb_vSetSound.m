@@ -39,8 +39,7 @@ function pb_vSetSound(snd,cfg,RZ6str)
    cfg.RZ6_1.SetTagVal('type2',snd.filter2.type);
    cfg.RZ6_1.SetTagVal('enable2',snd.filter2.enable);
 
-
-   MUX(cfg.(RZ6str),sndsetup(1),sndsetup(2));
+   pb_MUX(cfg.(RZ6str),sndsetup(1),sndsetup(2));
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

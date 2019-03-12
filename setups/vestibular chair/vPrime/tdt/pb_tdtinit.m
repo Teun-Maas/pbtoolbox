@@ -16,8 +16,8 @@ function handles = pb_tdtinit(handles)
    Fs                = RZ6_1.GetSFreq;
    handles.cfg.RZ6Fs	= Fs;
    
-   for muxIdx = 1:2
-      MUX(RZ6_1,muxIdx);
+   for muxIdx = 1:4  % muxID
+      pb_MUX(RZ6_1,muxIdx);
    end
 
    %% TDT status

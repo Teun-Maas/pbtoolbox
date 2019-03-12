@@ -4,33 +4,32 @@
 pb_clean;                  % Empty
 load('exD_saccade');       % load example data
 cfn = 0;                   % Initialize current figure number
-run = 2;                   % Set # of blocks to run
+run = 1;                   % Set # of blocks to run
 
 %% Block 1:
 %  Make figure 1: Plot data
 
-if run>cfn
-   %  Make figure & draft-obj
-   cfn   = pb_newfig(cfn,'size',[0 0 17 17],'resize','off'); 
-   d     = pb_draft('x',Saccades.GazeLatency,'y',Saccades.HeadLatency,'color',Saccades.Modality);
-   
-   
-   %  Plots
-   d.plot_rawdata
-   d.plot_vline('type','mode');
-   d.plot_hline('type','mode');
-   
-   %  Layout
-   d.set_axcomp(Saccades.Subject);
-   d.set_title('Saccade Latencies');
-   d.set_labels('x','Gaze Latency (ms)','y','Head Latency (ms)');
-   d.set_grid;
-   d.set_legend('Entries',{'Audio','Visual','Audiovisual'});
-   
-   %  Build
-   d.draft
-   d.print('disp',true);
-end
+% if run>cfn
+%    %  Make figure & draft-obj
+%    cfn   = pb_newfig(cfn,'size',[0 0 17 17],'resize','off'); 
+%    d     = pb_draft('x',Saccades.GazeLatency,'y',Saccades.HeadLatency,'color',Saccades.Modality);
+%    
+%    %  Plots
+%    d.plot_rawdata
+%    d.plot_vline('type','mode');
+%    d.plot_hline('type','mode');
+%    
+%    %  Layout
+%    d.set_axcomp(Saccades.Subject);
+%    d.set_title('Saccade Latencies');
+%    d.set_labels('x','Gaze Latency (ms)','y','Head Latency (ms)');
+%    d.set_grid;
+%    d.set_legend('Entries',{'Audio','Visual','Audiovisual'});
+%    
+%    %  Build
+%    d.draft
+%    d.print('disp',true);
+% end
 
 
 %% Block 2:
