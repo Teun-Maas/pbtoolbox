@@ -7,18 +7,43 @@ function make_suplabel(obj,varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
-   x        = pb_keyval('x',varargin,obj(1).labels.supx);
-   y        = pb_keyval('y',varargin,obj(1).labels.supy);
-   pos      = pb_keyval('position',varargin,obj(1).labels.pos);
+   %% Initialize
+   %  Get axes, positions and data
    
-   slax     = gobjects(0);
-   
-   if x || y
-      slax  = axes('Units','Normal','Position',pos,'Visible','off','tag','suplabel'); 	 % TODO: HOW TO MAKE THE POSITION ADAPTING ON AXES/FIGURE?
-      if x; xlabel(obj(1).labels.xlab,'Visible','on'); end
-      if y; ylabel(obj(1).labels.ylab,'Visible','on'); end
-      obj(1).h_ax_labels = slax;
+   %  Correct label width for putative legend
+   legendBoundary = 1;
+   if obj(1).h_ax_legend.bool
+      legendBoundary = obj(1).h_ax_legend.handles.Position(1);
    end
+   obj(1).labels.pos = [0 0 legendBoundary 0.975];
+   
+   %  Assess labels
+   bool = true; if numel(obj) == 1; bool = false; end
+   lab_x = bool; lab_y = bool;
+   
+   for iObj = 1:numel(obj) 
+      if ~strcmp(obj(1).labels.xlab, obj(iObj).labels.xlab); lab_x = false; end
+      if ~strcmp(obj(1).labels.ylab, obj(iObj).labels.ylab); lab_y = false; end
+   end
+   
+   %  Set superlabels
+   obj(1).labels.supx = lab_x;
+   obj(1).labels.supy = lab_y;
+   
+   %% Build Suplabel
+   %  Set Axis, display labels.
+   
+   h  = axes('Parent',obj(1).parent,'OuterPosition',obj(1).labels.pos,'Visible','off','tag','Labels');
+   
+   if lab_x; xlabel(obj(1).labels.xlab,'Visible','on'); end
+   if lab_y; ylabel(obj(1).labels.ylab,'Visible','on'); end
+   if ~isempty(obj(1).title); title(obj(1).title,'Visible','on','FontSize',18); end
+   
+   %% Checkout
+   %  Store and update primary obj data
+   
+   obj(1).h_ax_labels = h;
+   obj(1).h_ax_plot.playground = h.Position;
 end
 
  

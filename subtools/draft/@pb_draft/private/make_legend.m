@@ -7,26 +7,47 @@ function make_legend(obj,varargin)
 
 % PBToolbox (2019): JJH: j.heckman@donders.ru.nl
    
-   lgnd = obj(1).h_ax_legend;
-   if lgnd.bool
-      h = axes('Units','Normal','Position',[.85 .3 .15 .4],'tag','legend','Visible','off');
-      hold on;
+   %% Initialize
+   %  Assert legend and set axis
+   
+   lgnd     = obj(1).h_ax_legend;
+   if ~lgnd.bool; return; end
+   
+   ncol     = length(unique(obj(1).pva.color));
+   entries  = lgnd.features.entries;
+   if length(entries) ~= ncol; disp('Error: Number of entries and colors in legend did not match.'); return; end
+   
+   %  Get parameters
+   col   = pb_selectcolor(ncol,obj(1).pva.def);
+   move  = 0;
+   sz    = 0.04;
+   
+   %% Build Legend
+   %  Set Axis, display entries.
+   
+   %  Set axis
+   h = axes('Parent',obj(1).parent,'Visible','off','Position',lgnd.pos,'tag','Legend'); 
+   xlim([0 1]); ylim([0 1]);
+   hold on;
+   
+   %  Fill legend entries 
+   for iCol = 1:ncol
+      pos      = 0.5 + (ncol*sz/2) - (iCol-1)*sz -sz/2;
+      p(iCol)  = plot(0,pos,'Marker','o','Visible','on','Color',col(iCol,:),'MarkerFaceColor',col(iCol,:));
+      t(iCol)  = text(0.1,pos,entries{iCol},'Visible','on','FontSize',lgnd.features.fontsize);
       
-      ncol = length(unique(obj(1).pva.color));
-      col = pb_selectcolor(ncol,obj(1).pva.def);
-      move = 0;
-      for iCol = 1:ncol
-         pos = 0.575 - (iCol-1)*.075;
-         t(iCol) = text(0.1,pos,lgnd.features.entries{iCol},'Visible','on','FontSize',lgnd.features.fontsize);
-         p(iCol) = plot(0,pos,'Marker','o','Visible','on','Color',col(iCol,:),'MarkerFaceColor',col(iCol,:));
-         xlim([0 1]);
-         ylim([0 1]);
-         
-         if move<t(iCol).Extent(3); move = t(iCol).Extent(3); end
-      end
-      move           = (.95-move)*0.15;
-      h.Position(1)  = h.Position(1)+move;
+      %  Assert longest entry
+      if move < t(iCol).Extent(3); move = t(iCol).Extent(3); end
    end
+   
+   %  Align right 
+   move           = (.95-move) * 0.10;
+   h.Position(1)  = h.Position(1) + move;
+   
+   %% Checkout
+   %  Store and update primary obj data
+   
+   obj(1).h_ax_legend.handles = h;
 end
 
  

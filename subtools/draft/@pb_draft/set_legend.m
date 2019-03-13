@@ -14,8 +14,9 @@ function set_legend(obj,varargin)
    f.fontname        = pb_keyval('Fontname',v,'Helvetica');
    
    obj(1).h_ax_legend.bool       = true;
-   obj(1).h_ax_legend.handles    = {};
+   obj(1).h_ax_legend.handles    = [];
    obj(1).h_ax_legend.features   = f;
+   obj(1).h_ax_legend.pos        = [.85 .1 .15 .8];
 end
 
  

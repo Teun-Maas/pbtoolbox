@@ -1,11 +1,11 @@
 function draft(obj)
 % PB_DRAFT>DRAFT
 %
-% OBJ.DRAFT will draw a figure from a draft object.
+% OBJ.DRAFT will draw a figure from a pb_draft-object.
 %
-% See also PB_DRAFT
+% See also PB_DRAFT, SET_LABELS, SET_TITLE, SET_GRID, PRINT
 
-% PBToolbox (2019): JJH: j.heckman@donders.ru.nl
+% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    %% Initialize Draft
    %  Make figure, select parents, and set layouts
@@ -18,23 +18,31 @@ function draft(obj)
    end
    
    %  Set figure settings
-   set(obj(1).parent,'Color',[1 1 1]);
-   set(obj(1).parent,'renderer','painters');
-   
-   %% Draft Layout
-   %  Assert and prepare legend, and suplabels
-   
-   obj.make_legend;
-   obj.make_suplabel; 
-   obj.make_axes;          % CURRENTLY WORKING ON MAKE PLOTS
-   
-   %% DONE TILL HERE!!! REST NEEDS FIXING!
-   
-   %%  Set Compare Axis
-   %  Check and set comparing axis
+   set(obj(1).parent,'color','w');
+   t = sgtitle(obj(1).parent,obj(1).title);
+   set(t,'FontSize',18);
    
    ax       = gobjects(0);
    objsz    = size(obj);
+   
+   %% Super labels
+   %  Check and prepare superlabels
+   
+   %  Check labels
+   bool = true; if numel(obj) == 1; bool = false; end
+   lab_x = bool; lab_y = bool;
+   for iObj = 1:numel(obj) 
+      if ~strcmp(obj(1).labels.xlab, obj(iObj).labels.xlab); lab_x = false; end
+      if ~strcmp(obj(1).labels.ylab, obj(iObj).labels.ylab); lab_y = false; end
+   end
+   
+   %  Set superlabels
+   obj(1).labels.supx = lab_x;
+   obj(1).labels.supy = lab_y;
+   
+   
+   %%  Set Compare Axis
+   %  Check and set comparing axis
    
    nCmp     = length(unique(obj(1).pva.axcomp.feature));
    if min(objsz) > 1; nCmp = 1; end
@@ -55,9 +63,9 @@ function draft(obj)
          cObj    = (iObj-1)*nCmp + iCmp;
          
          %  Make Axes 
-         Ax       = pb_invidx(objsz.*cmpsz,cObj);                          % reverse get axes index
-         Ax2Obj   = pb_invidx(objsz,iObj);                                 % reverse get object index
-         ax(Ax)   = subplot(objsz(1)*cmpsz(1),objsz(2)*cmpsz(2),cObj);     % make axis
+         Ax       = pb_invidx(objsz.*cmpsz,cObj);   % reverse get axes index
+         Ax2Obj   = pb_invidx(objsz,iObj);                     % reverse get object index
+         ax(Ax)   = subplot(objsz(1)*cmpsz(1),objsz(2)*cmpsz(2),cObj);        % make axis
 
          if obj(iObj).pva.subtitle; title(obj(Ax2Obj).pva.subtitle); end         
          axis(obj(Ax2Obj).pva.axis);
@@ -87,6 +95,13 @@ function draft(obj)
          ax(Ax).XAxis.Exponent = length(num2str(max(abs(round(ax(Ax).XLim)))))-1;
       end
    end
+   
+   %% Adjust Axis Handles
+   %  Set super labels
+
+   obj.make_legend;
+   obj.make_axes(ax);
+   obj.make_suplabel;
 end
 
 

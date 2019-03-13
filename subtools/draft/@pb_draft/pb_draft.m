@@ -5,7 +5,7 @@ classdef pb_draft < matlab.mixin.Copyable
 %
 % See also DRAFT
 
-% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
+% PBToolbox (2019): JJH: j.heckman@donders.ru.nl
 
    %% Properties
    

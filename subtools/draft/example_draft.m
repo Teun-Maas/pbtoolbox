@@ -36,7 +36,7 @@ run = 1;                   % Set # of blocks to run
 %  Make figure 2: Plot rawdata + bubbleplot
 
 if run>cfn
-   tic
+   %tic
    %  Make figure
    cfn = pb_newfig(cfn,'size',[0 0 17 11],'resize','off'); 
    for iR = 1:2
@@ -64,8 +64,8 @@ if run>cfn
    
    %  Build
    d.draft;
-   d.print('disp',true);
-   toc
+   %d.print('disp',true);
+   %toc
 end
 
 %% Block 3:
