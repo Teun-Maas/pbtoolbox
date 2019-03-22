@@ -43,7 +43,7 @@ function make_suplabel(obj,varargin)
    %  Store and update primary obj data
    
    obj(1).h_ax_labels = h;
-   obj(1).h_ax_plot.playground = h.Position;
+   obj(1).h_ax_plot.playground = [h.Position(1)*0.8 h.Position(2) h.OuterPosition(3:4)];
 end
 
  

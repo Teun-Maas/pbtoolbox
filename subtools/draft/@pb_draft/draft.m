@@ -33,18 +33,18 @@ function draft(obj)
    %%  Set Compare Axis
    %  Check and set comparing axis
    
-   ax       = gobjects(0);
-   objsz    = size(obj);
-   
-   nCmp     = length(unique(obj(1).pva.axcomp.feature));
-   if min(objsz) > 1; nCmp = 1; end
-   
-   cmpsz          = [1 1];
-   [~,cmpInd]     = max(cmpsz);
-   cmpsz(cmpInd)  = nCmp; 
-   cmpsz          = fliplr(cmpsz);
-   
-   obj(1).h_ax_plot.sz = cmpsz .* size(obj);
+%    ax       = gobjects(0);
+%    objsz    = size(obj);
+%    
+%    nCmp     = length(unique(obj(1).pva.axcomp.feature));
+%    if min(objsz) > 1; nCmp = 1; end
+%    
+%    cmpsz          = [1 1];
+%    [~,cmpInd]     = max(cmpsz);
+%    cmpsz(cmpInd)  = nCmp; 
+%    cmpsz          = fliplr(cmpsz);
+%    
+%    obj(1).h_ax_plot.sz = cmpsz .* size(obj);
    
    %% Create Plots
    %  Draft each subplot
@@ -57,7 +57,7 @@ function draft(obj)
          %  Make Axes 
          Ax       = pb_invidx(objsz.*cmpsz,cObj);                          % reverse get axes index
          Ax2Obj   = pb_invidx(objsz,iObj);                                 % reverse get object index
-         ax(Ax)   = subplot(objsz(1)*cmpsz(1),objsz(2)*cmpsz(2),cObj);     % make axis
+         %ax(Ax)   = subplot(objsz(1)*cmpsz(1),objsz(2)*cmpsz(2),cObj);     % make axis
 
          if obj(iObj).pva.subtitle; title(obj(Ax2Obj).pva.subtitle); end         
          axis(obj(Ax2Obj).pva.axis);

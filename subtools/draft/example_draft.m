@@ -4,7 +4,7 @@
 pb_clean;                  % Empty
 load('exD_saccade');       % load example data
 cfn = 0;                   % Initialize current figure number
-run = 1;                   % Set # of blocks to run
+run = 9;                   % Set # of blocks to run
 
 %% Block 1:
 %  Make figure 1: Plot data
@@ -20,7 +20,7 @@ run = 1;                   % Set # of blocks to run
 %    d.plot_hline('type','mode');
 %    
 %    %  Layout
-%    d.set_axcomp(Saccades.Subject);
+%    %d.set_axcomp(Saccades.Subject);
 %    d.set_title('Saccade Latencies');
 %    d.set_labels('x','Gaze Latency (ms)','y','Head Latency (ms)');
 %    d.set_grid;
