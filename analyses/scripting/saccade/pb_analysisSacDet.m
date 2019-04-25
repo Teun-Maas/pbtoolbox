@@ -65,7 +65,8 @@ pa_sacdet(fname); % input: *.hv output:*.hv
 %% Load variables
 
 pa_sac2mat(); % MANUALLY select! input: *.hv / output: *.mat
-load(fname) % load 'XX-0001-YY-MM-DD-000n.mat --> create: Sac, Stim
+%%
+load(strrep(fname,'.sphere','')) % load 'XX-0001-YY-MM-DD-000n.mat --> create: Sac, Stim
 clear fn fname s;
 S = pb_stim2MSstim(Stim);
 [M] = pa_supersac(Sac,S);
