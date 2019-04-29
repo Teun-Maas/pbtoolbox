@@ -7,9 +7,7 @@ function pb_MUX(RP,Device,Channel)
 
 % PBToolbox (2019): JJH: j.heckman@donders.ru.nl
 
-   if nargin<3
-      Channel = 0;
-   end
+   if nargin<3; Channel = 0; end
 
    RP.SetTagVal('DeviceSelect',Device-1);          % select the device
    if Channel                                      % activate a channel

@@ -78,7 +78,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    
    mxevent			= max(ev);
    sel				= ismember(ev,mxevent);
-   mxdelay			= max([de(sel) ceil(1000*cfg.nsamples./cfg.RZ6Fs) ]);
+   mxdelay			= max([de(sel) ceil(1000*cfg.nsamples./cfg.RZ6Fs)]);
    
    cfg.RZ6_1.SetTagVal('eventWait',mxevent+1);
    cfg.RZ6_1.SetTagVal('delayWait',mxdelay);

@@ -14,23 +14,24 @@ function pb_lightshow(leds)
    ir    = 50;
    ig    = ir;
 
-   seq1  = [0:2:9 fliplr(16:2:24)];
-   seq2  = [1:2:9 fliplr(17:2:24)];
+   % Sequence needs updating due to new SLC distribution
+   seq1  = [0:2:9 fliplr(16:2:63)];
+   seq2  = [1:2:9 fliplr(17:2:63)];
    
-   for i=1:n
-      if mod(i,2) == 0
-         s(i).set(seq1,'r');
+   for iC = 1:n
+      if mod(iC,2) == 0
+         s(iC).set(seq1,'r');
       else 
-         s(i).set(seq2,'g');
+         s(iC).set(seq2,'g');
       end
-       s(i).intensity('r', ir);
-       s(i).intensity('g', ig);
+       s(iC).intensity('r', ir);
+       s(iC).intensity('g', ig);
    end
    
    leds.write(s);
    
-   for i=1:n
-       leds.trigger;
+   for iC = 1:n
+      leds.trigger;
       pause(0.35);
    end
    delete(s);

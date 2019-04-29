@@ -1,17 +1,15 @@
-function [ses,str] = pb_runLSL(varargin)
-% PB_RUNLSL
+function [ses,str] = pb_runLSL2(varargin) 
+% PB_RUNLSL2
 %
-% PB_RUNLSL(varargin) creates a LSL session for VC.
+% PB_RUNLSL2(varargin) creates a LSL session for VC.
 %
 % See also PB_VRUNEXP
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-% check if all streams are necesary
-
    de = pb_keyval('de', varargin, true);
-   pl = pb_keyval('pl', varargin, false);
-   gz = pb_keyval('gz', varargin, true);
+   pl = pb_keyval('pl', varargin, true);
+   gz = pb_keyval('gz', varargin, false);
    pd = pb_keyval('pd', varargin, false);
    ot = pb_keyval('ot', varargin, true);
    
@@ -40,15 +38,10 @@ function [ses,str] = pb_runLSL(varargin)
       % Find, select and make streams for LSL.
       tmp = strrep(streams(iStrm),'type=''','');
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
-      %disp([newline 'Looking for ' tmp ' stream...'])
       
       info  = lsl_resolver(streams{iStrm});
       l     = info.list();
       if isempty(l); error('No streams found'); end
-
-      for iList = 1:size(l,1)
-        %fprintf('%d: name: ''%s'' type: ''%s''\n',iList,l(iList).name,l(iList).type);
-      end
 
       str(iStrm) = lsl_istream(info{1});
       ses.add_stream(str(iStrm));
@@ -63,7 +56,6 @@ function [ses,str] = pb_runLSL(varargin)
 end
 
 function listener(~, event)
-   %disp(event);
 end
 
 
