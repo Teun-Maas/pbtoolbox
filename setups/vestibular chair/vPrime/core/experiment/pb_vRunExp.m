@@ -95,7 +95,7 @@ function pb_vRunExp(handles)
       pb_stopLSL(ses); 
       
       %  store data
-      pb_vStoreData(handles, Dat, iBlck);
+      pb_vStoreData(handles, Dat, iBlck,str);
 
       %  update block information
       handles.cfg = pb_updatecount(handles.cfg,'block','count');
