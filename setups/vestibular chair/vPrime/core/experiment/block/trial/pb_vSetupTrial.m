@@ -14,11 +14,10 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    
       %% LED
    if any(selled)
-      led		= stim(selled);
-      nled	= numel(led);
-      % 	nled = 2
-      n		= nled*2; % LEDs need to be turned on and off
-      s		= ledpattern(n);
+      led		= pb_vSimuLEDl(stim(selled));
+      nled     = numel(led);
+      n        = nled*2; % LEDs need to be turned on and off
+      s        = ledpattern(n);
 
       cnt		= 0;
       for iLed = 1:nled
@@ -44,7 +43,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
          
          for ii	= 1:2
             cnt = cnt+1;
-            if ii==1
+            if ii == 1
                s(cnt).set(led(iLed).Z,cfg.ledcolours{col},1);
                s(cnt).intensity(cfg.ledcolours{col},led(iLed).intensity); % Vestibular range 0-100;
             else
@@ -52,7 +51,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
             end
          end
       end
-      stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07');
+      stim(find(selled,1)).ledhandle = ledcontroller_pi('dcn-led06','dcn-led07','dcn-led09','dcn-led10');
       stim(find(selled,1)).ledhandle.write(s);
    end
 

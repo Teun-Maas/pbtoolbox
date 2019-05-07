@@ -22,8 +22,8 @@ function cfg = pb_vClearTrial(stim, cfg)
    
    %% Turn off sounds
    
-   for muxIdx = 1:2
-      % MUX(cfg.RZ6_1,muxIdx,0)
+   for muxIdx = 1:4
+      MUX(cfg.RZ6_1,muxIdx,0)
    end
    
    %% Initiate trial
