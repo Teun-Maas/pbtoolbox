@@ -1,4 +1,4 @@
-function pb_vStoreData(h, dat)
+function pb_vStoreData(h, dat, bn)
 % PB_VSTOREBLOCKDAT
 %
 % PB_VSTOREBLOCKDAT(cfg, Dat)  stores 'Dat' Data in files.
@@ -9,10 +9,10 @@ function pb_vStoreData(h, dat)
 
    cfg = h.cfg;
    
-   dat(iBlck).event_data    = str(1).read;
-   dat(iBlck).pupil_labs    = str(2).read;
-   dat(iBlck).optitrack     = str(3).read;
-   dat(iBlck).block_info    = handles.block(iBlck);
+   dat(bn).event_data    = str(1).read;
+   dat(bn).pupil_labs    = str(2).read;
+   dat(bn).optitrack     = str(3).read;
+   dat(bn).block_info    = handles.block(bn);
 
    [~,fn] = pb_fext(cfg.fname);
    file = [cfg.dname filesep 'block_info_' fn '.mat'];

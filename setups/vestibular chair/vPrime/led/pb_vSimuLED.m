@@ -15,7 +15,7 @@ function led = pb_vSimuLED(led)
             led(iT).ondelay == led(iT-1).ondelay && ...
             led(iT).offdelay == led(iT-1).offdelay
          if led(iT).Z ~= tmp(ctmp).Z                                       % but different location (sanity check)
-            tmp(ctmp).Z =  [tmp(ctmp).Z,led(iT).Z];                        
+            tmp(ctmp).Z =  [tmp(ctmp). Z,led(iT).Z];                        
          end
       else
          ctmp = ctmp+1;
