@@ -65,8 +65,8 @@ function [block,cfg] = pb_vReadExp(cfg)
             block(bn).trial(tn).stim(sn).intensity    = par(4);
             block(bn).trial(tn).stim(sn).onevent		= par(5);
             block(bn).trial(tn).stim(sn).ondelay		= par(6);
-            block(bn).trial(tn).stim(sn).offdelay		= par(5)+par(7);
-            block(bn).trial(tn).stim(sn).duration		= par(7);
+            block(bn).trial(tn).stim(sn).offdelay		= par(7);
+            block(bn).trial(tn).stim(sn).duration		= par(7)-par(6);
             block(bn).trial(tn).stim(sn).offevent		= par(5);
             
          case {'LED','LED1','LED2'}
