@@ -30,7 +30,7 @@ function pb_vRunExp(handles)
     
    %  initialize recordings
    rc             = pb_runPupil; 
-   [ses,str,idx]  = pb_runLSL;
+   [ses,str]      = pb_runLSL;
    expTime        = tic;
    
    %% START BLOCK 

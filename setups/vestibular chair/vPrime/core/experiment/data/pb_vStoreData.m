@@ -1,4 +1,4 @@
-function pb_vStoreData(h, dat, idx)
+function pb_vStoreData(h, dat)
 % PB_VSTOREBLOCKDAT
 %
 % PB_VSTOREBLOCKDAT(cfg, Dat)  stores 'Dat' Data in files.
