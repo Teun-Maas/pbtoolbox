@@ -14,7 +14,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    
       %% LED
    if any(selled)
-      led		= pb_vSimuLEDl(stim(selled));
+      led		= pb_vSimuLED(stim(selled));
       nled     = numel(led);
       n        = nled*2; % LEDs need to be turned on and off
       s        = ledpattern(n);
