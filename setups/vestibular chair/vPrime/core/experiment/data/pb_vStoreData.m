@@ -12,7 +12,7 @@ function pb_vStoreData(h, dat, bn, str)
    dat(bn).event_data    = str(1).read;
    dat(bn).pupil_labs    = str(2).read;
    dat(bn).optitrack     = str(3).read;
-   dat(bn).block_info    = handles.block(bn);
+   dat(bn).block_info    = h.block(bn);
 
    [~,fn] = pb_fext(cfg.fname);
    file = [cfg.dname filesep 'block_info_' fn '.mat'];
