@@ -43,7 +43,7 @@ delay		=	0;                                                             % [ms]
 atten		=	0;                                                             % [dB] attenuation
 
 % Speaker selection
-dum         = spherelookupMinor;
+dum         = pb_vLookup;
 nSpeakers   = dum.nspeakers;
 speakers    = dum.lookup;
 speakers    = speakers(~isnan(speakers(:,5)),:);                           % remove NaN entries (i.e. unused MUX channels
@@ -154,34 +154,34 @@ tArray = (1:length(Sounds.in)) / fsRZ6;
 
 % Time domain
 figure(1); 
-subplot(411);
+subplot(211);
 plot(tArray,Sounds.in);
 title('sent to TDT');
 
-subplot(412);
-plot(tArray,Sounds.out);
-title('Played by TDT');
+% subplot(412);
+% plot(tArray,Sounds.out);
+% title('Played by TDT');
 
-subplot(413);
+subplot(212);
 plot(tArray,Sounds.recorded);
 title('Recorded');
 xlabel('# of samples');
 
 freqs = linspace(1,fsRZ6,nsamples);
 
-% F-domain
-figure(2); 
-subplot(4,1,1);
-getpower(Sounds.in,length(Sounds.in),'display',2);
-title('sent to TDT');
+% % F-domain
+% figure(2); 
+% subplot(2,1,1);
+% getpower(Sounds.in,length(Sounds.in),'display',2);
+% title('sent to TDT');
 
-subplot(4,1,2);
-getpower(Sounds.out, length(Sounds.in),'display',2);
-title('Played by TDT');
+% subplot(4,1,2);
+% getpower(Sounds.out, length(Sounds.in),'display',2);
+% title('Played by TDT');
 
-subplot(4,1,3);
-getpower(Sounds.recorded,length(Sounds.in),'display',2);
-title('Recorded');
-xlabel('Frequencies');
+% subplot(2,1,2);
+% getpower(Sounds.recorded,length(Sounds.in),'display',2);
+% title('Recorded');
+% xlabel('Frequencies');
 
 
