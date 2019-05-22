@@ -43,8 +43,8 @@ function pb_vVestExp(varargin)
    BD        = 60;                           % block duration in seconds
    
    %% Sine
-   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.3);
-   block(1).Vertical    = struct('Amplitude', 13, 'Signal', 2, 'Duration',  BD,   'Frequency',.3);
+   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  0,   'Frequency',.1);
+   block(1).Vertical    = struct('Amplitude', 0,  'Signal', 1, 'Duration',  0,   'Frequency',.1);
    
    block(2).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.2);
    block(2).Vertical    = struct('Amplitude', 20, 'Signal', 2, 'Duration',  BD,   'Frequency',.2);
