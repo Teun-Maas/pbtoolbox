@@ -56,7 +56,7 @@ function td = getdurations(block)
          stimarr(end+1) = block(bidx).trial(tidx).stim(end).offdelay;
       end
    end
-   td = ceil(max(stimarr)/500)/2;                                          % rounds up max trial duration with .5 precision
+   td    = ceil(max(stimarr)/500)/2;                                          % rounds up max trial duration with .5 precision
 end
 
  

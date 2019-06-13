@@ -1,4 +1,4 @@
-function pb_vRunTrial(zbus, trialdur)
+function pb_vRunTrial(zbus, cfg)
 % PB_VRUNTRIAL(HANDLES)
 %
 % PB_VRUNTRIAL(HANDLES)  ...
@@ -13,7 +13,10 @@ function pb_vRunTrial(zbus, trialdur)
    %% Trigger event 1
    zbus.zBusTrigB(0, 0, 2); % start event 1/trial onset; trigger zBus 4 = RA16;
 
-   t = tic;
+   t           = tic;
+   trialdur    = cfg.trialdur;
+   if cfg.trig; trialdur = 10; end
+      
    while toc(t) < trialdur
       pause(0.05);
    end

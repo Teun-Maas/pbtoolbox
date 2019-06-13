@@ -18,7 +18,11 @@ function cfg = pb_vClearTrial(stim, cfg)
             stim(iStm).ledhandle.delete; 	% delete(leds)/switch off light;
          end
       end
+      if isfield(stim(iStm),'ledhandle')
+      end
    end
+   
+   
    
    %% Turn off sounds
    

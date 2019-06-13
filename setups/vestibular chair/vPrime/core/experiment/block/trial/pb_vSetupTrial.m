@@ -11,6 +11,7 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    %% SET TDT PARAMETERS
    selled		= strcmpi({stim.modality},'LED');
    selsnd		= strcmpi({stim.modality},'sound');
+   seltrg		= strcmpi({stim.modality},'TRG0');
    
       %% LED
    if any(selled)
@@ -66,6 +67,10 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
    end
 
    cfg.maxSamples = 0;
+   
+   %% TRIGGER
+   
+   cfg.trig    = any(seltrg);
 
    %% WAIT
    
