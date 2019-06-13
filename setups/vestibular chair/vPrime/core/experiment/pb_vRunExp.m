@@ -69,7 +69,7 @@ function pb_vRunExp(handles)
          trialTime            = tic;
          
          %  run trial
-         pb_vRunTrial(handles.cfg.zBus, handles.cfg.trialdur);
+         pb_vRunTrial(handles.cfg.zBus, handles.cfg);
          pb_vTraces(handles);       
          
          %  save trial
