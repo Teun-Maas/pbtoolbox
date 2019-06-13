@@ -17,14 +17,10 @@ function pb_vRunTrial(zbus, cfg)
    disp('Waiting for RZ6 button press/sound/led/acquisition');
 
    t           = tic;
-   while ~cfg.RZ6_1.GetTagVal('Wait'); pause(0.05); end 
-   
    trialdur    = cfg.trialdur;
-   if cfg.trig; trialdur = 15; end
-
-   while toc(t) < trialdur || cfg.RZ6_1.GetTagVal('Active')
-      pause(0.05); 
-   end
+   if cfg.trig; trialdur = 10; end
+   
+   while ~cfg.RZ6_1.GetTagVal('Wait') || toc(t) < trialdur; pause(0.05); end 
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
