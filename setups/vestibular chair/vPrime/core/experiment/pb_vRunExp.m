@@ -30,10 +30,8 @@ function pb_vRunExp(handles)
    Dat         = pb_dataobj(nblocks);
     
    %  initialize recordings
-   if ~debug
-      rc             = pb_runPupil; 
-      [ses,str]      = pb_runLSL;
-   end
+   rc             = pb_runPupil; 
+   [ses,str]      = pb_runLSL;
    expTime        = tic;
    
    %% START BLOCK 
@@ -48,10 +46,8 @@ function pb_vRunExp(handles)
       pb_vCheckServo(~ismac && ~debug);
       
       %  start recording
-      if ~debug
-         pb_startLSL(ses);
-         pb_startPupil(rc);
-      end
+      pb_startLSL(ses);
+      pb_startPupil(rc);
       
       %  start vestibular chair
       if ~ismac && ~debug     
