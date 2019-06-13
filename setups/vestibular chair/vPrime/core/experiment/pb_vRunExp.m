@@ -14,7 +14,7 @@ function pb_vRunExp(handles)
    %  load & read experiment
    
    %  set debug mode
-   debug = false;
+   debug = true;
    
    %  set handles
    pb_setupShow(handles);
@@ -24,13 +24,17 @@ function pb_vRunExp(handles)
    handles     = pb_vInitialize(handles, true);
    
    %  set block information
-   block       = handles.block;  
-   nblocks     = handles.cfg.Blocks;
-   Dat         = pb_dataobj(nblocks);
+   if ~debug
+      block       = handles.block;  
+      nblocks     = handles.cfg.Blocks;
+      Dat         = pb_dataobj(nblocks);
+   end
     
    %  initialize recordings
-   rc             = pb_runPupil; 
-   [ses,str]      = pb_runLSL;
+   if ~debug
+      rc             = pb_runPupil; 
+      [ses,str]      = pb_runLSL;
+   end
    expTime        = tic;
    
    %% START BLOCK 

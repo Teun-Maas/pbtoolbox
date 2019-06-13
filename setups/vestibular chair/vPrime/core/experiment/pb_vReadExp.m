@@ -93,7 +93,7 @@ function [block,cfg] = pb_vReadExp(cfg)
             block(bn).trial(tn).stim(sn).modality		= 'trigger';
             if par(1) == 1
                block(bn).trial(tn).stim(sn).detect		= 'rise';
-            elseif par==2
+            elseif par(1)==2
                block(bn).trial(tn).stim(sn).detect		= 'fall';
             end
             block(bn).trial(tn).stim(sn).channel		= par(2);
