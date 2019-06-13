@@ -20,7 +20,9 @@ function pb_vRunTrial(zbus, cfg)
    trialdur    = cfg.trialdur;
    if cfg.trig; trialdur = 10; end
    
-   while ~cfg.RZ6_1.GetTagVal('Wait') || toc(t) < trialdur; pause(0.05); end 
+   while ~cfg.RZ6_1.GetTagVal('Wait') || toc(t) < trialdur
+      % pause(0.05); 
+   end 
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
