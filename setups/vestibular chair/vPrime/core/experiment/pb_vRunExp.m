@@ -24,11 +24,10 @@ function pb_vRunExp(handles)
    handles     = pb_vInitialize(handles, true);
    
    %  set block information
-   if ~debug
-      block       = handles.block;  
-      nblocks     = handles.cfg.Blocks;
-      Dat         = pb_dataobj(nblocks);
-   end
+
+   block       = handles.block;  
+   nblocks     = handles.cfg.Blocks;
+   Dat         = pb_dataobj(nblocks);
     
    %  initialize recordings
    if ~debug
@@ -49,8 +48,10 @@ function pb_vRunExp(handles)
       pb_vCheckServo(~ismac && ~debug);
       
       %  start recording
-      pb_startLSL(ses);
-      pb_startPupil(rc);
+      if ~debug
+         pb_startLSL(ses);
+         pb_startPupil(rc);
+      end
       
       %  start vestibular chair
       if ~ismac && ~debug     
