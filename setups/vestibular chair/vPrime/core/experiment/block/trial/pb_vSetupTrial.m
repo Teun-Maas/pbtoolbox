@@ -74,8 +74,8 @@ function [stim, cfg] = pb_vSetupTrial(stim,cfg)
 
    %% WAIT
    
-   ev = [stim.offevent];
-   de = [stim.offdelay];
+   ev = 0;
+   de = 2500;
    
    if isfield(stim,'offevent'); ev = stim.offevent; end
    if isfield(stim,'offdelay'); de = stim.offdelay; end
