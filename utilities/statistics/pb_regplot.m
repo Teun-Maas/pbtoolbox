@@ -12,10 +12,10 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    v           = varargin;
    marker      = pb_keyval('marker',v,'o');
    data        = pb_keyval('data',v,true);
-   text        = pb_keyval('text',v,false);
+   textOut     = pb_keyval('text',v,false);
    color       = pb_keyval('color',v,'k');
-   linestyle   = pb_keyval('linestyle',v,'--');
-   linewidth   = pb_keyval('linewidth',v,2);
+   linestyle   = pb_keyval('linestyle',v,'-');
+   linewidth   = pb_keyval('linewidth',v,3);
    
    X     = X(:)';
    Y     = Y(:)';
@@ -29,13 +29,15 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    
    gain                        = b(2);
    bias                        = b(1);
-   r                           = corrcoef(X,Y); r = r(2);
+   r                           = corrcoef(X,Y); r = b(2);
 
    %% Graphics
    h = gobjects(0);
    if data; h(1) = plot(X, Y, ['k' marker]); end
    axxes = axis;
    h(end+1) = plot(axxes([1 2]),gain*axxes([1 2])+bias,'Color',color,'LineStyle',linestyle,'LineWidth',linewidth);
+   mov = max(axxes)/10;
+   if textOut; text(mov,-mov,['r = ' num2str(gain)],'FontSize',18); end
    if ~hs; hold off; end
 end
 

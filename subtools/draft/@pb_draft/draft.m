@@ -33,18 +33,18 @@ function draft(obj)
    %%  Set Compare Axis
    %  Check and set comparing axis
    
-%    ax       = gobjects(0);
-%    objsz    = size(obj);
-%    
-%    nCmp     = length(unique(obj(1).pva.axcomp.feature));
-%    if min(objsz) > 1; nCmp = 1; end
-%    
-%    cmpsz          = [1 1];
-%    [~,cmpInd]     = max(cmpsz);
-%    cmpsz(cmpInd)  = nCmp; 
-%    cmpsz          = fliplr(cmpsz);
-%    
-%    obj(1).h_ax_plot.sz = cmpsz .* size(obj);
+   ax       = gobjects(0);
+   objsz    = size(obj);
+   
+   nCmp     = length(unique(obj(1).pva.axcomp.feature));
+   if min(objsz) > 1; nCmp = 1; end
+   
+   cmpsz          = [1 1];
+   [~,cmpInd]     = max(cmpsz);
+   cmpsz(cmpInd)  = nCmp; 
+   cmpsz          = fliplr(cmpsz);
+   
+   obj(1).h_ax_plot.sz = cmpsz .* size(obj);
    
    %% Create Plots
    %  Draft each subplot

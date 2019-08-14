@@ -23,10 +23,10 @@ function signal = pb_cleanSP(signal,len)
    end
 end
  
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %
 %       Written by: Jesse J. Heckman (2018)                 %
 %                                                           %
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 

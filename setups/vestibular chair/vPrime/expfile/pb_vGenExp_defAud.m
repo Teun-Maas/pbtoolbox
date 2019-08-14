@@ -51,7 +51,7 @@ function pb_vGenexp_defAud
    %length sound 
    maxsnd = 200 ;
    minsnd = 200 ;
-   dur    = [250];
+   dur    = [100];
    dur    = dur(:) ;
 
   
@@ -155,7 +155,7 @@ function writeexp(expfile,datdir,X,Y,snd,int,ledon,sndon,dur,block)
    Rep         = 1; % we have 0 repetitions, so insert 1...
    Rnd         = 0; % we randomized ourselves already
    Mtr         = 'n'; % the motor should be on
-   pb_vWriteHeader(fid,datdir,ITI,blocksz,blocksz*trialsz*Rep,Rep,Rnd,Mtr,'Lab',5); % helper-function
+   pb_vWriteHeader(fid,datdir,ITI,blocksz,blocksz*ntrials*Rep,Rep,Rnd,Mtr,'Lab',5); % helper-function
  
    %% Body of exp-file
    % Create a trial
