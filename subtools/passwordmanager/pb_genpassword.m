@@ -18,6 +18,7 @@ function pb_genpassword(varargin)
    spc   = '±§!@€#$%^&*+=:;|\~<,>.?';
    
    password = '';
+   rng('shuffle');
    for iChunk = 1:nchunk
       s        = blanks(nchar);
       order    = randperm(nchar);

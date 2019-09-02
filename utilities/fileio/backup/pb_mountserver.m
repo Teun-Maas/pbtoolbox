@@ -1,4 +1,4 @@
-function [sn] = pb_mountserver(varargin)
+function sn = pb_mountserver(varargin)
 % PB_MOUNTSERVER(varargin)
 %
 % PB_MOUNTSERVER(varargin) mounts server for pulling or storing data. TO
@@ -19,7 +19,7 @@ function [sn] = pb_mountserver(varargin)
    
    if s > 0 && s ~= 64; disp(cout); end
    if s == 64 && ~force; system('umount ~/sharename/'); prfx = 'un'; end
-   if s == 0 && flag; pb_open; end
+   if s == 0 && flag || flag && force; pb_open; end
    disp([srv ' is ' prfx 'mounted.' newline]);
 end
 

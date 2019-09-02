@@ -145,7 +145,6 @@ function writeexp(expfile,datdir,X,Y,snd,int,ledon,sndon,dur,block)
 
    expfile     = fcheckext(expfile,'.exp'); % check whether the extension exp is included
 
-
    fid         = fopen(expfile,'wt+'); % this is the way to write date to a new file
    ntrials     = numel(X); 
    blocksz     = length(block);
@@ -168,7 +167,7 @@ function writeexp(expfile,datdir,X,Y,snd,int,ledon,sndon,dur,block)
       for ii               = 1:ntrials        % each location
          writetrl(fid,ii);
          writeled(fid,'LED',0,0,5,0,0,0,ledon(ii)); % fixation LED
-         pb_writesnd(fid,'SND',round(X(ii)),Y(ii),snd(ii),0,0,ledon(ii)+sndon(ii),ledon(ii)+sndon(ii)+dur); % Sound on
+         writesnd(fid,'SND',round(X(ii)),Y(ii),snd(ii),0,0,ledon(ii)+sndon(ii),ledon(ii)+sndon(ii)+dur); % Sound on
       end
    end
    fclose(fid);
