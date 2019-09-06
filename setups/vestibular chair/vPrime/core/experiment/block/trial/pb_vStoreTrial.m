@@ -29,9 +29,12 @@ function beta = setCFG(cfg)
                   'vestibularsignal',[],...
                   'nstim',[],...
                   'stim',[]);
+              
+   ACQsz            = cfg.RZ6_1.GetTagVal('Index');
                
    beta.blocknumber = cfg.blocknumber;
    beta.trialnumber = cfg.trialnumber;
+   beta.sound       = cfg.RZ6_1.ReadTagV('ACQ_Data',0,ACQsz);
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
