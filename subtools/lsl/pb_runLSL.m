@@ -14,6 +14,7 @@ function [ses,str] = pb_runLSL(varargin)
    gz = pb_keyval('gz', varargin, true);
    pd = pb_keyval('pd', varargin, false);
    ot = pb_keyval('ot', varargin, true);
+   sh = pb_keyval('ot', varargin, true);
    
    tmp = {};
    
@@ -21,21 +22,23 @@ function [ses,str] = pb_runLSL(varargin)
                'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Python Representation - Eye 0''', ...
                'type=''Pupil Capture @ pupil-desktop'' and name=''Gaze Python Representation''', ...
                'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
-               'type=''OptiTrack Mocap @ DCN-OT01'' and name=''Rigid Bodies'''};
+               'type=''OptiTrack Mocap @ DCN-OT01'' and name=''Rigid Bodies''', ...
+               'type=''SenseHat Mocap @ DCN19'' and name=''Labeled Markers'''};
    
    if de; tmp(end+1) = streams(1); end
    if pl; tmp(end+1) = streams(2); end 
    if gz; tmp(end+1) = streams(3); end
    if pd; tmp(end+1) = streams(4); end
    if ot; tmp(end+1) = streams(5); end
+   if sh; tmp(end+1) = streams(6); end
    
    streams = tmp;
+   clear tmp;
          
    ses      = lsl_session();
    ls       = length(streams);
    str      = lsl_istream.empty(0,ls);
    
-   clear tmp;
    for iStrm = 1:ls
       % Find, select and make streams for LSL.
       tmp = strrep(streams(iStrm),'type=''','');
@@ -59,7 +62,8 @@ function [ses,str] = pb_runLSL(varargin)
    if pl; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
    if gz; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
    if pd; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
-   if ot; addlistener(str(c),'DataAvailable', @listener); end
+   if ot; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
+   if sh; addlistener(str(c),'DataAvailable', @listener); end
 end
 
 function listener(~, event)

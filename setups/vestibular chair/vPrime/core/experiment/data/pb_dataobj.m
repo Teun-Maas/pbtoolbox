@@ -12,6 +12,7 @@ classdef pb_dataobj < handle
        event_data = [];
        pupil_labs = [];
        optitrack = [];
+       sensehat = [];
        block_info = [];
     end
 
