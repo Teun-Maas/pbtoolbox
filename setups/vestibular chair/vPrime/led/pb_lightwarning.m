@@ -23,7 +23,6 @@ function pb_lightwarning()
          s(iC).set(seq1,'r');
       end
        s(iC).intensity('r', ir);
-       s(iC).intensity('g', ig);
    end
    
    leds.write(s);
