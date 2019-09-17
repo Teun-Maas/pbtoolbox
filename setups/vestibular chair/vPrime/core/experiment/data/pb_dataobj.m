@@ -2,7 +2,7 @@ classdef pb_dataobj < handle
 % PB_DATAOBJ()
 %
 % PB_VCREATEDAT()  ...
-%
+%d
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl

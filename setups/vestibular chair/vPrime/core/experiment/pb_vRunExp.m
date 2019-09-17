@@ -14,7 +14,7 @@ function pb_vRunExp(handles)
    %  load & read experiment
    
    %  set debug mode
-   debug = true;
+   debug = false;
    
    %  set handles
    pb_setupShow(handles);

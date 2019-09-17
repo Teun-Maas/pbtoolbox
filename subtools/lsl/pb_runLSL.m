@@ -14,7 +14,7 @@ function [ses,str] = pb_runLSL(varargin)
    gz = pb_keyval('gz', varargin, true);
    pd = pb_keyval('pd', varargin, false);
    ot = pb_keyval('ot', varargin, true);
-   sh = pb_keyval('ot', varargin, true);
+   sh = pb_keyval('sh', varargin, true);
    
    tmp = {};
    
