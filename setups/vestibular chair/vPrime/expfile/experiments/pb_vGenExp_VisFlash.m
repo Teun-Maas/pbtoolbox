@@ -1,4 +1,4 @@
-function pb_vGenExp_Vis(varargin)
+function pb_vGenExp_VisFlash(varargin)
 % PB_VGENEXP_VIS()
 %
 % PB_VGENEXP_VIS()  will generate an EXP-file for a default localization experiment. 
@@ -19,7 +19,7 @@ function pb_vGenExp_Vis(varargin)
 %
 % See also WRITESND, WRITELED, WRITETRG, GENWAV_DEFAULT, etc
 
-% PBToolbox (2018): JJH: j.heckman@donders.ru.nl
+% PBToolbox (2019): JJH: j.heckman@donders.ru.nl
 
    %% Initialization
    %  Clear, empty, default imputs 
@@ -29,9 +29,16 @@ function pb_vGenExp_Vis(varargin)
    disp('   ...')
 
    cfn = 0;
+   
+   % Get Filename
+   st    = dbstack;
+   sname = st.name;
+   ind   = strfind(sname,'_');
+   if isempty(ind); ind = 0; end
+   fn = sname(max(ind)+1:end);
 
    showexp     = pb_keyval('showexp',varargin,true);
-   expfile     = pb_keyval('fname',varargin,'VOR.exp'); 
+   expfile     = pb_keyval('fname',varargin,[fn '.exp']); 
    datdir      = pb_keyval('datdir',varargin,'DEFAULT');
    cdir        = pb_keyval('cdir',varargin,userpath);
    
@@ -132,8 +139,8 @@ function pb_vGenExp_Vis(varargin)
    blockconditions   = [];
    nblockreps        = N/trialsinblock;
 
-   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  blockdur,   'Frequency',.1);
-   block(1).Vertical    = struct('Amplitude', 0,  'Signal', 2, 'Duration',  blockdur,   'Frequency',.1);
+   block.Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  blockdur,   'Frequency',.16);
+   block.Vertical    = struct('Amplitude', 30,  'Signal', 2, 'Duration',  blockdur,   'Frequency',.16);
    %% Save data somewhere
    writeexp(expfile,datdir,X,Y,int,dur,block,fixled); 
    % see below, these are helper functions to write an exp-file line by line / stimulus by stimulus
@@ -171,36 +178,40 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
    Mtr			= 'n';      % the motor should be on
 
    pb_vWriteHeader(fid,datdir,ITI,blocksz,blocksz*trialsz*Rep,Rep,Rnd,Mtr,'Lab',5); % helper-function
+   pl    = randperm(trialsz);       % randomize trialorder in blocks
    
-   for iBlock = 1:blocksz
-      %  Write blocks
+   newBlock = true;
+   totalDur = 0;
+   iBlock   = 1;
+   for iTrial = 1:trialsz
       
-      pb_vWriteBlock(fid,iBlock);
-      pb_vWriteSignal(fid,block(iBlock));
-      
-      %pl    = 1:trialsz;
-      pl    = randperm(trialsz);       % randomize trialorder in blocks
-      
-      for iTrial = 1:trialsz
-         %  Write trials
-         
-         pb_vWriteTrial(fid,trlIdx);
-         VIS = [];
-         
-         VIS.LED        = 'LED'; 
-         VIS.X          = theta(pl(iTrial)); 
-         VIS.Y          = phi(pl(iTrial)); 
-         VIS.Int        = int(pl(iTrial)); 
-         VIS.EventOn    = 0; 
-         VIS.Onset      = 500 + randi(100,1,1) - 50;
-         VIS.EventOff   = 0; 
-         VIS.Offset     = VIS.Onset + dur(pl(iTrial));
-         
-         VIS      = pb_vFixLed(VIS,fixled,'x',fixled.x,'y',fixled.y,'dur',fixled.dur,'pause',fixled.pause);
-         trlIdx 	= trlIdx+1;
-         
-         pb_vWriteStim(fid,2,[],VIS);
+      %  Write trials
+      if newBlock == true 
+               %  Write blocks
+            pb_vWriteBlock(fid,iBlock);
+            pb_vWriteSignal(fid,block);
+            newBlock = false;
+            iBlock   = iBlock+1;
       end
+      
+      pb_vWriteTrial(fid,trlIdx);
+      VIS = [];
+
+      VIS.LED        = 'LED'; 
+      VIS.X          = theta(pl(iTrial)); 
+      VIS.Y          = phi(pl(iTrial)); 
+      VIS.Int        = int(pl(iTrial)); 
+      VIS.EventOn    = 0; 
+      VIS.Onset      = 500 + randi(100,1,1) - 50;
+      VIS.EventOff   = 0; 
+      VIS.Offset     = VIS.Onset + dur(pl(iTrial));
+
+      VIS      = pb_vFixLed(VIS,fixled,'x',fixled.x,'y',fixled.y,'dur',fixled.dur,'pause',fixled.pause);
+      trlIdx 	= trlIdx+1;
+
+      pb_vWriteStim(fid,2,[],VIS);
+      totalDur = totalDur + VIS.Offset + 1000;
+      if totalDur >= (200-1.5)*1000; totalDur = 0; newBlock = true; end
    end
    fclose(fid);
 end
