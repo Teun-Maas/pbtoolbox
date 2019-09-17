@@ -34,7 +34,7 @@ function pb_lightwarning()
    
    for iC = 1:n
       leds.trigger;
-      if isodd(iC); pause(0.3); else; pause(0.15); end
+      if ~iseven(iC); pause(0.3); else; pause(0.15); end
    end
    delete(s);
 end
