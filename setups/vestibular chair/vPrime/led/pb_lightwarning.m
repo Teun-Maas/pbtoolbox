@@ -11,20 +11,16 @@ function pb_lightwarning()
    
    leds = ledcontroller_pi('dcn-led06','dcn-led07','dcn-led09','dcn-led10');
 
-   n     = 4;
+   n     = 6;
    s     = ledpattern(n);
    ir    = 50;
-   ig    = ir;
 
    % Sequence needs updating due to new SLC distribution
    seq1  = [0:9 fliplr(16:1:63)]; %% [0:2:63];
-   seq2  = []; %% [1:2:63];
    
    for iC = 1:n
-      if mod(iC,2) == 0
+      if mod(iC,2) == 1
          s(iC).set(seq1,'r');
-      else 
-         s(iC).set(seq2,'g');
       end
        s(iC).intensity('r', ir);
        s(iC).intensity('g', ig);
@@ -34,9 +30,10 @@ function pb_lightwarning()
    
    for iC = 1:n
       leds.trigger;
-      if ~iseven(iC); pause(0.3); else; pause(0.15); end
+      if ~iseven(iC); pause(0.1); else; pause(0.1); end
    end
    delete(s);
+   delete(leds);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
