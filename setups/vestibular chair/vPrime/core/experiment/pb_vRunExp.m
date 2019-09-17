@@ -54,7 +54,7 @@ function pb_vRunExp(handles)
          vs            	= pb_sendServo(profile);
          blockTime    	= tic; 
          pb_startServo(vs);
-         pause(6);                                                         % allow vestibular chair to get in sync with input signal
+         pause(4*pi);                                                         % allow vestibular chair to get in sync with input signal
       end
 
       %% RUN TRIALS
@@ -85,7 +85,7 @@ function pb_vRunExp(handles)
       %  stop vestibular chair
       if ~ismac && ~debug  
          elapsedTime = toc(blockTime);                
-         if elapsedTime < dur; pause(dur-floor(elapsedTime)+6); end        % wait untill chair is finished running before disabling.
+         if elapsedTime < dur; pause(dur-floor(elapsedTime)+(4*pi)); end        % wait untill chair is finished running before disabling.
          pb_stopServo(vs);
          Dat(iBlck) = pb_readServo(vs, Dat(iBlck));
          delete(vs);
