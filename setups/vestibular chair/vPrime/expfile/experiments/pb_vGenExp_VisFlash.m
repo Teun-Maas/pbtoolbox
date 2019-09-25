@@ -110,7 +110,7 @@ function pb_vGenExp_VisFlash(varargin)
    
    modality       = 2;                 % 2=VISUAL
    int				= [50];              % w/ [i1, i2, i3...]
-   dur            = 2.^(0:2);       % stim duration in ms 2.^(0:7)*.5
+   dur            = 2.^(0:7)*0.5;      % stim duration in ms 2.^(0:7)*.5
    col            = [1];               % w/ [R,G]
    
    [X,~,~]                 = ndgrid(X,0,col,int,dur);
@@ -168,9 +168,14 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
    expfile		= fcheckext(expfile,'.exp');  % check whether the extension exp is included
    fid         = fopen(expfile,'wt+');         % this is the way to write date to a new file
    
-   trialsz     = numel(theta);   	% number of trials
-   blocksz     = length(block);     % xnumber of blocks
-   trlIdx      = 1;                 % trial count
+
+   
+   trialsz     = numel(theta);                  % number of trials
+   tdurexp     = 2.1 * trialsz + (sum(dur)/1000);
+   effblockdur = 200-(4*pi);
+   blocksz     = ceil(tdurexp/effblockdur);     % xnumber of blocks
+   leftover    = ceil(mod(tdurexp,effblockdur)+4*pi);
+   trlIdx      = 1;                             % trial count
    
    ITI			= [0 0];    % useless, but required in header
    Rep			= 1;        % we have 0 repetitions, so insert 1...
@@ -184,10 +189,16 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
    totalDur = 0;
    iBlock   = 1;
    for iTrial = 1:trialsz
-      
       %  Write trials
+      
       if newBlock == true 
-               %  Write blocks
+            %  Write blocks
+            
+            if iBlock == blocksz
+               block.Vertical.Duration    = leftover;
+               block.Horizontal.Duration  = leftover;
+            end 
+            
             pb_vWriteBlock(fid,iBlock);
             pb_vWriteSignal(fid,block);
             newBlock = false;
@@ -195,8 +206,8 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
       end
       
       pb_vWriteTrial(fid,trlIdx);
-      VIS = [];
-
+      
+      VIS            = [];
       VIS.LED        = 'LED'; 
       VIS.X          = theta(pl(iTrial)); 
       VIS.Y          = phi(pl(iTrial)); 
@@ -205,13 +216,13 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
       VIS.Onset      = 500 + randi(100,1,1) - 50;
       VIS.EventOff   = 0; 
       VIS.Offset     = VIS.Onset + dur(pl(iTrial));
-
-      VIS      = pb_vFixLed(VIS,fixled,'x',fixled.x,'y',fixled.y,'dur',fixled.dur,'pause',fixled.pause);
-      trlIdx 	= trlIdx+1;
+      VIS            = pb_vFixLed(VIS,fixled,'x',fixled.x,'y',fixled.y,'dur',fixled.dur,'pause',fixled.pause);
 
       pb_vWriteStim(fid,2,[],VIS);
-      totalDur = totalDur + VIS.Offset + 1000;
-      if totalDur >= (200-1.5)*1000; totalDur = 0; newBlock = true; end
+      
+      totalDur = totalDur + VIS.Offset + 1600; % some extra time for running each trial
+      if totalDur >= (200-(4*pi))*1000; totalDur = 0; newBlock = true; end
+      trlIdx 	= trlIdx+1;
    end
    fclose(fid);
 end

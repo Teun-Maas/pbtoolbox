@@ -15,10 +15,7 @@ function y = pb_logspace(d1, d2, n, base)
       base = 10;
    end
 
-   if d2 == pi || d2 == single(pi) 
-      d2 = pb_log(d2, base);
-   end
-
+   disp('This function is rubbish; do not use!')
    y = base .^ linspace(d1, d2, n);
 end
  
