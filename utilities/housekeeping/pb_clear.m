@@ -8,7 +8,7 @@ function pb_clear(varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-
+   % get workspace
    list     = evalin('base', 'who');
    listsz   = length(list);
    listArr  = 1 : listsz;

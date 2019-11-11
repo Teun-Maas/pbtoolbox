@@ -12,12 +12,13 @@ function out = pb_where(varargin)
    fn = which(varargin{1});
    if isempty(fn); return; end
    
-   path = fn(1:end-(length(varargin{1})+2));
+   p = fn(1:end-(length(varargin{1})+2));
    
    if nargout == 1
-      out = path;
+      out = p;
    else
-      disp(path);
+      disp(p);
+      clipboard('copy',p);
    end
 end
  

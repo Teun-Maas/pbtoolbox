@@ -59,7 +59,7 @@ function pb_vGenExp_VisFlash(varargin)
    dEl         = dEl(:);
 
    sel1			= (abs(dAz)+abs(dEl)) <= maxAbsAz & abs(dEl) <= maxAbsEl; 
-   sel2        = iseven(dAz) | dEl == 0;
+   sel2        = iseven(dAz) & dEl ~= 0;
    sel         = sel1 & sel2;
    
    dAz         = dAz(sel);
@@ -70,9 +70,10 @@ function pb_vGenExp_VisFlash(varargin)
    %% Select target positions used in experiment
    %  Get targerts.
    
-   targetInd   = randperm(length(dAz));
-   dAz         = dAz(sort(targetInd(1:63)));
-   dEl         = dEl(sort(targetInd(1:63)));
+   targetl     = length(dAz);
+   targetInd   = randperm(targetl);
+   dAz         = dAz(sort(targetInd(1:targetl)));
+   dEl         = dEl(sort(targetInd(1:targetl)));
 
    %% Actual azimuth and elevation
    % The actual speaker positions are not perfectly aligned with 5 deg

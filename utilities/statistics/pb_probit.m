@@ -27,7 +27,7 @@ function [h,D] = pb_probit(D, varargin)
 
 	%% Rawdata
    
-   iRT   = 1/D;
+   iRT   = 1./D;
    x     = -1./sort(D);
    n     = numel(iRT);
    y     = probitscale((1:n)./n);

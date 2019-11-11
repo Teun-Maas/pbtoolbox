@@ -10,8 +10,7 @@ function [n,p] = pb_defsubplot(fig)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   figure(fig);
-   h = pb_fobj(gcf,'Type','Axes');
+   h = pb_fobj(fig,'Type','Axes');
    n = length(h);
 
    p = zeros(1,n);
