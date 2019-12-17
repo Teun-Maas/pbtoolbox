@@ -13,7 +13,7 @@ function [fname, path] = pb_getfile(varargin)
    ext      = pb_keyval('ext',varargin,'*.*');
    title    = pb_keyval('title',varargin,'Open file...'); % titles have been removed from matlab ui's in OS X - El capitain
 
-   cd(cdir);
+   if flag; cd(cdir); end
 
    [fname, path] = uigetfile(ext,title); 
    fpath = [path fname];

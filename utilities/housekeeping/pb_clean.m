@@ -1,4 +1,4 @@
-function pb_clean(varargin)
+function cfn = pb_clean(varargin)
 % PB_CLEAN(varargin)
 %
 % PB_CLEAN(varargin) cleans up your matlab. Closes all open figures,
@@ -12,7 +12,8 @@ function pb_clean(varargin)
    empty    = pb_keyval('clc',varargin,true);
    clr      = pb_keyval('clr',varargin,true);
    
-   if fig; close all; end
+   if fig; close all hidden; end
+   if nargout; cfn = 0; end
    if empty; clc; end
    if islogical(clr)
       if clr; pb_clear(); end

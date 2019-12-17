@@ -19,7 +19,7 @@ function pb_initialize()
    % Run generic commands
    cd(INIT_DIR);
    INIT_FILES = dir('*.m');
-   for n = 1:size(INIT_FILES);
+   for n = 1:size(INIT_FILES)
        [~,INIT_CMD,~] = fileparts(INIT_FILES(n).name);
        eval(INIT_CMD);
    end
@@ -27,7 +27,7 @@ function pb_initialize()
    % Run architecture specficic commands
    cd(INIT_ARCH_DIR);
    INIT_FILES = dir('*.m');
-   for n = 1:size(INIT_FILES);
+   for n = 1:size(INIT_FILES)
        [~,INIT_CMD,~]=fileparts(INIT_FILES(n).name);
        eval(INIT_CMD);
    end

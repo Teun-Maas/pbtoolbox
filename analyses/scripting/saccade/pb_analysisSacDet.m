@@ -16,7 +16,7 @@ spheretrial2complete(); % creates 2 .sphere files: calibration "0000" block, and
 
 %% Prep Calibration data
 
-[fname,~] = pb_getfile('dir',cdir);
+[fname,~] = pb_getfile('dir',cd);
 
 sphere2hoopdat(fname); % calibration 
 sphere2hoopcsv(fname);
@@ -24,7 +24,7 @@ sphere2hoopcsv(fname);
 
 %% Calibrate experiment data
 
-[fname,~] = pb_getfile('dir',cdir);
+[fname,~] = pb_getfile('dir',cd);
 
 sphere2hoopdat(fname); % data
 sphere2hoopcsv(fname);
@@ -53,8 +53,8 @@ pa_sac2mat(); % MANUALLY select! input: *.hv / output: *.mat
 %%
 load(strrep(fname,'.sphere','')) % load 'XX-0001-YY-MM-DD-000n.mat --> create: Sac, Stim
 clear fn fname s;
-S = pb_stim2MSstim(Stim);
-[M] = pa_supersac(Sac,S);
+%S = pb_stim2MSstim(Stim);
+[M] = pa_supersac(Sac,Stim);
 
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
