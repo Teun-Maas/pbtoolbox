@@ -10,13 +10,12 @@ function y = pb_logspace(d1, d2, n, base)
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  
-   if nargin == 2
-      n = 50;
-      base = 10;
-   end
+   if nargin < 3; n = 50; end
+   if nargin < 4; base = 10; end
 
-   disp('This function is rubbish; do not use!')
-   y = base .^ linspace(d1, d2, n);
+   d1    = pb_log(d1,base);
+   d2    = pb_log(d2,base);
+   y     = base .^ linspace(d1, d2, n);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

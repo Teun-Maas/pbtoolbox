@@ -5,7 +5,7 @@ pb_clean;
 path        = '/Users/jjheckman/Documents/Data/PhD/Experiment/vestibular_frequencies/JJH-0004-19-09-24/';
 fn          = 'Converted_Data.mat';
 fullname    = [path fn];
-blocknumber = 4;
+blocknumber = 5;
 cfn         = 0;
 
 load(fullname);
@@ -43,7 +43,7 @@ for iD = 1:datl
    if isfield(D(iD).Pup.Data,'gaze_normal_3d')
       gaze_normalsrot = D(iD).Pup.Data.gaze_normal_3d*Rot;
    else
-     	gaze_normalsrot = D(iD).Pup.Data.base_data.base_data.circle_3d.normal*Rot; % in case 2D gaze
+     	gaze_normalsrot = D(iD).Pup.Data.base_data.base_data.circle_3d.normal * Rot; % in case 2D gaze
    end
    
    % Convert to angles
@@ -495,6 +495,8 @@ legend('Slowphase','Quickphase')
 pb_nicegraph;
 xlim([selStart selStop])
 
+
+
 %% Fix border edges
 %  set fPup = NaN for slowphase == 0
 
@@ -517,7 +519,7 @@ for iSeg = 2:length(starts) % ignore first start
    signs          = sign(chuncksign);
    
    nsamples       = l(iSeg);
-   if nsamples <= 50     
+   if nsamples <= 50 && nsamples > 4
       ncheck      = ceil(nsamples/4);       % Edge regions
       meansign    = sign(sum(signs));
       
@@ -622,6 +624,7 @@ pb_nicegraph;
 beginVOR = tscPup(starts(1)); 
 endVOR   = tscPup(stops(end));
 xlim([beginVOR endVOR])
+
 %%
 
 dVOR  = [0; diff(VOR)];
@@ -650,7 +653,7 @@ plot(tscPup,pdVOR);
 plot(tsVestibularI,vestibular_posDI);
 
 pb_nicegraph;
-maxVVC = findpeaks(abs(dVest(15<tsVestibularI<70)),tsVestibularI(15<tsVestibularI<70),'MinPeakProminence',1);
+maxVVC = findpeaks(abs(dVest(15 < tsVestibularI < 70)),tsVestibularI(15<tsVestibularI<70),'MinPeakProminence',1);
 maxVVC = mean(maxVVC);
 
 %% Interpolate Timestamps Vestibular and VOR signals
@@ -660,19 +663,19 @@ maxVVC = mean(maxVVC);
 tscVestI = tscPup;
 vestI    = interp1(tsVestibularI,vestibular_posDI,tscPup, 'pchip');
 
-xVOR = (tscPup(~isnan(VOR)));
-yVOR = transpose(VOR(~isnan(VOR)));
+xVOR     = (tscPup(~isnan(VOR)));
+yVOR     = transpose(VOR(~isnan(VOR)));
 
 indStart = find(tscVestI >= xVOR(1));
 indStop  = find(tscVestI >= xVOR(end));
 range    = indStart:indStop;
-xVEST        = tscVestI(range);
-yVEST        = vestI(range);
+xVEST    = tscVestI(range);
+yVEST    = vestI(range);
 
-xVOR        = xVOR(2:end);
-yVOR        = yVOR(2:end);
-xVEST        = xVEST(2:end);
-yVEST        = yVEST(2:end);
+xVOR     = xVOR(2:end);
+yVOR     = yVOR(2:end);
+xVEST    = xVEST(2:end);
+yVEST    = yVEST(2:end);
 
 %% Fit Sines
 %  Get sinefits
@@ -680,13 +683,8 @@ yVEST        = yVEST(2:end);
 frVest   = 0.2; % change this based on the actual frequency
 
 %  Get fit parameters
-parVor   = sineFit(xVOR,yVOR);
-cfn      = cfn+2;                           % increment the cfn
+parVor   = sineFit(xVOR,yVOR);                         % increment the cfn
 parVest  = sineFit(xVEST,yVEST);
-cfn      = cfn+2;                           % increment the cfn
-
-parVor(4)   = parVor(4)+.3;                 % THIS SHOULD BE FIXED; SEE WEIRD ARBITRARY CONSTANT
-parVest(4)	= parVest(4)-.17;
 
 %  Make fit
 fVOR     = parVor(2) * sin(2*pi*frVest * xVOR + parVor(4)) + parVor(1);
@@ -710,8 +708,140 @@ end
 
 xlim([xVEST(1) xVEST(end)])
 
-relPhase = parVor(4)-parVest(4)
-gain     = parVor(2)/parVest(2)
+relPhase = parVor(4)-parVest(4);
+gain     = parVor(2)/parVest(2);
+
+%% Remove drift VOR
+%  Select peaks to control for drift
+
+% Adjust for drift in yVOR signal
+cfn = pb_newfig(cfn);
+hold on;
+
+plot(xVOR,yVOR,'.');
+
+xlim([xVOR(1) xVOR(end)]);
+pb_nicegraph('linewidth',2);
+ 
+[xV,~]         = ginput(2);            % select 2 peaks, one at the beginning and one at the end of the signal (either 2 lower peaks, or 2 higher peaks)
+[~, ind(1)]   	= min(abs(xVOR-xV(1)));
+[~, ind(2)]   	= min(abs(xVOR-xV(2)));
+
+xn          = (yVOR(ind(2)) - yVOR(ind(1))) / (xVOR(ind(2)) - xVOR(ind(1)));
+drift       = yVOR(ind(1)) + xVOR * xn - xn * xVOR(ind(1));
+yVORd       = yVOR - (yVOR(ind(1))+ xVOR * xn - xn * xVOR(ind(1)));
+yVORdmc     = yVORd - mean(yVORd);
+
+plot(xVOR,yVORdmc,'.');
+plot(xVOR,drift,'--');
+
+c_leg       = {'Raw VOR','corrected VOR','Drift'};
+
+pb_hline(0);
+pb_nicegraph('linewidth',2);
+legend(c_leg)
+
+
+%% Fit Sines
+%  Fit sines to Eye and head (chair) data.
+
+%  Get fit parameters
+fits        = struct([]);
+fits(1).par = sineFit(xVOR,yVORdmc);            % Vestibulo-Ocular Reflex
+fits(1).x   = xVOR;
+
+fits(2).par = sineFit(xVEST,yVEST);             % Vestibular
+fits(2).x   = xVEST;
+
+cfn = pb_newfig(cfn);
+hold on
+
+plot(xVOR,yVORdmc,'.');
+plot(xVEST,yVEST,'.');
+
+for  iFit = 1:length(fits)
+   
+   sineP    = fits(iFit).par;
+   
+   %  Parameters
+   u        = sineP(1);
+   A        = sineP(2);
+   w        = 2*pi*sineP(3);
+   P        = sineP(4);
+   t        = fits(iFit).x;
+   
+   %  Fit
+   sinefit  = A * sin(w*t + P) + u;
+   fits(iFit).sineFit = sinefit;
+   
+   plot(fits(iFit).x,fits(iFit).sineFit);
+end
+
+ncol  = 2;
+col   = pb_selectcolor(ncol,2);
+col   = [col/1.5; col];
+
+pb_nicegraph;
+
+h = pb_fobj(gca,'Type','Line');
+
+for iCol = 1:length(h)
+   h(iCol).Color     = col(iCol,:);
+   
+   h(iCol).LineWidth    = 1;
+   h(iCol).MarkerSize   = 1;
+   
+   if iCol > 2; h(iCol).LineWidth = 2; end
+end
+
+c_leg   = {'Raw Chair','Raw Eye','Vestibular Fit','VOR Fit'};
+legend(c_leg);
+
+fits(1).par(2)
+
+%%
+
+ft       = fittype('sin(2*pi*freq*x+shift)*yscale','coefficients',{'shift','freq','yscale'});
+mdlVEST  = fit(xVEST',yVEST'-mean(yVEST),ft,'startpoint',[sineP(4),sineP(3),sineP(2)]);
+fVEST2   = mdlVEST.yscale*sin(2*pi*mdlVEST.freq*xVEST+mdlVEST.shift);
+
+ft       = fittype('sin(2*pi*freq*x+shift)*yscale','coefficients',{'shift','freq','yscale'});
+mdlVOR   = fit(xVOR',yVOR'-mean(yVOR),ft,'startpoint',[parVest(4),parVest(3),parVest(2)*0.5]);
+fVOR2    = mdlVOR.yscale*sin(2*pi*mdlVOR.freq*xVOR+mdlVOR.shift);
+
+
+%  Plot data
+cfn = pb_newfig(cfn);
+subplot(211);
+hold on;
+
+h = gobjects(0);
+%h(end+1) = plot(xVOR,yVOR,'.');
+h(end+1) = plot(xVOR,yVORdmc,'.');
+h(end+1) = plot(xVOR,fVOR2,'--');
+%h(end+1) = plot(xVOR,fVOR,'--');
+
+subplot(212);
+hold on;
+
+h(end+1) = plot(xVEST,yVEST);
+h(end+1) = plot(xVEST,fVEST2,'--');
+%h(end+1) = plot(xVEST,fVEST,'--');
+
+pb_nicegraph;
+
+for i = 1:length(h)
+   h(i).LineWidth = 2;
+end
+
+linkaxes;
+xlim([xVEST(1) xVEST(end)])
+
+relPhase    = fits(1).par(4)-fits(2).par(4)
+gain        = fits(1).par(2)/fits(2).par(2)
+
+relPhase    = mdlVOR.shift-mdlVEST.shift
+gain        = mdlVOR.yscale/-mdlVEST.yscale
 
 
 
