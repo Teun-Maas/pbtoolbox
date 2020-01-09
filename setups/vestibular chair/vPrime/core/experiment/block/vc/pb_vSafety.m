@@ -10,20 +10,27 @@ function signal = pb_vSafety(signal)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    vAx = {'Vertical','Horizontal'};
+   
+   % DO NOT CHANGE THESE!
+   thresh_dur = 300;
+   thresh_amp = 100;
+   thresh_fre = 1;
+   
 
    for iAx = 1:2
       if ~strcmp(signal(iAx).type,'none')
-         if signal(iAx).duration > 300 
+         %  Safe Durations
+         if signal(iAx).duration > thresh_dur 
             warning(['Detected unsafe signal. ' vAx{iAx} ' duration too long!']);
-            signal(iAx).duration = 300;
+            signal(iAx).duration = thresh_dur;
          end
-         if signal(iAx).amplitude > 100/iAx
+         if signal(iAx).amplitude > thresh_amp/iAx
             warning(['Detected unsafe signal. ' vAx{iAx} ' amplitude too large!']);
-            signal(iAx).amplitude = 100/iAx;
+            signal(iAx).amplitude = thresh_amp/iAx;
          end
-        	if signal(iAx).frequency > .3
+        	if signal(iAx).frequency > thresh_fre
             warning(['Detected unsafe signal. ' vAx{iAx} ' frequency too high!']);
-            signal(iAx).frequency = .3;
+            signal(iAx).frequency = 0.3;
          end
       end
    end
