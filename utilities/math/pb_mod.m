@@ -9,8 +9,6 @@ function [modulo,div] = pb_mod(a,b)
 
    modulo   = mod(a,b);
    div      = floor(a/b);
-   
-   if div  == a/b; div = div-1; end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
