@@ -43,10 +43,11 @@ function [ses,str] = pb_runLSL(varargin)
       % Find, select and make streams for LSL.
       tmp = strrep(streams(iStrm),'type=''','');
       tmp = tmp{1}(1:find(tmp{1} == '@',1)-2);
-      %disp([newline 'Looking for ' tmp ' stream...'])
       
       info  = lsl_resolver(streams{iStrm});
       l     = info.list();
+      
+      if isempty(info.infos); error(['lsl resolver cannot make connection with:  ' tmp]); end   % Pupil labs? check if 'LSL relay' is tickmarked in pupil capture 
       if isempty(l); error('No streams found'); end
 
       for iList = 1:size(l,1)
