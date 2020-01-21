@@ -39,7 +39,7 @@ function [x,t] = VC_noisesignal(mu, dur, SR)
     
     % noise signal
     sigma   =   0;
-    t       =   0:1/SR:dur;
+    t       =  (0:(dur*SR)-1)/SR;
     x       =   mu+sigma;
     x       =   x+randn(length(t),1);
 
@@ -62,7 +62,7 @@ function [x,t] = VC_sinesignal(dur, SR, freq)
     % function generates a sine signal
 
     w = freq*2*pi;
-    t = 0:1/SR:dur;
+    t = (0:(dur*SR)-1)/SR;
     x = sin(w*t);
     
     tsz    	=   length(t);
@@ -72,7 +72,7 @@ end
 function [x,t] = VC_predictedsine(dur, SR, freq) %%% <--- TO DO: FIX THE TRANSFER FUNCTION!!
     % function generates a perfect sine output
     
-    t = 0:1/SR:dur;
+    t          = (0:(dur*SR)-1)/SR;
     xfun       = pb_y2x();
     
     tsz        =   length(t);
@@ -82,14 +82,14 @@ end
 function [x,t]  = VC_turnsignal(dur, SR)
     % function will create turn signal of length dur
     
-    t = 0:1/SR:dur;
+    t = (0:(dur*SR)-1)/SR;
     x = t;
 end
 
 function [x,t]  = VC_VOR(dur, SR)
     % function will create turn signal of length dur
     
-    t = 0:1/SR:dur;
+    t = (0:(dur*SR)-1)/SR;
     x = t;
     
     tsz = length(t);
