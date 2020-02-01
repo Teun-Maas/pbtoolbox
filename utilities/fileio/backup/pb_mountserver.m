@@ -14,11 +14,11 @@ function sn = pb_mountserver(varargin)
    
    prfx     = '';
 
-   cin      = ['mount -t smbfs //' getcredentials(srv) '@' srv '-srv.science.ru.nl/' srv '/ ~/sharename/'];
+   cin      = ['mount -t smbfs //' getcredentials(srv) '@' srv '-srv.science.ru.nl/' srv '/ /Volumes/mbaudit5'];
    [s,cout] = system(cin);
    
    if s > 0 && s ~= 64; disp(cout); end
-   if s == 64 && ~force; system('umount ~/sharename/'); prfx = 'un'; end
+   if s == 64 && ~force; system('umount /Volumes/mbaudit5'); prfx = 'un'; end
    if s == 0 && flag || flag && force; pb_open; end
    disp([srv ' is ' prfx 'mounted.' newline]);
 end

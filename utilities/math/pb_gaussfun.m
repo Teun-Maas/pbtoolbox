@@ -13,7 +13,7 @@ function x = pb_gaussfun(len,varargin)
    P     = pb_keyval('P',v);
    
    if ~isempty(P); sigma = sqrt(P); end
-   x     = sigma*randn(len,1)+mu;
+   x     = sigma*rot90(randn(len,1))+mu;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

@@ -8,7 +8,7 @@ function cout = pb_open(folder, varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    if nargin == 0
-      folder = '~/sharename';
+      folder = '/Volumes/smb';
    end
    
    if exist(folder,'dir')

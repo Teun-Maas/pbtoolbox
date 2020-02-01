@@ -14,7 +14,7 @@ function signal = pb_vSafety(signal)
    % DO NOT CHANGE THESE!
    thresh_dur = 300;
    thresh_amp = 100;
-   thresh_fre = 1;
+   thresh_fre = 0.65;
    
 
    for iAx = 1:2

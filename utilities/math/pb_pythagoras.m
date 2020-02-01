@@ -7,6 +7,8 @@ function c = pb_pythagoras(a,b)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
+   
+   
    if mean(a)<0; sign = -1; else; sign = 1; end
    if mean(b)<0; sign = -1 * sign; end
    

@@ -2,11 +2,15 @@
 %  Empty, Clear, Clean, Set globals.
 
 pb_clean;
-path        = '/Users/jjheckman/Documents/Data/PhD/Experiment/vestibular_frequencies/JJH-0004-19-09-24/';
-fn          = 'Converted_Data.mat';
-fullname    = [path fn];
-blocknumber = 5;
+
 cfn         = 0;
+[fn,path]   = pb_getfile('cdir',pb_datapath);
+fullname    = [path fn];
+blocknumber = 4;
+load(fullname);
+
+D           = Data;
+datl        = length(D);
 
 load(fullname);
 changefonts;      % set fonts to avenir next
@@ -842,7 +846,6 @@ gain        = fits(1).par(2)/fits(2).par(2)
 
 relPhase    = mdlVOR.shift-mdlVEST.shift
 gain        = mdlVOR.yscale/-mdlVEST.yscale
-
 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

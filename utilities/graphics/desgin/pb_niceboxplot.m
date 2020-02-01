@@ -10,7 +10,7 @@ function pb_niceboxplot(h, varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
    %% Set initial variables
-   if nargin == 0; h = gcf; end
+   if nargin == 0; h = gcf;  end
 
    outliers    = pb_keyval('outliers',varargin,0);
    ac          = pb_keyval('ac',varargin,0);
@@ -22,16 +22,18 @@ function pb_niceboxplot(h, varargin)
    linestyle   = pb_keyval('linestyle',varargin,'-');
 
    %% Body
-   axx = pb_fobj(gcf,'Type','Axes');
+   axx = pb_fobj(h,'Type','Axes');
    for iAxes=1:length(axx)
-      ax = axx(iAxes);
+      ax       = axx(iAxes);
+      hpatch   = pb_fobj(gcf,'Tag','Boxplot Patch');
+      delete(hpatch);
 
       % Remove BS
       if ~ac; delete(pb_fobj(ax,'Tag','Upper Adjacent Value')); delete(pb_fobj(ax,'Tag','Lower Adjacent Value')); end
       if ~outliers; delete(pb_fobj(ax,'Tag','Outliers')); end
 
       nBP = length(pb_fobj(ax,'Tag','Box'));
-      lines = pb_fobj(ax,'Type','Line');
+      lines = pb_fobj(ax,'Type','Line','-not','Tag','Outliers');
 
       % Create color pattern
       if isempty(col); col = pb_selectcolor(nBP,def); end
@@ -48,7 +50,7 @@ function pb_niceboxplot(h, varargin)
       end
       bx = pb_fobj(ax,'Tag','Box');
       for k=1:length(bx)
-         patch(axx(iAxes),get(bx(k),'XData'),get(bx(k),'YData'),col(k,:),'FaceAlpha',alpha,'EdgeColor',col(k,:),'LineWidth',linewidth);
+         patch(axx(iAxes),get(bx(k),'XData'),get(bx(k),'YData'),col(k,:),'FaceAlpha',alpha,'EdgeColor',col(k,:),'LineWidth',linewidth,'Tag','Boxplot Patch');
       end
    end
    figure(gcf);
