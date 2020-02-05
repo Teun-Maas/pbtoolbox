@@ -27,7 +27,8 @@ function D = pb_convertdata(fn,varargin)
 
       opt            = dat(iSig).optitrack;
       opt.Data       = lsl_optitrack_convert2soa(opt);
-
+      
+      event          = dat(iSig).event_data;
       sensehat       = dat(iSig).sensehat;
 
       D(iSig).Pup       = pup;
@@ -37,8 +38,9 @@ function D = pb_convertdata(fn,varargin)
 
       D(iSig).Timestamp.Pup   = lsl_correct_pupil_timestamps(pup);
       D(iSig).Timestamp.Opt   = lsl_correct_lsl_timestamps(opt);
+      D(iSig).Timestamp.Stim  = lsl_correct_lsl_timestamps(event);
       D(iSig).Timestamp.Sense = lsl_correct_lsl_timestamps(sensehat);
-      
+            
       dat(iSig).block_info.fn = fn;
       D(iSig).Block_Info      = dat(iSig).block_info;
    end
