@@ -86,7 +86,7 @@ function pb_vVestExp(varargin)
       if ispc
          dos(['"C:\Program Files\Windows NT\Accessories\wordpad.exe" ' expfile ' &']);
       elseif ismac
-         system(['open -a TextWrangler ' cd filesep expfile]);
+         system(['open -a BBEdit ' cd filesep expfile]);
       end
    end
 end

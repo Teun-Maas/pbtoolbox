@@ -1,21 +1,10 @@
-function pb_vGenVisExp(varargin)
-% PB_VGENVISEXP
+function pb_vGenExp_defaultloc_vis(varargin)
+% PB_VGENEXP_VIS
 %
-% PB_VGENVISEXP(varargin) will generate an EXP-file for a default localization experiment. 
+% PB_VGENEXP_VIS(varargin) will generate an EXP-file for a default localization experiment. 
 % EXP-files are used for the psychophysical experiments at the
 % Biophysics Department of the Donders Institute for Brain, Cognition and
 % Behavior of the Radboud University Nijmegen, the Netherlands.
-%
-% VESTIBULAR STIMULATION PARAMETERS:
-%
-% Vestibular signals:      1) none, 
-%                          2) predict sine, 
-%                          3) noise, 
-%                          4) turn, 
-%                          5) VOR-turnstop.
-%
-% Azimuth rotation:        VER
-% Elevation rotation:      HOR
 %
 % See also WRITESND, WRITELED, WRITETRG, GENWAV_DEFAULT, etc
 
@@ -31,29 +20,40 @@ function pb_vGenVisExp(varargin)
    cfn = 0;
 
    showexp     = pb_keyval('showexp',varargin,true);
-   expfile     = pb_keyval('fname',varargin,'VOR.exp'); 
+   expfile     = pb_keyval('fname',varargin,'vDefaultloc_vis.exp'); 
    datdir      = pb_keyval('datdir',varargin,'DEFAULT');
    cdir        = pb_keyval('cdir',varargin,userpath);
    
    cd(cdir);
 
    %% Desired azimuth and elevation
+   %  Define hemisphere
    
    %  Select target ranges
-   maxAbsAz       = 45;
-   maxAbsEl       = 0;
+   maxAbsAz       = 55;
+   maxAbsEl       = 35;
    
    %  Possible targets
-   dAz         = -45:5:45;
-   dEl         = 0;
+   dAz         = -50:05:50;
+   dEl         = -30:10:30;
    [dAz,dEl]   = meshgrid(dAz,dEl);
    dAz         = dAz(:);
    dEl         = dEl(:);
 
-   sel			= (abs(dAz)+abs(dEl)) <= maxAbsAz & abs(dEl) <= maxAbsEl; 
+   sel1			= (abs(dAz)+abs(dEl)) <= maxAbsAz & abs(dEl) <= maxAbsEl; 
+   sel2        = iseven(dAz) | dEl == 0;
+   sel         = sel1 & sel2;
+   
    dAz         = dAz(sel);
    dEl         = dEl(sel);
    nloc        = numel(dAz);
+
+   %% Select target positions
+   %  Get targerts.
+   
+   targetInd   = randperm(length(dAz));
+   dAz         = dAz(sort(targetInd(1:63)));
+   dEl         = dEl(sort(targetInd(1:63)));
 
    %% Actual azimuth and elevation
    % The actual speaker positions are not perfectly aligned with 5 deg
@@ -72,7 +72,7 @@ function pb_vGenVisExp(varargin)
       hold on
       plot(X,Y,'x')
 
-      axis([-50 50 -50 50]);
+      axis([-60 60 -60 60]);
       axis square
       set(gca,'TickDir','out');
       xlabel('Azimuth (deg)');
@@ -86,12 +86,12 @@ function pb_vGenVisExp(varargin)
    fixled.bool    = true;    % do you want a fixation light?
    fixled.x       = 0;
    fixled.y       = 0;
-   fixled.dur     = 1000;
-   fixled.pause   = 1000;
+   fixled.dur     = 750;
+   fixled.pause   = 250;
    
    modality       = 2;        % 2=VISUAL
    int				= [50];     % w/ [i1, i2, i3...]
-   dur            = [5];      % stim duration in ms
+   dur            = [250];      % stim duration in ms
    col            = [1];      % w/ [R,G]
    
    [X,~,~]                 = ndgrid(X,0,col,int,dur);
@@ -120,18 +120,8 @@ function pb_vGenVisExp(varargin)
    blockconditions = [];
    nblockreps      = N/trialsinblock;
 
-   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
-   block(1).Vertical    = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
-   
-   block(2).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
-   block(2).Vertical    = struct('Amplitude', 35, 'Signal', 2, 'Duration',  BD,   'Frequency',.1);
-   
-   block(3).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
-   block(3).Vertical    = struct('Amplitude', 25, 'Signal', 3, 'Duration',  BD,   'Frequency',.1);
-   
-   block(4).Horizontal  = struct('Amplitude', 0,  'Signal', 2, 'Duration',  BD,   'Frequency',.1);
-   block(4).Vertical    = struct('Amplitude', 25, 'Signal', 5, 'Duration',  BD,   'Frequency',.1);
-
+   block(1).Horizontal  = struct('Amplitude', 0,  'Signal', 1, 'Duration',  200,   'Frequency',.1);
+   block(1).Vertical    = struct('Amplitude', 0,  'Signal', 1, 'Duration',  200,   'Frequency',.1);
    %% Save data somewhere
    writeexp(expfile,datdir,X,Y,int,dur,block,fixled); 
    % see below, these are helper functions to write an exp-file line by line / stimulus by stimulus
@@ -190,7 +180,7 @@ function writeexp(expfile,datdir,theta,phi,int,dur,block,fixled)
          VIS.Y          = phi(pl(iTrial)); 
          VIS.Int        = int(pl(iTrial)); 
          VIS.EventOn    = 0; 
-         VIS.Onset      = 500;
+         VIS.Onset      = 250;
          VIS.EventOff   = 0; 
          VIS.Offset     = VIS.Onset + dur(pl(iTrial));
          
@@ -206,7 +196,7 @@ end
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %
-%       Written by: Jesse J. Heckman (2018)                 %
+%       Written by: Jesse J. Heckman (2020)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
