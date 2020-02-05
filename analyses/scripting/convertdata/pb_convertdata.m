@@ -32,7 +32,7 @@ function D = pb_convertdata(fn,varargin)
 
       D(iSig).Pup       = pup;
       D(iSig).Opt       = opt;
-      D(iSig).Sensehat  = mat2struct(sensehat.Data,struct_sensehat_fields);
+      D(iSig).Sensehat  = mat2struct(sensehat.Data,pb_struct_sensehat);
       D(iSig).VC        = dat(iSig).vestibular_signal;
 
       D(iSig).Timestamp.Pup   = lsl_correct_pupil_timestamps(pup);
