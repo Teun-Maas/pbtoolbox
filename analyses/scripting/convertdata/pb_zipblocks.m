@@ -35,7 +35,7 @@ function fn = pb_zipblocks(cdir,varargin)
    fn = strrep(fn,'block_info_','converted_data_');
    fn = [fn '.mat'];
    save([cd filesep fn], 'Data');
-   disp(['<< Zipd complete... (fn: ' fn ')']);
+   disp(['<< Zip complete... (fn: ' fn ')']);
    
 end
  
