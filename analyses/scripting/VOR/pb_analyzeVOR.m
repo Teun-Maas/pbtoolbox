@@ -4,16 +4,16 @@
 pb_clean;
 
 cfn         = 0;
-[fn,path]   = pb_getfile('cdir',pb_datapath);
+[fn,path]   = pb_getfile('dir',pb_datapath);
 fullname    = [path fn];
-blocknumber = 4;
+blocknumber = 7;
 load(fullname);
 
 D           = Data;
 datl        = length(D);
 
 load(fullname);
-changefonts;      % set fonts to avenir next
+%changefonts;      % set fonts to avenir next
 
 %% Convert 2 AzEl
 %  Take eye x, y, z traces and transform 2 azimuth and elevation
@@ -57,7 +57,7 @@ end
 %% Interpolate VC data (find lsl_ts for tsVC(1) = 0! )
 %  Read in Data, synchronize VC/SH, define tsVC(1) as 0 for all LSL streams
 
-FsVC = 9.95;
+FsVC = 9.98;
 
 %  Sensehat data
 sensehat_posD     = rad2deg(cumsum(D(blocknumber).Sensehat.gyro_y - D(blocknumber).Sensehat.gyro_y(1)))/-100;
@@ -98,7 +98,7 @@ hold on;
 plot(tsSense, sensehat_posD,'.');
 plot(tsVestibularI, vestibular_posDI,'.');
 
-pb_hline([45 -45]);
+pb_hline([30 -30]);
 
 title(['Cross-correlate VC and Sensehat signal (lag = ' num2str(lagDiff,'%.2f') ' s)'] );
 legend('FusionPose','VC PV')

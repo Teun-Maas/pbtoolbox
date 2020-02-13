@@ -36,7 +36,6 @@ function fn = pb_zipblocks(cdir,varargin)
    fn = [fn '.mat'];
    save([cd filesep fn], 'Data');
    disp(['<< Zip complete... (fn: ' fn ')']);
-   
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
@@ -45,8 +44,4 @@ end
 %       Written by: Jesse J. Heckman (2020)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-
-
-
-%%
 

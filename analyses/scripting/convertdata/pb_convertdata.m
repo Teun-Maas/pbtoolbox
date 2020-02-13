@@ -22,7 +22,7 @@ function D = pb_convertdata(fn,varargin)
       %  Loop over pb_data
 
       %  temp variables
-      pup            = dat(iSig).pupil_labs;
+      pup            = dat(iSig).pupil_labs;u
       pup.Data       = lsl_pupil_convert2soa(pup);
 
       opt            = dat(iSig).optitrack;

@@ -11,8 +11,7 @@ function path = pb_datapath(path)
    if isempty(path) || ~exist(path)
       username = char(java.lang.System.getProperty('user.name'));
       if ismac                                                             % MAC       (personal   //    NO VC, NO TDT)
-         path = ['/Users/' username '/Documents/Data/Experiment'];
-         %path = '/Users/jjheckman/Documents/Data/PhD/Experiment/VC';
+         path = ['/Users/' username '/Documents/Data/PhD/Experiment'];
       elseif isunix && ~ismac                                            	% LINUX     (public     //    VC, NO TDT)
          path = ['/home/' username '/Documents/Data'];
       elseif ispc                                                        	% WINDOWS   (public     //    VC, TDT)
