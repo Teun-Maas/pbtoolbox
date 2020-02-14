@@ -105,7 +105,7 @@ for iFFT = 1:samplesz
    signalsfft(iFFT,:)   = P1;
 end
 
-%% Train & Predict
+%% Train & Validate
 
 %  Make training- and testset
 clc;
@@ -134,7 +134,64 @@ cm    = confusionchart(testlbl, predictions, ...
  
 title(['Confusion Chart: (' num2str(1-accuracy,3) ' misrate)']);
 
+%% Test (prove)
 
+%  Experimental parameters
+trialsz     = 10;
+
+%  Create GUI
+col         = pb_selectcolor(3,2);
+[~,h]       = pb_newfig(999);
+h.Color     = [1 1 1];
+a           = axes('XColor',[1 1 1], ...
+                     'YColor',[1 1 1], ...
+                     'Color','none', ...
+                     'XTick',[], ...
+                     'YTick',[]);
+                  
+ttl         = sgtitle('Keystroke Classification (ML)','FontSize',20,'FontWeight','Bold');
+txt(1)      = text(0.3,0.65,'Keystroke:','FontSize',13);
+txt(2)      = text(0.31,0.5,'...','FontSize',50,'Color',col(1,:));
+
+txt(3)      = text(0.6,0.65,'Predict:','FontSize',13);
+txt(4)      = text(0.60,0.5,'...','FontSize',50,'Color',col(2,:));
+
+%%  Run experiment
+
+for iTrial = 1:trialsz
+   %  Get keystroke
+   
+   %  Create audio recording
+   fs                = 44100;
+   recObj            = audiorecorder(fs,24,2);
+   recObj.record;
+   
+   k                 = waitforbuttonpress;
+   sample            = recObj.CurrentSample;
+   value             = get(gcf,'CurrentCharacter');
+   
+   txt(2).String     = value;
+   
+   %  Save audio
+   pause(0.15)
+   recObj.stop;
+   
+   %  Compute fft
+   y        = recObj.getaudiodata;
+   ind(1)   = (sample - 1504);
+   ind(2)   = (sample + 5110);
+   y        = y(ind(1):ind(2),1);
+   Y     	= fft(y);
+   P2       = abs(Y/samplesz);
+   P1       = P2(1:samplesz/2+1);
+   P1(2:end-1) 	= 2*P1(2:end-1);
+   
+   output   = mdl.predict(P1');
+   
+   txt(4).String     = output;
+   pause(1);
+   
+end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
