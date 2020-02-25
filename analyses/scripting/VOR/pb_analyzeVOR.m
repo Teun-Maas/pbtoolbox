@@ -4,16 +4,13 @@
 pb_clean;
 
 cfn         = 0;
-[fn,path]   = pb_getfile('dir',pb_datapath);
-fullname    = [path fn];
-blocknumber = 7;
+% [fn,path]   = pb_getfile('dir',pb_datapath);
+% fullname    = [path fn];
+blocknumber = 9;
+fullname = '/Users/jjheckman/Documents/Data/PhD/Experiment/e1_vor/JJH-0007-20-02-25/converted_data_JJH-0007-20-02-25.mat';
 load(fullname);
 
-D           = Data;
 datl        = length(D);
-
-load(fullname);
-%changefonts;      % set fonts to avenir next
 
 %% Convert 2 AzEl
 %  Take eye x, y, z traces and transform 2 azimuth and elevation
@@ -51,7 +48,7 @@ for iD = 1:datl
    end
    
    % Convert to angles
-   D(iD).AzEl.Eye = -VCxyz2azel(gaze_normalsrot(:,1),gaze_normalsrot(:,2),gaze_normalsrot(:,3));
+   D(iD).AzEl.Eye = - pb_xyz2azel(gaze_normalsrot(:,1),gaze_normalsrot(:,2),gaze_normalsrot(:,3));
 end
 
 %% Interpolate VC data (find lsl_ts for tsVC(1) = 0! )
@@ -98,7 +95,8 @@ hold on;
 plot(tsSense, sensehat_posD,'.');
 plot(tsVestibularI, vestibular_posDI,'.');
 
-pb_hline([30 -30]);
+amplitude  = D(1).Block_Info.signal.ver.amplitude;
+pb_hline([amplitude -amplitude]);
 
 title(['Cross-correlate VC and Sensehat signal (lag = ' num2str(lagDiff,'%.2f') ' s)'] );
 legend('FusionPose','VC PV')
@@ -208,6 +206,7 @@ ylim([-40 40]);
 
 text(10, -30,['Outliers filter: ' num2str(sum(out)) ' samples (' num2str(100*(sum(out)/length(out)),'%.1f') '%)'],'Fontsize',15)
 pb_nicegraph;
+xlim([0 30])
 
 Pup = hPup;     % Use hampel filtered signal for further filtering
 
@@ -385,7 +384,7 @@ siStart  =  find(tscPup >= selStart, 1);
 siStop   =  find(tscPup >= selStop, 1);
 
 %  Machine Learning
-xVEST        = kInput(siStart : siStop);
+xVEST     	= kInput(siStart : siStop);
 IDX         = kmeans(xVEST , 2 , 'distance' , 'sqEuclidean');
 
 % 
@@ -631,34 +630,34 @@ xlim([beginVOR endVOR])
 
 %%
 
-dVOR  = [0; diff(VOR)];
-dVest = [0 diff(vestibular_posDI)];
-
-pdVOR    = nancumsum(dVOR,[],2);
-pdVest   = cumsum(dVest);
-
-% nanx        = isnan(dVOR);
-% t           = 1:numel(dVOR);
-% dVOR(nanx)  = interp1(t(~nanx), dVOR(~nanx), t(nanx),'pchip');
-% dVOR        = lowpass(dVOR,'Fc',.3,'Fs',120,'order',30);
-
-cfn = pb_newfig(cfn);
-
-subplot(211);
-hold on
-
-plot(tscPup,dVOR);
-plot(tsVestibularI,dVest);
-
-subplot(212);
-hold on
-
-plot(tscPup,pdVOR);
-plot(tsVestibularI,vestibular_posDI);
-
-pb_nicegraph;
-maxVVC = findpeaks(abs(dVest(15 < tsVestibularI < 70)),tsVestibularI(15<tsVestibularI<70),'MinPeakProminence',1);
-maxVVC = mean(maxVVC);
+% dVOR  = [0; diff(VOR)];
+% dVest = [0 diff(vestibular_posDI)];
+% 
+% pdVOR    = nancumsum(dVOR,[],2);
+% pdVest   = cumsum(dVest);
+% 
+% % nanx        = isnan(dVOR);
+% % t           = 1:numel(dVOR);
+% % dVOR(nanx)  = interp1(t(~nanx), dVOR(~nanx), t(nanx),'pchip');
+% % dVOR        = lowpass(dVOR,'Fc',.3,'Fs',120,'order',30);
+% 
+% cfn = pb_newfig(cfn);
+% 
+% subplot(211);
+% hold on
+% 
+% plot(tscPup,dVOR);
+% plot(tsVestibularI,dVest);
+% 
+% subplot(212);
+% hold on
+% 
+% plot(tscPup,pdVOR);
+% plot(tsVestibularI,vestibular_posDI);
+% 
+% pb_nicegraph;
+% maxVVC = findpeaks(abs(dVest(15 < tsVestibularI < 70)),tsVestibularI(15<tsVestibularI<70),'MinPeakProminence',1);
+% maxVVC = mean(maxVVC);
 
 %% Interpolate Timestamps Vestibular and VOR signals
 %  In order to make phase shift accurate we have to have same starting

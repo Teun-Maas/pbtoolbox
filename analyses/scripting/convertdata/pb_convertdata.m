@@ -38,8 +38,12 @@ function D = pb_convertdata(fn,varargin)
 
       D(iSig).Timestamp.Pup   = lsl_correct_pupil_timestamps(pup);
       D(iSig).Timestamp.Opt   = lsl_correct_lsl_timestamps(opt);
-      D(iSig).Timestamp.Stim  = lsl_correct_lsl_timestamps(event);
       D(iSig).Timestamp.Sense = lsl_correct_lsl_timestamps(sensehat);
+      
+      % If no event data is being stored, event_data is not the right object type (lsl_data).
+      if ~isempty(dat(iSig).event_data)
+         D(iSig).Timestamp.Stim  = lsl_correct_lsl_timestamps(event);
+      end
             
       dat(iSig).block_info.fn = fn;
       D(iSig).Block_Info      = dat(iSig).block_info;

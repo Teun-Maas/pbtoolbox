@@ -14,7 +14,7 @@ function fn = pb_zipblocks(cdir,varargin)
    
    listing = dir('block_info_*.mat');
    
-   Data     = struct([]);
+   D     = struct([]);
    for iL = 1:length(listing)
       disp(['>> Unpacking: ' listing(iL).name '...']);
       disp('    >> Converting data...');
@@ -23,10 +23,10 @@ function fn = pb_zipblocks(cdir,varargin)
       tmpsz = length(tmp);
       
       %  Zip blocks
-      if isempty(Data)
-         Data = tmp; 
+      if isempty(D)
+         D = tmp; 
       else
-         Data(end+1:end+tmpsz) = tmp; 
+         D(end+1:end+tmpsz) = tmp; 
          disp(['    << ' num2str(tmpsz) ' block(s) appended.']);
       end
    end
@@ -34,7 +34,7 @@ function fn = pb_zipblocks(cdir,varargin)
    fn = listing(1).name(1:end-9);
    fn = strrep(fn,'block_info_','converted_data_');
    fn = [fn '.mat'];
-   save([cd filesep fn], 'Data');
+   save([cd filesep fn], 'D');
    disp(['<< Zip complete... (fn: ' fn ')']);
 end
  
