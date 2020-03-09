@@ -10,8 +10,6 @@ function pb_genpassword(varargin)
    v        = varargin;
    nchunk   = pb_keyval('chunks',v,4);
    nchar    = pb_keyval('chars',v,5);
-   maxl     = pb_keyval('length',v);
-   
    
    abc   = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz';
    num   = '0123456789';

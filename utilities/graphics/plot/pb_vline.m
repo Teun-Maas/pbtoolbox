@@ -29,6 +29,9 @@ function h = pb_vline(x, varargin)
 
    x        = x(:)'; 
    
+   % Approach zero
+   lim(lim==0) = 1e-100;
+   
    for i = 1:len
       h(i)  = plot([x(i);x(i)], lim, style);
       set(h(i),'Tag','graphical aid: vertical');

@@ -4,10 +4,10 @@
 pb_clean;
 
 cfn         = 0;
-% [fn,path]   = pb_getfile('dir',pb_datapath);
-% fullname    = [path fn];
-blocknumber = 9;
-fullname = '/Users/jjheckman/Documents/Data/PhD/Experiment/e1_vor/JJH-0007-20-02-25/converted_data_JJH-0007-20-02-25.mat';
+[fn,path]   = pb_getfile('dir',pb_datapath);
+fullname    = [path fn];
+blocknumber = 5;
+% fullname =     '/Users/jjheckman/Documents/Data/PhD/Experiment/e1_vor/JJH-0010-20-02-26/converted_data_JJH-0010-20-02-26.mat'
 load(fullname);
 
 datl        = length(D);
@@ -21,7 +21,7 @@ for iD = 1:datl
    % Loop over data
    q        = quaternion(D(iD).Opt.Data.qw,D(iD).Opt.Data.qx,D(iD).Opt.Data.qy,D(iD).Opt.Data.qz);
    vp       = transpose(RotateVector(q,[0 0 1]',1));
-   AzEl     = -VCxyz2azel(vp(:,1),vp(:,2),vp(:,3));
+   AzEl     = -pb_xyz2azel(vp(:,1),vp(:,2),vp(:,3));
 
    D(iD).AzEl.Head = AzEl;
 
@@ -802,49 +802,57 @@ legend(c_leg);
 
 fits(1).par(2)
 
+
+[~,iVOR]    = find(fits(1).sineFit == min(fits(1).sineFit));
+[~,iVEST]   = find(fits(2).sineFit == max(fits(2).sineFit));
+
+dt       = fits(1).x(iVOR) - fits(2).x(iVEST);
+Period   = 1 / D(blocknumber).Block_Info.signal.ver.frequency;
+Phase    = dt / Period * 360
+
 %%
-
-ft       = fittype('sin(2*pi*freq*x+shift)*yscale','coefficients',{'shift','freq','yscale'});
-mdlVEST  = fit(xVEST',yVEST'-mean(yVEST),ft,'startpoint',[sineP(4),sineP(3),sineP(2)]);
-fVEST2   = mdlVEST.yscale*sin(2*pi*mdlVEST.freq*xVEST+mdlVEST.shift);
-
-ft       = fittype('sin(2*pi*freq*x+shift)*yscale','coefficients',{'shift','freq','yscale'});
-mdlVOR   = fit(xVOR',yVOR'-mean(yVOR),ft,'startpoint',[parVest(4),parVest(3),parVest(2)*0.5]);
-fVOR2    = mdlVOR.yscale*sin(2*pi*mdlVOR.freq*xVOR+mdlVOR.shift);
-
-
-%  Plot data
-cfn = pb_newfig(cfn);
-subplot(211);
-hold on;
-
-h = gobjects(0);
-%h(end+1) = plot(xVOR,yVOR,'.');
-h(end+1) = plot(xVOR,yVORdmc,'.');
-h(end+1) = plot(xVOR,fVOR2,'--');
-%h(end+1) = plot(xVOR,fVOR,'--');
-
-subplot(212);
-hold on;
-
-h(end+1) = plot(xVEST,yVEST);
-h(end+1) = plot(xVEST,fVEST2,'--');
-%h(end+1) = plot(xVEST,fVEST,'--');
-
-pb_nicegraph;
-
-for i = 1:length(h)
-   h(i).LineWidth = 2;
-end
-
-linkaxes;
-xlim([xVEST(1) xVEST(end)])
-
-relPhase    = fits(1).par(4)-fits(2).par(4)
-gain        = fits(1).par(2)/fits(2).par(2)
-
-relPhase    = mdlVOR.shift-mdlVEST.shift
-gain        = mdlVOR.yscale/-mdlVEST.yscale
+% 
+% ft       = fittype('sin(2*pi*freq*x+shift)*yscale','coefficients',{'shift','freq','yscale'});
+% mdlVEST  = fit(xVEST',yVEST'-mean(yVEST),ft,'startpoint',[sineP(4),sineP(3),sineP(2)]);
+% fVEST2   = mdlVEST.yscale*sin(2*pi*mdlVEST.freq*xVEST+mdlVEST.shift);
+% 
+% ft       = fittype('sin(2*pi*freq*x+shift)*yscale','coefficients',{'shift','freq','yscale'});
+% mdlVOR   = fit(xVOR',yVOR'-mean(yVOR),ft,'startpoint',[parVest(4),parVest(3),parVest(2)*0.5]);
+% fVOR2    = mdlVOR.yscale*sin(2*pi*mdlVOR.freq*xVOR+mdlVOR.shift);
+% 
+% 
+% %  Plot data
+% cfn = pb_newfig(cfn);
+% subplot(211);
+% hold on;
+% 
+% h = gobjects(0);
+% %h(end+1) = plot(xVOR,yVOR,'.');
+% h(end+1) = plot(xVOR,yVORdmc,'.');
+% h(end+1) = plot(xVOR,fVOR2,'--');
+% %h(end+1) = plot(xVOR,fVOR,'--');
+% 
+% subplot(212);
+% hold on;
+% 
+% h(end+1) = plot(xVEST,yVEST);
+% h(end+1) = plot(xVEST,fVEST2,'--');
+% %h(end+1) = plot(xVEST,fVEST,'--');
+% 
+% pb_nicegraph;
+% 
+% for i = 1:length(h)
+%    h(i).LineWidth = 2;
+% end
+% 
+% linkaxes;
+% xlim([xVEST(1) xVEST(end)])
+% 
+% relPhase    = fits(1).par(4)-fits(2).par(4)
+% gain        = fits(1).par(2)/fits(2).par(2)
+% 
+% relPhase    = mdlVOR.shift-mdlVEST.shift
+% gain        = mdlVOR.yscale/-mdlVEST.yscale
 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
