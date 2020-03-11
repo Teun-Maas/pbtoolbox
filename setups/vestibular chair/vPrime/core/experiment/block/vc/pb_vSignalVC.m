@@ -37,7 +37,7 @@ function [profile,dur] = pb_vSignalVC(handles)
    [hSafe,~]      = pb_vCheckVelSignal(profile.h);
    [vSafe,~]      = pb_vCheckVelSignal(profile.v);
    
-   if ~hSafe || ~vSafe || ~strcmp(signal(2).type,'vor') || ~strcmp(signal(2).type,'turn') % FORBIDDEN WITH HORIZONTAL AXIS
+   if ~hSafe || ~vSafe || strcmp(signal(2).type,'vor') || strcmp(signal(2).type,'turn') % FORBIDDEN WITH HORIZONTAL AXIS
       error('Vestibular signals were not safe!');
    end
    
