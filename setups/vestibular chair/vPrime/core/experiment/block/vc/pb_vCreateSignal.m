@@ -30,7 +30,7 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
             error('False type specification');
       end
    end
-   if dshow; figure; hold on; for i=1:N; plot(D(i).t,D(i).x); pb_nicegraph; end; end
+   if dshow; pb_newfig(999); hold on; for i=1:N; plot(D(i).t,D(i).x); pb_nicegraph; end; end
 end
 
 %-- Specific signal functions --%
@@ -89,13 +89,31 @@ end
 function [x,t]  = VC_VOR(dur, SR)
     % function will create turn signal of length dur
     
-    t = (0:(dur*SR)-1)/SR;
-    x = t;
-    
-    tsz = length(t);
-    ind = floor(tsz/2);
-    x(ind+1:end) = x(ind);
+   t     = (0:(dur*SR)-1)/SR;
+   tsz   = length(t);
+   th    = t(1:ceil(tsz/2));
+   thsz  = length(th);
+
+   %  Create velocity step profile (with tukeywin ramp)
+   r     = 0.05;
+   v     = ones(1,thsz);
+   v     = v .* rot90(tukeywin(thsz,r));
+   
+   % add empty length
+   v(end+1:tsz)   = 0;
+   x              = cumsum(v)/SR;
 end
+
+% function [x,t]  = VC_VOR(dur, SR)
+%     % function will create turn signal of length dur
+%     
+%     t = (0:(dur*SR)-1)/SR;
+%     x = t;
+%     
+%     tsz = length(t);
+%     ind = floor(tsz/2);
+%     x(ind+1:end) = x(ind);
+% end
 
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

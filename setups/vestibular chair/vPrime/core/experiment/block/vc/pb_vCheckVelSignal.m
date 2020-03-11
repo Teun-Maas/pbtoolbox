@@ -9,7 +9,7 @@ function [safe,threshold] = pb_vCheckVelSignal(signal)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
    safe        = true;
-   threshold   = 60;       % Should be 60 d/s: DO NOT CHANGE!! 
+   threshold   = 110;       % Should be 60 d/s: DO NOT CHANGE!! 
    SR          = 10;
    
    mvel = SR * max(abs(diff(signal))); 
