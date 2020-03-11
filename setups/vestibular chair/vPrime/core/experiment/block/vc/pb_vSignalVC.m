@@ -35,10 +35,10 @@ function [profile,dur] = pb_vSignalVC(handles)
    
    %  Check signal safety
    [hSafe,~]      = pb_vCheckVelSignal(profile.h);
-   [vSafe,mvel]   = pb_vCheckVelSignal(profile.v);
+   [vSafe,~]      = pb_vCheckVelSignal(profile.v);
    
-   if ~hSafe || ~vSafe
-      error(['Vestibular signals were not safe! (velocity exceeds ' num2str(mvel) ')']);
+   if ~hSafe || ~vSafe || signal(2).type > 3 % 4 and 5 are turning experiments, FORBIDDEN WITH HORIZONTAL AXIS
+      error('Vestibular signals were not safe!');
    end
    
    %% FEEDBACK GUI
