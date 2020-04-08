@@ -53,7 +53,7 @@ function pb_nicegraph(varargin)
       % LINE:
       %
       % Use as 'primary' data
-      h_line = pb_fobj(ax(i),'Type','Line');
+      h_line = pb_fobj(ax(i),'Type','Line','-not','Tag','Fixed');
 
       for j=1:length(h_line)
          set(h_line(length(h_line)+1-j), ...
@@ -64,7 +64,7 @@ function pb_nicegraph(varargin)
       % FUNCTIONLINE:
       %
       % Use as 'primary' data
-      h_fline = pb_fobj(ax(i),'Type','FunctionLine');
+      h_fline = pb_fobj(ax(i),'Type','FunctionLine','-not','Tag','Fixed');
 
       for iFline=1:length(h_fline)
          set(h_fline(length(h_fline)+1-iFline), ...
@@ -75,7 +75,7 @@ function pb_nicegraph(varargin)
       % ERRORBAR:
       %
       % Use as 'primary' data
-      h_error = pb_fobj(ax(i),'Type','ErrorBar');
+      h_error = pb_fobj(ax(i),'Type','ErrorBar','-not','Tag','Fixed');
 
       for j=1:length(h_error)
          set(h_error(length(h_error)+1-j), ...
@@ -86,7 +86,7 @@ function pb_nicegraph(varargin)
       % BAR:
       %
       % Use as 'primary' data
-      h_bar = pb_fobj(ax(i),'Type','Bar');
+      h_bar = pb_fobj(ax(i),'Type','Bar','-not','Tag','Fixed');
 
       for k=1:length(h_bar)
          set(h_bar(k), ...
@@ -102,7 +102,7 @@ function pb_nicegraph(varargin)
       % HISTOGRAM:
       % 
       % Use as 'primary' data
-      h = pb_fobj(ax(i),'Type','Histogram');
+      h = pb_fobj(ax(i),'Type','Histogram','-not','Tag','Fixed');
 
       for l=1:length(h)
       set(h(l), ...
@@ -118,7 +118,7 @@ function pb_nicegraph(varargin)
       % SCATTER: 
       %
       % Use as 'background' data for fits and regressions
-      h = pb_fobj(ax(i),'Type','Scatter');
+      h = pb_fobj(ax(i),'Type','Scatter','-not','Tag','Fixed');
       ScatCol = pb_statcolor(length(h)+1,[],[],[],'def',5);
 
       for iScat = 1:length(h)
@@ -135,7 +135,7 @@ function pb_nicegraph(varargin)
       % AREA: 
       % 
       % Use as 'range' to match with fitted data plots.
-      h = pb_fobj(ax(i),'Type','Area');
+      h = pb_fobj(ax(i),'Type','Area','-not','Tag','Fixed');
       AreaCol = pb_statcolor(length(h)+1,[],[],[],'def',5);
 
       for iArea = 1:length(h)
@@ -148,7 +148,7 @@ function pb_nicegraph(varargin)
       % PATCH: 
       % 
       % Use as 'range' to match with fitted data plots.
-      h = pb_fobj(ax(i),'Type','Patch');
+      h = pb_fobj(ax(i),'Type','Patch','-not','Tag','Fixed');
       PatchCol = pb_statcolor(length(h)+1,[],[],[],'def',5);
 
       for iPatch = 1:length(h)
@@ -163,7 +163,7 @@ function pb_nicegraph(varargin)
       % STEM:
       %
       % Use as 'primary' data
-      h_stem = pb_fobj(ax(i),'Type','Stem');
+      h_stem = pb_fobj(ax(i),'Type','Stem','-not','Tag','Fixed');
 
       for iStem=1:length(h_stem)
          set(h_stem(length(h_stem)+1-iStem), ...

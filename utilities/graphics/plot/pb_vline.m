@@ -20,6 +20,8 @@ function h = pb_vline(x, varargin)
    style       = pb_keyval('style',varargin,'k--');
    visibility  = pb_keyval('visibility',varargin,'off');
    lim         = pb_keyval('lim',varargin,get(gca,'YLim'));
+   col         = pb_keyval('color',varargin);
+   lw         = pb_keyval('LineWidth',varargin,1);
 
    ho       = ishold; hold on;
    len      = length(x);
@@ -34,8 +36,10 @@ function h = pb_vline(x, varargin)
    
    for i = 1:len
       h(i)  = plot([x(i);x(i)], lim, style);
+      if ~isempty(col); set(h(i),'Color',col); end
       set(h(i),'Tag','graphical aid: vertical');
-      set(h(i),'HandleVisibility',visibility); % set handle visibility
+      set(h(i),'LineWidth',lw);
+      set(h(i),'HandleVisibility',visibility);        % set handle visibility
    end
    if ~ho; hold off; end
 end

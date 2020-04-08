@@ -12,6 +12,7 @@ function [TOT,h] = pb_bubbleplot(X,Y,varargin)
    YW       = pb_keyval('Ywidth',varargin);
    scale    = pb_keyval('scale',varargin,1);
    def      = pb_keyval('col',varargin,5);
+   tagged   = pb_keyval('tag',varargin,'Fixed');
    
    if isempty(XW); [~,~,XW,~] = pb_binsize(X); XW = XW*scale; end
    if isempty(YW); [~,~,YW,~] = pb_binsize(Y); YW = YW*scale; end
@@ -54,11 +55,11 @@ function [TOT,h] = pb_bubbleplot(X,Y,varargin)
    x	= x(sel);
    y	= y(sel);
 
-   SZ			= ceil(100*M)*scale;
+   SZ			= ceil(300*M)*scale;
    [~,~,idx]	= unique(M);
    col			= statcolor(max(idx),[],[],[],'def',def);
    C			= col(idx,:);
-   h			= scatter(x,y,SZ,C,'filled');
+   h			= scatter(x,y,SZ,C,'filled','Tag',tagged);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

@@ -7,6 +7,9 @@ function pb_johnplot(X,Y,varargin)
 
 % PBToolbox (2019): JJH: j.heckman@donders.ru.nl
 
+   if nargin == 1
+      Y = 1:length(X);
+   end
    if size(X) ~= size(Y); disp('Dimensions X and Y do not agree'); return; end
    
    markersize     = pb_keyval('markersize',varargin,2);

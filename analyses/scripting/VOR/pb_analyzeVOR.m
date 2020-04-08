@@ -810,49 +810,6 @@ dt       = fits(1).x(iVOR) - fits(2).x(iVEST);
 Period   = 1 / D(blocknumber).Block_Info.signal.ver.frequency;
 Phase    = dt / Period * 360
 
-%%
-% 
-% ft       = fittype('sin(2*pi*freq*x+shift)*yscale','coefficients',{'shift','freq','yscale'});
-% mdlVEST  = fit(xVEST',yVEST'-mean(yVEST),ft,'startpoint',[sineP(4),sineP(3),sineP(2)]);
-% fVEST2   = mdlVEST.yscale*sin(2*pi*mdlVEST.freq*xVEST+mdlVEST.shift);
-% 
-% ft       = fittype('sin(2*pi*freq*x+shift)*yscale','coefficients',{'shift','freq','yscale'});
-% mdlVOR   = fit(xVOR',yVOR'-mean(yVOR),ft,'startpoint',[parVest(4),parVest(3),parVest(2)*0.5]);
-% fVOR2    = mdlVOR.yscale*sin(2*pi*mdlVOR.freq*xVOR+mdlVOR.shift);
-% 
-% 
-% %  Plot data
-% cfn = pb_newfig(cfn);
-% subplot(211);
-% hold on;
-% 
-% h = gobjects(0);
-% %h(end+1) = plot(xVOR,yVOR,'.');
-% h(end+1) = plot(xVOR,yVORdmc,'.');
-% h(end+1) = plot(xVOR,fVOR2,'--');
-% %h(end+1) = plot(xVOR,fVOR,'--');
-% 
-% subplot(212);
-% hold on;
-% 
-% h(end+1) = plot(xVEST,yVEST);
-% h(end+1) = plot(xVEST,fVEST2,'--');
-% %h(end+1) = plot(xVEST,fVEST,'--');
-% 
-% pb_nicegraph;
-% 
-% for i = 1:length(h)
-%    h(i).LineWidth = 2;
-% end
-% 
-% linkaxes;
-% xlim([xVEST(1) xVEST(end)])
-% 
-% relPhase    = fits(1).par(4)-fits(2).par(4)
-% gain        = fits(1).par(2)/fits(2).par(2)
-% 
-% relPhase    = mdlVOR.shift-mdlVEST.shift
-% gain        = mdlVOR.yscale/-mdlVEST.yscale
 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

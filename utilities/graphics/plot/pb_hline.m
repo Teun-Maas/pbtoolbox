@@ -21,6 +21,7 @@ function h = pb_hline(y, varargin)
    visibility = pb_keyval('visibility',varargin,'off');
    lim        = pb_keyval('lim',varargin,get(gca,'XLim'));
    lw         = pb_keyval('LineWidth',varargin,1);
+   col         = pb_keyval('color',varargin);
    
    ho       = ishold; hold on;
    len      = length(y);
@@ -35,9 +36,11 @@ function h = pb_hline(y, varargin)
 
    for i = 1:len
       h(i)  = plot(lim, [y(i);y(i)], style);
+      if ~isempty(col); set(h(i),'Color',col); end
       set(h(i),'Tag','graphical aid: horizonal');
       set(h(i),'HandleVisibility',visibility); % set handle visibility
       set(h(i),'LineWidth',lw);
+      set(h(i),'HandleVisibility',visibility);        % set handle visibility
    end
    if ~ho; hold off; end
 end
