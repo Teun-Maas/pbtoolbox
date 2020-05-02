@@ -15,6 +15,7 @@ function x = pb_y2x(varargin)
    
    H = pb_keyval('H',varargin,def.H);
    y = pb_keyval('y',varargin,def.y);
+   
    Y = laplace(y);
    X = Y/H;
    x = ilaplace(X);

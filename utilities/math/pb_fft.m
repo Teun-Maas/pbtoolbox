@@ -13,6 +13,7 @@ function [Y,f,P] = pb_fft(signal,fs,varargin)
    
    Y = fft(signal);
    L = length(Y);
+   if ~iseven(L); L = L-1; end
    
    P2 = abs(Y/L);
    P1 = P2(1:L/2+1);

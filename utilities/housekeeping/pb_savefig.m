@@ -9,28 +9,28 @@ function pb_savefig(varargin)
 
    n = nargin;
 
-   fig     = pb_keyval('fig',varargin);
+   fig     = pb_keyval('fig',varargin,gcf);
    
    fname   = pb_keyval('fname',varargin);
    dir     = pb_keyval('dir',varargin,[pb_datadir 'PhD/Figures/']);
-   ext     = pb_keyval('ext',varargin,'pdf');
+   ext     = pb_keyval('ext',varargin,'epsc');
    cd(dir);
 
    figure(fig);
    g = groot;
 
    if n == 0 && ~isempty(g.Children)
-      filter = {'*.fig';'*.pdf'};
+      filter = {'*.fig';'*.eps';'*.pdf'};
       h = get(g,'currentFigure');
-      [fname, path] = uiputfile(filter,[],strcat('Fig_',num2str(h.Number)));
+      [fname, fpath] = uiputfile(filter,[],strcat('Fig_',num2str(h.Number)));
    elseif n >= 1 && ~isempty(g.Children)
-      path = dir;
+      fpath = dir;
    end
 
    h = get(g,'currentFigure'); 
-   path = [path '/' fname];
-   savefig(h,path);
-   saveas(h,path,ext);
+   fpath = [fpath fname];
+   %savefig(h,fpath);
+   saveas(h,fpath,ext);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
