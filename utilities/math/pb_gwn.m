@@ -12,11 +12,17 @@ function gwn = pb_gwn(N,varargin)
    v = varargin;
    shuffle  = pb_keyval('shuffle',v,true);
    Fc       = pb_keyval('fc',v,0.5);
-   Fs       = pb_keyval('fs',v,10); 
+   Fs       = pb_keyval('fs',v,0.1); 
    order    = pb_keyval('order',v,500); 
    filter   = pb_keyval('filter',v,'lowpass');
    mu       = pb_keyval('mu',v,0);
    display  = pb_keyval('display',v,false);
+   
+   % Make shorter signals
+   idx = 1:N;
+   if N <= order*3
+      N = order*3+1;
+   end
    
    %  reset random noise generator
    if shuffle
@@ -36,14 +42,19 @@ function gwn = pb_gwn(N,varargin)
 
    %  Reverse to time domain
    gwn	= ifft(S,'symmetric');
-   gwn   = gwn + mu;
    
+   %  Filter noise
    switch filter
       case 'lowpass'
          gwn   = lowpass(gwn,'Fc',Fc,'Fs',Fs,'order', order); % Low-pass filter
       case 'highpass'
          gwn   = highpass(gwn,'Fc',Fc,'Fs',Fs,'order',order); % High-pass filter  
    end
+   
+   %  Cut off back to wanted size
+   gwn   = gwn(idx);
+   gwn   = gwn / max(abs(gwn));
+   gwn   = gwn + mu;
          
    if display
       [~,f,P] = pb_fft(gwn,10,'display',false);

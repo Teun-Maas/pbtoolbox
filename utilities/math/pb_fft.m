@@ -8,7 +8,7 @@ function [Y,f,P] = pb_fft(signal,fs,varargin)
 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
-   V.display = pb_keyval('display',varargin,true);
+   display = pb_keyval('display',varargin,false);
 
    
    Y = fft(signal);
@@ -21,7 +21,7 @@ function [Y,f,P] = pb_fft(signal,fs,varargin)
    P = P1;
    f = fs*(0:(L/2))/L; 
    
-   if V.display
+   if display
       pb_newfig(pb_nextfigurenumber-1);
       plot(f,P) 
       title('Single-Sided Amplitude Spectrum of X(t)')
