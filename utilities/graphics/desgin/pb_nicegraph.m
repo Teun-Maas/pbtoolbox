@@ -15,6 +15,7 @@ function pb_nicegraph(varargin)
 	def         =   pb_keyval('def',varargin,2);
 	conditions  =   pb_keyval('conditions',varargin,1);
 	linewidth   =   pb_keyval('linewidth',varargin,1);
+   font        =  pb_keyval('font',varargin,'Didot');
 
 	ax      = pb_fobj(gcf,'Type','Axes');
 	if ax<1; return; end
@@ -30,6 +31,15 @@ function pb_nicegraph(varargin)
    end
    
 	col = flipud(col);
+   
+   %% Set Fonts
+   
+   % COLORBAR:
+   h_cbar = pb_fobj(gcf,'Type','Colorbar');
+   
+   for i = 1:length(h_cbar)
+      h_cbar(i).FontName = font;
+   end
 
    %% Body: Make nice graphs
 	for i = 1:n
@@ -49,6 +59,8 @@ function pb_nicegraph(varargin)
       setAx.FontSize      = 13;
       setAx.YDir          = 'normal';
       setAx.LineWidth     = 1;
+      
+      SetAx.FontName = font; 
 
       % LINE:
       %

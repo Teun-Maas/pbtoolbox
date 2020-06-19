@@ -11,7 +11,7 @@ function gwn = pb_gwn(N,varargin)
    %  Various arguments in
    v = varargin;
    shuffle  = pb_keyval('shuffle',v,true);
-   Fc       = pb_keyval('fc',v,0.5);
+   Fc       = pb_keyval('fc',v,0.05);
    Fs       = pb_keyval('fs',v,0.1); 
    order    = pb_keyval('order',v,500); 
    filter   = pb_keyval('filter',v,'lowpass');
