@@ -72,7 +72,7 @@ function [block,cfg] = pb_vReadExp(cfg)
          case {'LED','LED1','LED2'}
             % Updates count and writes stimulus
             sn    = sn+1;
-            par   = sscanf(tline(nchar+1:end),'%d%d%d%d%f%d%f',[7,1]);
+            par   = sscanf(tline(nchar+1:end),'%d%d%d%d%d%d%d',[7,1]);
 				
             block(bn).trial(tn).stim(sn).modality		= 'LED';
 				block(bn).trial(tn).stim(sn).X            = par(1);
