@@ -1,4 +1,4 @@
-function leds = pb_fixled
+function [leds,s] = pb_fixled
 % PB_LIGHTWARNING()
 %
 % PB_LIGHTWARNING()  ...
@@ -21,7 +21,5 @@ function leds = pb_fixled
    end
 
    leds.write(s);
-   leds.trigger;
-   
-   delete(s);
+
 end
