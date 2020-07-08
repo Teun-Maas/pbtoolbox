@@ -10,8 +10,9 @@ function [leds,s] = pb_fixled
    import org.zeromq.ZMQ
    
    leds  = ledcontroller_pi('dcn-led06','dcn-led07','dcn-led09','dcn-led10');
-
-   s     = ledpattern(2);
+   
+   n     = 2;
+   s     = ledpattern(n);
    central_speaker = 10; % central led = 10 (11th starting with 0 from the left)
    for iC = 1:n
       if mod(iC,2) == 1
