@@ -14,10 +14,9 @@ function [leds,s] = pb_fixled(varargin)
    
    n     = 2;
    s     = ledpattern(n);
-   central_speaker = 5; % central led = 5 (6th starting with 0 from the left)
    for iC = 1:n
       if mod(iC,2) == 1
-         s(iC).set(central_speaker,'r');
+         s(iC).set(target,'r');
       end
        s(iC).intensity('r', 50);
    end
