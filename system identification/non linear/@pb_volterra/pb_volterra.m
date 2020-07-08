@@ -44,7 +44,6 @@ classdef pb_volterra < matlab.mixin.Copyable
             
       obj = compute_polynomial_coefficients(obj);
       obj = compute_volterra_kernels(obj,order);
-      obj = compute_volterra_series(obj,order);
       
       obj = predict_volterra_series(obj,input);
       obj = compare(obj,input,output);

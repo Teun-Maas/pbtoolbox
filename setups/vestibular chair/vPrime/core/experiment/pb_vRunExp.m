@@ -51,11 +51,17 @@ function pb_vRunExp(handles)
       
       %  start vestibular chair
       if ~ismac && ~debug     
+         % Start chair
          vs            	= pb_sendServo(profile);
-         pb_lightwarning;
          blockTime    	= tic; 
+         pb_lightwarning;
          pb_startServo(vs);
-         pause(4*pi);                                                         % allow vestibular chair to get in sync with input signal
+         
+         % Central fixation light
+         leds = pb_fixled;
+         pause(4*pi);            % allow vestibular chair to get in sync with input signal
+         leds.trigger;
+         pb_delobj(leds, s);
       end
 
       %% RUN TRIALS

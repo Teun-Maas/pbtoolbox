@@ -15,7 +15,7 @@ function pb_nicegraph(varargin)
 	def         =   pb_keyval('def',varargin,2);
 	conditions  =   pb_keyval('conditions',varargin,1);
 	linewidth   =   pb_keyval('linewidth',varargin,1);
-   font        =  pb_keyval('font',varargin,'Didot');
+   font        =  pb_keyval('font',varargin,'Times New Roman');
 
 	ax      = pb_fobj(gcf,'Type','Axes');
 	if ax<1; return; end

@@ -36,7 +36,7 @@ function obj = compute_polynomial_coefficients(obj)
          fun = obj.netpar.activation_function;
          for i = 1:nhidden
             for j = 1:ninput
-               % TO DO --> Fill with actuall computations of a.
+               % a(j,1) = ;
             end
          end
    end

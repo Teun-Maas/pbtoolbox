@@ -13,9 +13,9 @@ function obj = predict_volterra_series(obj,input)
    % Get data parameters
    xlen     = length(input);
    range    = 1:DELAYS;
-   t        = DELAYS+1:length(input);
+   t        = DELAYS:length(input)-1;
 
-   y  = zeros(1,length(input)-DELAYS); % + H(1).kernel;
+   y  = zeros(1,length(input)-DELAYS);% + obj.kernels(1).kernel;
    for iS = 1:length(input)-DELAYS
       
       % Prep your sample memory

@@ -46,9 +46,9 @@ function k = currentkernel(c,a,w,n)
             for i = 1:NODES
                s = s + c(i) .* a(n+1,i) .* w(i,j1);
             end
-            k(j1) =  s;
+            k(DELAYS+1-j1) =  s;
          end
-         
+         %k = zeros(size(k));
          
       case 2   % h2 
          % 2nd order volterra kernel
@@ -59,9 +59,11 @@ function k = currentkernel(c,a,w,n)
                for i = 1:NODES
                   s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2);
                end
-               k(j1,j2) =  s;
+               k(DELAYS+1-j1,DELAYS+1-j2) =  s;
             end
          end
+         k = k./max(max(k))*20; %% NOTE THIS IS NORMALIZED TO MATCH THE BEHAVIOUR OF SIMULATION
+         
          
          
       case 3   % h3
@@ -74,10 +76,11 @@ function k = currentkernel(c,a,w,n)
                   for i = 1:NODES
                      s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3);
                   end
-                  k(j1,j2,j3) =  s;
+                  k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3) =  s;
                end
             end
          end
+         %k = k / 1;
          
          
       case 4   % h4
@@ -91,7 +94,7 @@ function k = currentkernel(c,a,w,n)
                      for i = 1:NODES
                         s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4);
                      end
-                     k(j1,j2,j3,j4) =  s;
+                     k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3,DELAYS+1-j4) =  s;
                   end
                end
             end
@@ -111,7 +114,7 @@ function k = currentkernel(c,a,w,n)
                         for i = 1:NODES
                            s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5);
                         end
-                        k(j1,j2,j3,j4,j5) =  s;
+                        k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3,DELAYS+1-j4,DELAYS+1-j5) =  s;
                      end
                   end
                end
@@ -132,7 +135,7 @@ function k = currentkernel(c,a,w,n)
                            for i = 1:NODES
                               s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5) * w(i,j6);
                            end
-                           k(j1,j2,j3,j4,j5,j6) =  s;
+                           k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3,DELAYS+1-j4,DELAYS+1-j5,DELAYS+1-j6) =  s;
                         end
                      end
                   end
@@ -154,7 +157,7 @@ function k = currentkernel(c,a,w,n)
                               for i = 1:NODES
                                  s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5) * w(i,j6) * w(i,j7);
                               end
-                              k(j1,j2,j3,j4,j5,j6,j7) =  s;
+                              k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3,DELAYS+1-j4,DELAYS+1-j5,DELAYS+1-j6,DELAYS+1-j7) =  s;
                            end
                         end
                      end
