@@ -16,9 +16,9 @@ function [leds,s] = pb_fixled
    central_speaker = 10; % central led = 10 (11th starting with 0 from the left)
    for iC = 1:n
       if mod(iC,2) == 1
-         s.set(central_speaker,'r');
+         s(iC).set(central_speaker,'r');
       end
-       s.intensity('r', 50);
+       s(iC).intensity('r', 50);
    end
 
    leds.write(s);
