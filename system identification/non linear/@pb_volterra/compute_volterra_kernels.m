@@ -29,6 +29,7 @@ end
 function k = currentkernel(c,a,w,n)
    % Returns the nth order kernel
    
+   dt = 1;
    [DELAYS, NODES] = size(a);
    
    switch n    % Get the nth order kernel calculation
@@ -37,14 +38,13 @@ function k = currentkernel(c,a,w,n)
          % 0th order volterra kernel
          k = sum(c .* a(n+1,:));
          
-         
       case 1   % h1 
          % 1st order volterra kernel
          k    = zeros(1,length(a)); % 1-D
          for j1 = 1:DELAYS
             s = 0;
             for i = 1:NODES
-               s = s + c(i) .* a(n+1,i) .* w(i,j1);
+               s = s + c(i) .* a(n+1,i) .* w(i,j1) * dt^n;
             end
             k(DELAYS+1-j1) =  s;
          end
@@ -57,14 +57,13 @@ function k = currentkernel(c,a,w,n)
             for j2 = 1:DELAYS
                s = 0;
                for i = 1:NODES
-                  s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2);
+                  s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * dt^n;
                end
                k(DELAYS+1-j1,DELAYS+1-j2) =  s;
             end
          end
-         k = k./max(max(k))*20; %% NOTE THIS IS NORMALIZED TO MATCH THE BEHAVIOUR OF SIMULATION
-         
-         
+         %k = k./max(max(k))*20; %% NOTE THIS IS NORMALIZED TO MATCH THE BEHAVIOUR OF SIMULATION
+
          
       case 3   % h3
          % 3rd order volterra kernel 
@@ -74,7 +73,7 @@ function k = currentkernel(c,a,w,n)
                for j3 = 1:DELAYS
                   s = 0;
                   for i = 1:NODES
-                     s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3);
+                     s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * dt^n;
                   end
                   k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3) =  s;
                end
@@ -92,7 +91,7 @@ function k = currentkernel(c,a,w,n)
                   for j4 = 1:DELAYS
                      s = 0;
                      for i = 1:NODES
-                        s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4);
+                        s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * dt^n;
                      end
                      k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3,DELAYS+1-j4) =  s;
                   end
@@ -112,7 +111,7 @@ function k = currentkernel(c,a,w,n)
                      for j5 = 1:DELAYS
                         s = 0;
                         for i = 1:NODES
-                           s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5);
+                           s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5) * dt^n;
                         end
                         k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3,DELAYS+1-j4,DELAYS+1-j5) =  s;
                      end
@@ -133,7 +132,7 @@ function k = currentkernel(c,a,w,n)
                         for j6 = 1:DELAYS
                            s = 0;
                            for i = 1:NODES
-                              s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5) * w(i,j6);
+                              s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5) * w(i,j6) * dt^n;
                            end
                            k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3,DELAYS+1-j4,DELAYS+1-j5,DELAYS+1-j6) =  s;
                         end
@@ -155,7 +154,7 @@ function k = currentkernel(c,a,w,n)
                            for j7 = 1:DELAYS
                               s = 0;
                               for i = 1:NODES
-                                 s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5) * w(i,j6) * w(i,j7);
+                                 s = s + c(i) .* a(n+1,i) .* w(i,j1) * w(i,j2) * w(i,j3) * w(i,j4) * w(i,j5) * w(i,j6) * w(i,j7) * dt^n;
                               end
                               k(DELAYS+1-j1,DELAYS+1-j2,DELAYS+1-j3,DELAYS+1-j4,DELAYS+1-j5,DELAYS+1-j6,DELAYS+1-j7) =  s;
                            end

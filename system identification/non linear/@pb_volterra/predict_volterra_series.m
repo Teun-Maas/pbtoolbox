@@ -49,7 +49,7 @@ function obj = predict_volterra_series(obj,input)
          for j1 = 1:DELAYS
             for j2 = 1:DELAYS
                for j3 = 1:DELAYS
-                  sumt =  sumt + (obj.kernels(4).kernel(j1,j2,j3) * xin(j1)) * xin(j2) * xin(j3);
+                  sumt =  sumt + (obj.kernels(4).kernel(j1,j2,j3) * xin(j1)) * xin(j2) * xin(j3); 
                end
             end
          end

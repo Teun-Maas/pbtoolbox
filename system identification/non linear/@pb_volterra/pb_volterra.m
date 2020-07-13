@@ -30,21 +30,23 @@ classdef pb_volterra < matlab.mixin.Copyable
          if nargin == 0; return; end
          
          if ~isempty(net)
+            %  Assert
             if ~isa(net,'network'); error('Net is not a network class.'); end
             if net.numLayers ~= 2; error('Algorithm requires a simple 2-layer feedforward neural network'); end
             
+            %  Read input arguments
+            obj.kv.deriv_sigfun  = pb_keyval('dsigfun',varargin);
             obj.feedforwardnet   = net;
-
+            
+            %  Constructor functions
             obj = read_network(obj);
             obj = compute_polynomial_coefficients(obj);
          end
       end
       
-      obj = set_polynomial_method(obj,poly_method);
-            
+      obj = set_polynomial_method(obj,poly_method);  
       obj = compute_polynomial_coefficients(obj);
       obj = compute_volterra_kernels(obj,order);
-      
       obj = predict_volterra_series(obj,input);
       obj = compare(obj,input,output);
    end
