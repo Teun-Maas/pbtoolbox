@@ -9,7 +9,7 @@ function obj = parse_data(obj,x,y)
 
    if length(x) ~= length(y); error('Input and output data are not same size'); end
 
-   ninput   = obj.layers.num_input;
+   ninput   = obj.dimensions.num_input;
    xlen     = length(x) - ninput + 1;
    count    = round(xlen * obj.train_test_ratio);
    

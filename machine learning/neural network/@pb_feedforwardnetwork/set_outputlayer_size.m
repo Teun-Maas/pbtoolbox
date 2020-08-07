@@ -1,18 +1,16 @@
-function output = compute_node_output(obj,hnode,input)
-% COMPUTE_NODE_OUTPUT
+function obj = set_outputlayer_size(obj,num_output)
+% SET_HIDDENLAYER_SIZE
 %
-% COMPUTE_NODE_OUTPUT(obj,hnode,input) 
+% SET_HIDDENLAYER_SIZE determines the number of output units
+% in the output layer of the neural network architecture.
 %
 % See also PB_FEEDFORWARDNETWORK
 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
-   delays      = obj.layers.num_input;
-   weights     = obj.weights{1};
-   bias        = obj.bias;
-   
-   z        = sum(weights(:,hnode) .* input) + bias(hnode);
-   output   = obj.compute_activation_function(z);
+   if max(size(num_output))>1; error('Output layer definition should be a single number, reflecting the number of output units.'); end
+
+   obj.dimensions.num_output = num_output;
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

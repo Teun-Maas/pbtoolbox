@@ -1,4 +1,4 @@
-function obj = update_app_handle(obj)
+function obj = update_app_handle(obj,mode)
 % UPDATE_APP_HANDLE
 %
 % UPDATE_APP_HANDLE  ...
@@ -8,11 +8,14 @@ function obj = update_app_handle(obj)
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
    if ~isempty(obj.app_handle)
-      obj.app_handle.step = obj.app_handle.step+1;
-      waitbar(obj.app_handle.step/length(obj.data.train.y), obj.app_handle.handle, sprintf('%1d',obj.app_handle.step))
+      switch mode
+         case 'epoch'
+            obj.app_handle.step = obj.app_handle.step+1;
+            waitbar(obj.app_handle.step/obj.num_epochs, obj.app_handle.handle, sprintf('Epoch: %1d/%1d',obj.app_handle.step,obj.num_epochs))
+      end
    end
 end
- 
+
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %

@@ -7,7 +7,8 @@ function obj = set_activation_function(obj,fun)
 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
-   obj.activation_function = fun;
+ 
+   obj.activation_function = @tansig;%fun;
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

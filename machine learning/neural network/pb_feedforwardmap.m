@@ -46,7 +46,6 @@ function [NN,hmap] = pb_feedforwardmap(x,y,varargin)
          for iR = 1:REPS
             %  Network
             net      = feedforwardnet(iN);
-            net.trainParam.showWindow = shownet;
             net      = train(net,x_inputs,y_target);
             y_net    = net(x_inputs);
 

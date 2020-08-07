@@ -1,5 +1,5 @@
-function output = compute_node_output(obj,hnode,input)
-% COMPUTE_NODE_OUTPUT
+function [obj,z,a]   = compute_forward(obj,x)
+% COMPUTE_FORWARD
 %
 % COMPUTE_NODE_OUTPUT(obj,hnode,input) 
 %
@@ -7,12 +7,18 @@ function output = compute_node_output(obj,hnode,input)
 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
-   delays      = obj.layers.num_input;
-   weights     = obj.weights{1};
-   bias        = obj.bias;
+   % Define default & preallocate
+   nlayers  = length(obj.weights);
+   z        = cell(nlayers,1);
+   a        = cell(nlayers,1);
+   xT       = x;
    
-   z        = sum(weights(:,hnode) .* input) + bias(hnode);
-   output   = obj.compute_activation_function(z);
+   % Compute output (or  a(:,2))
+   for iL = 1:nlayers
+      z{iL}  = obj.weights{iL} * xT + obj.bias{iL};
+      a{iL}  = obj.layers{iL}.compute_activation_function(z{iL});
+      xT     = a{iL};
+   end
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

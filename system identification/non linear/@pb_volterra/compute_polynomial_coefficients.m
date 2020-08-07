@@ -37,7 +37,7 @@ function obj = compute_polynomial_coefficients(obj)
             for j = 1:ninput
                % Calculate the a_ji coefficients of p_i
                bias      	= obj.weights.bias(i);
-               a(j,i)   	= 1/factorial(j-1) * s(j).sigf(bias);
+               a(j,i)   	= 1/factorial(j-1) * s(j).sigf(bias); % * 2/pi
             end
          end
          

@@ -19,8 +19,10 @@ function nfn = pb_nextfigurenumber
    for iF = 1:flen
       numbers(iF) = f(iF).Number;
    end
+   
    %  Return
-   nfn = max(iF)+1;
+   nfn = max(iF);
+   if isempty(nfn); nfn = 0; end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

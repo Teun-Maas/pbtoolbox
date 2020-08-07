@@ -1,5 +1,5 @@
-function output = compute_node_output(obj,hnode,input)
-% COMPUTE_NODE_OUTPUT
+function output  = predict(obj,x)
+% COMPUTE_FORWARD
 %
 % COMPUTE_NODE_OUTPUT(obj,hnode,input) 
 %
@@ -7,12 +7,14 @@ function output = compute_node_output(obj,hnode,input)
 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
-   delays      = obj.layers.num_input;
-   weights     = obj.weights{1};
-   bias        = obj.bias;
-   
-   z        = sum(weights(:,hnode) .* input) + bias(hnode);
-   output   = obj.compute_activation_function(z);
+   % Check for input dimensions
+   if min(size(x)) > 1 || length(x) ~= obj.dimensions.num_input
+      error(['Input data did not match required dimensions (memory = ' num2str(obj.layers.num_input) ')']);
+   end
+
+   x           = flip(reshape(x,[obj.dimensions.num_input,1])); % force orientation input
+   [~,~,a]     = compute_forward(obj,x);
+   output      = a{end};
 end
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

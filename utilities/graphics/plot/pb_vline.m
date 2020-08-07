@@ -21,7 +21,7 @@ function h = pb_vline(x, varargin)
    visibility  = pb_keyval('visibility',varargin,'off');
    lim         = pb_keyval('lim',varargin,get(gca,'YLim'));
    col         = pb_keyval('color',varargin);
-   lw         = pb_keyval('LineWidth',varargin,1);
+   lw          = pb_keyval('LineWidth',varargin,1);
 
    ho       = ishold; hold on;
    len      = length(x);
