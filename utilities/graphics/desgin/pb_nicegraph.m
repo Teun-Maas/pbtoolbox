@@ -185,6 +185,7 @@ function pb_nicegraph(varargin)
       end
       
    end
+   pb_highlightaxes(gcf);
 end
 
 function DotSize = DSize(NDots)

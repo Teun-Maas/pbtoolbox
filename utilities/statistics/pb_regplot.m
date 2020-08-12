@@ -16,6 +16,7 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    color       = pb_keyval('color',v,'k');
    linestyle   = pb_keyval('linestyle',v,'-');
    linewidth   = pb_keyval('linewidth',v,3);
+   tag         = pb_keyval('tag',varargin,'Fixed');
    
    X     = X(:)';
    Y     = Y(:)';
@@ -35,7 +36,7 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    h = gobjects(0);
    if data; h(1) = plot(X, Y, ['k' marker]); end
    axxes = axis;
-   h(end+1) = plot(axxes([1 2]),gain*axxes([1 2])+bias,'Color',color,'LineStyle',linestyle,'LineWidth',linewidth);
+   h(end+1) = plot(axxes([1 2]),gain*axxes([1 2])+bias,'Color',color,'LineStyle',linestyle,'LineWidth',linewidth,'Tag',tag);
    mov = max(axxes)/10;
    if textOut; text(mov,-mov,['r = ' num2str(gain)],'FontSize',18); end
    if ~hs; hold off; end
