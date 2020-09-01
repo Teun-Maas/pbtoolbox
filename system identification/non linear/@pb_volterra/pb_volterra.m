@@ -18,6 +18,7 @@ classdef pb_volterra < matlab.mixin.Copyable
    properties (Access = protected, Hidden = true)    
       varg
       netpar
+      process
       kv
    end
 
@@ -43,7 +44,7 @@ classdef pb_volterra < matlab.mixin.Copyable
             obj = compute_polynomial_coefficients(obj);
          end
       end
-      
+      obj = set_normalisation(obj,method);
       obj = set_polynomial_method(obj,poly_method);  
       obj = compute_polynomial_coefficients(obj);
       obj = compute_volterra_kernels(obj,order);

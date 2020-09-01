@@ -15,13 +15,16 @@ function obj = predict_volterra_series(obj,input)
    range    = 1:DELAYS;
    t        = DELAYS:length(input)-1;
 
-   y = zeros(1,length(input)-DELAYS);% + obj.kernels(1).kernel;
+   y = zeros(1,length(input)-DELAYS); %+ obj.kernels(1).kernel;
    for iS = 1:length(input)-DELAYS
       
-      % Prep your sample memory
+      %  Prep your sample memory
       current  = iS+DELAYS-1;
       range    = current-DELAYS+1:current;
       xin      = fliplr(input(range));  % relevant x's
+      
+      %  Preprocess: apply normalise input data
+%       xin      = mapminmax('apply',xin,obj.process.input);
       
       if N >= 2 
          % H1
@@ -38,7 +41,7 @@ function obj = predict_volterra_series(obj,input)
          for j1 = 1:DELAYS
             for j2 = 1:DELAYS
                sumt =  sumt + (obj.kernels(3).kernel(j1,j2) * xin(j1)) * xin(j2);
-            end
+             end
          end
          y(iS) = y(iS) + sumt; 
       end
@@ -106,7 +109,10 @@ function obj = predict_volterra_series(obj,input)
          end
          y(iS) = y(iS) + sumt; 
       end
-
+      
+      %  Postprocess: reverse normalization
+%       y(iS) = mapminmax('reverse',y(iS),obj.process.output);
+      
    end
    obj.model.y = y;
    obj.model.t = t;

@@ -61,7 +61,7 @@ function k = currentkernel(c,a,w,n)
                k(DELAYS+1-j1,DELAYS+1-j2) =  s;
             end
          end
-         k = k./max(max(k)) * 20.628; %% NOTE THIS IS NORMALIZED TO MATCH THE BEHAVIOUR OF SIMULATION
+         %k = k./max(max(k)) * 4.5120^1; %* 30.0800^0.5; %% NOTE THIS IS NORMALIZED TO MATCH THE BEHAVIOUR OF SIMULATION
          
          
       case 3   % h3

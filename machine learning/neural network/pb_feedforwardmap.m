@@ -10,7 +10,7 @@ function [NN,hmap] = pb_feedforwardmap(x,y,varargin)
    REPS     = pb_keyval('repeats',varargin,3);
    NODES    = pb_keyval('nodes',varargin,3);
    DELAYS   = pb_keyval('delays',varargin,15);
-   display  = pb_keyval('display',varargin,true);
+   display  = pb_keyval('display',varargin,false);
    map      = pb_keyval('map',varargin,1);
    shownet  = pb_keyval('shownet',varargin,0);
    
@@ -44,16 +44,30 @@ function [NN,hmap] = pb_feedforwardmap(x,y,varargin)
 
          Rsq = zeros(1,REPS);
          for iR = 1:REPS
-            %  Network
+            
+            %  Normalize data
+            % [xin,xPs] = mapminmax(x_inputs);
+            % [yin,yPs] = mapminmax(y_target);
+            
+            %  Initialize Network
             net      = feedforwardnet(iN);
+            net.trainParam.showWindow = shownet;                           % Allow for visualization
+            % net.inputs{1}.processFcns  = {'removeconstantrows'};           % No normalization
+            % net.outputs{2}.processFcns = {'removeconstantrows'};
+
+            %  Train network
             net      = train(net,x_inputs,y_target);
-            y_net    = net(x_inputs);
-
-            [r,~,~]  = regression(y_target,y_net);
-            Rsq(iR)  = r^2;
-
-            NN.nodes(iN).delay(iD).repeat(iR).net  = net;
-            NN.nodes(iN).delay(iD).repeat(iR).rsq  = Rsq(iR);
+            ysim     = sim(net,x_inputs);
+            mdl      = fitlm(y_target,ysim);
+            Rsq(iR)  = mdl.Rsquared.Adjusted;
+            
+            % Network General
+            NN.nodes(iN).delay(iD).repeat(iR).net        = net;
+            NN.nodes(iN).delay(iD).repeat(iR).rsq        = Rsq(iR);
+            
+            % Processing functions
+            % NN.nodes(iN).delay(iD).repeat(iR).process.x  = xPs;
+            % NN.nodes(iN).delay(iD).repeat(iR).process.y  = yPs;
          end
          % Get average R^2
          mrsq = mean(Rsq);

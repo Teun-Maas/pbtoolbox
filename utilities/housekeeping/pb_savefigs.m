@@ -17,7 +17,7 @@ function pb_savefigs(varargin)
    h = flipud(g.Children); 
 
    for i = 1:length(h)
-      pb_savefig('fig',h(i),'fname',[prefix num2str(i)],'dir',path);
+      pb_savefig('fig',h(i),'fname',[prefix num2str(i)],'dir',path,'ext','.pdf');
    end
 end
  
