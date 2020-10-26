@@ -25,7 +25,6 @@ function obj = compute_volterra_kernels(obj,order)
    obj.kernels = H;
 end
 
-
 function k = currentkernel(c,a,w,n)
    % Returns the nth order kernel
    

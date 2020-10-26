@@ -13,7 +13,7 @@ function [cfn,f] = pb_newfig(cfn, varargin)
    units = pb_keyval('units',varargin,'centimeters');
    ws    = pb_keyval('ws',varargin,'docked'); % normal
    rsz   = pb_keyval('resize',varargin,'on');
-   sz    = pb_keyval('size',varargin,[0 0 17 11]); 
+   sz    = pb_keyval('size',varargin,[0 0 20 14]); 
 
    cfn = cfn+1; f = figure(cfn); clf;
    

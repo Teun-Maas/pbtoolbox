@@ -17,7 +17,7 @@ function pb_colgraph(varargin)
    def     = pb_keyval('def',varargin,2);
 
    cfn     = fig.Number;
-   ho  = ishold(cfn);
+   ho    = ishold(gca);
 
    %% Main
 

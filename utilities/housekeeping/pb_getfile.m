@@ -9,7 +9,7 @@ function [fname, path] = pb_getfile(varargin)
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
 
-   cdir     = pb_keyval('dir',varargin,cd);
+   cdir     = pb_keyval('cdir',varargin,cd);
    cd(cdir);  
    
    ext      = pb_keyval('ext',varargin,'*.*');

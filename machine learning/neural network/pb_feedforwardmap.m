@@ -7,12 +7,17 @@ function [NN,hmap] = pb_feedforwardmap(x,y,varargin)
 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
-   REPS     = pb_keyval('repeats',varargin,3);
-   NODES    = pb_keyval('nodes',varargin,3);
-   DELAYS   = pb_keyval('delays',varargin,15);
-   display  = pb_keyval('display',varargin,false);
-   map      = pb_keyval('map',varargin,1);
-   shownet  = pb_keyval('shownet',varargin,0);
+   REPS        = pb_keyval('repeats',varargin,1);
+   NODES       = pb_keyval('nodes',varargin,3);
+   DELAYS      = pb_keyval('delays',varargin,15);
+   display     = pb_keyval('display',varargin,false);
+   map         = pb_keyval('map',varargin,1);
+   shownet     = pb_keyval('shownet',varargin,0);
+   normalise   = pb_keyval('normalise',varargin,'mapminmax');
+   mapx        = pb_keyval('mapx',varargin,[-360 360]);
+   mapy        = pb_keyval('mapy',varargin,[-360 360]);
+   map         = pb_keyval('map',varargin,[-1 1]);
+   progress    = pb_keyval('progress',varargin,true);
    
    hmap  = zeros(NODES,DELAYS);
    NN    = struct;
@@ -24,6 +29,15 @@ function [NN,hmap] = pb_feedforwardmap(x,y,varargin)
       N1 = 1;
       D1 = 1;
    end
+   
+   % Waitbar
+   cnt         = 0;
+   trainingnum = length(N1:NODES)*length(D1:DELAYS)*(REPS);
+   wb_handle   = waitbar(cnt,['Progress training neural networks (' num2str(cnt) '/' num2str(trainingnum) ')']);
+   
+   %  Normalize data
+   [x,xPs] = pb_mapminmax(x,'mapx',mapx);
+   [y,yPs] = pb_mapminmax(y,'mapx',mapx);
    
    for iN = N1:NODES
       for iD = D1:DELAYS
@@ -44,16 +58,13 @@ function [NN,hmap] = pb_feedforwardmap(x,y,varargin)
 
          Rsq = zeros(1,REPS);
          for iR = 1:REPS
-            
-            %  Normalize data
-            % [xin,xPs] = mapminmax(x_inputs);
-            % [yin,yPs] = mapminmax(y_target);
-            
+            cnt = cnt+1;
+
             %  Initialize Network
             net      = feedforwardnet(iN);
             net.trainParam.showWindow = shownet;                           % Allow for visualization
-            % net.inputs{1}.processFcns  = {'removeconstantrows'};           % No normalization
-            % net.outputs{2}.processFcns = {'removeconstantrows'};
+            net.inputs{1}.processFcns  = {'removeconstantrows'};           % No normalization
+            net.outputs{2}.processFcns = {'removeconstantrows'};
 
             %  Train network
             net      = train(net,x_inputs,y_target);
@@ -66,14 +77,17 @@ function [NN,hmap] = pb_feedforwardmap(x,y,varargin)
             NN.nodes(iN).delay(iD).repeat(iR).rsq        = Rsq(iR);
             
             % Processing functions
-            % NN.nodes(iN).delay(iD).repeat(iR).process.x  = xPs;
-            % NN.nodes(iN).delay(iD).repeat(iR).process.y  = yPs;
+            NN.nodes(iN).delay(iD).repeat(iR).process.x  = xPs;
+            NN.nodes(iN).delay(iD).repeat(iR).process.y  = yPs;
+            waitbar(cnt/trainingnum,wb_handle,['Progress training neural networks (' num2str(cnt) '/' num2str(trainingnum) ')']);
          end
          % Get average R^2
          mrsq = mean(Rsq);
          hmap(iN,iD) = mrsq; 
       end
    end
+   
+   close(wb_handle);
    
    if display
        visualize_map(hmap)                 

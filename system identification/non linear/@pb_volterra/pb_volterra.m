@@ -3,7 +3,7 @@ classdef pb_volterra < matlab.mixin.Copyable
 % 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
    
-   properties (GetAccess = public, SetAccess = private)
+   properties (GetAccess = public, SetAccess = public)
       feedforwardnet
       model
       kernels
@@ -37,10 +37,13 @@ classdef pb_volterra < matlab.mixin.Copyable
             
             %  Read input arguments
             obj.kv.deriv_sigfun  = pb_keyval('dsigfun',varargin);
+            obj.process.x        = pb_keyval('preprocess',varargin);
+            obj.process.y        = pb_keyval('postprocess',varargin);
             obj.feedforwardnet   = net;
             
             %  Constructor functions
             obj = read_network(obj);
+            obj = set_normalisation(obj,'mapminmax');
             obj = compute_polynomial_coefficients(obj);
          end
       end
@@ -48,6 +51,7 @@ classdef pb_volterra < matlab.mixin.Copyable
       obj = set_polynomial_method(obj,poly_method);  
       obj = compute_polynomial_coefficients(obj);
       obj = compute_volterra_kernels(obj,order);
+      obj = update_kernels(obj,nets);
       obj = predict_volterra_series(obj,input);
       obj = compare(obj,input,output);
    end

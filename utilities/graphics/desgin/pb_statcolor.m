@@ -107,6 +107,9 @@ function Col = pb_statcolor(ncol,statmap,palette,Par,varargin)
          statmap = 'sequential';
          palette = 'luminancechromahue';
          Par = [70 70 70 70 0 360]; % [Lmin Lmax Cmin Cmax H1 H2] %Rainbow
+     case 16
+         statmap = 'qualitative';
+         palette = 'cool';
       otherwise
          statmap = 'qualitative';
          palette = 'dynamic';
@@ -126,6 +129,8 @@ function Col = pb_statcolor(ncol,statmap,palette,Par,varargin)
                H		= linspace(270,150,ncol);
             case {'w','warm'}
                H		= linspace(90,-30,ncol);
+            case {'cool'}'
+               H     = linspace(270,-30,ncol);
          end
          C		= repmat(70,1,ncol);
          L		= repmat(70,1,ncol);

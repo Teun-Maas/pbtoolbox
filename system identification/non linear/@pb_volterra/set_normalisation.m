@@ -15,7 +15,7 @@ function obj = set_normalisation(obj,method)
          method = 'none';
    end
 
-   obj.proccess.normalisation = method;
+   obj.process.normalisation = method;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
