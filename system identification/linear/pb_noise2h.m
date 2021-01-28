@@ -25,7 +25,11 @@ function [ir,D] = pb_noise2h(input,output,varargin)
       D(iN).ir       = ir(1:memory);
       
    end
-   ir = mean(vertcat(D.ir));
+   if iN>1
+      ir = mean(vertcat(D.ir));
+   else
+      ir = D.ir;
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

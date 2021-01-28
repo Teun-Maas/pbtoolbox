@@ -10,8 +10,14 @@ function [file,path] = pb_fsplit(fn)
    if strcmp(fn(end),filesep); error(['Filename cannot end with a filesep (' filesep ').']); end
    
    seps  = strfind(fn,filesep);
-   file  = fn(seps(end)+1:end);
-   path  = fn(1:seps(end));
+   
+   if isempty(seps)
+      file = fn;
+      path = [cd filesep];
+   else
+      file  = fn(seps(end)+1:end);
+      path  = fn(1:seps(end));
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

@@ -9,7 +9,7 @@ function fn = pb_zipblocks(cdir,varargin)
 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
-   if nargin == 0; cdir = pb_getdir('dir','/Users/jjheckman/Documents/Data/PhD/Experiment'); end
+   if nargin == 0; cdir = pb_getdir('cdir','/Users/jjheckman/Documents/Data/PhD/Experiment'); end
    cd(cdir);
    
    listing = dir('block_info_*.mat');
