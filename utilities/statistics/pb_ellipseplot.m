@@ -13,7 +13,7 @@ function h = pb_ellipseplot(Mu,SD,Phi,varargin)
    col      = pb_keyval('color',v,'k');
    alpha    = pb_keyval('alpha',v,.33);
    ls       = pb_keyval('linestyle',v,'--');
-   SD       = pb_keyval('sd',v,SD*2);
+   SD       = pb_keyval('sd',v,SD);
    disp     = pb_keyval('disp',v,false);
    regcol   = pb_keyval('regcol',v,col);
    
@@ -39,7 +39,6 @@ function h = pb_ellipseplot(Mu,SD,Phi,varargin)
       'LineWidth',1,...
       'LineStyle',ls,...
       'FaceAlpha',alpha);
-   
    
    if disp; h(2) = pb_regplot(X,Y,'data',false,'color',col); end  %% REGRESSION DOES NOT MATCH ANGLE OF ELLIPSE
    if ~hs; hold on; end

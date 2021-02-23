@@ -17,6 +17,8 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    linestyle   = pb_keyval('linestyle',v,'-');
    linewidth   = pb_keyval('linewidth',v,3);
    tag         = pb_keyval('tag',varargin,'Fixed');
+   alpha       = pb_keyval('alpha',varargin,1);
+   msize       = pb_keyval('size',varargin,10);
    
    X     = X(:)';
    Y     = Y(:)';
@@ -34,7 +36,14 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
 
    %% Graphics
    h = gobjects(0);
-   if data; h(1) = plot(X, Y, ['k' marker]); end
+   if data
+      h(1) = scatter(X, Y, ['k' marker']); 
+      h(1).MarkerFaceAlpha       = alpha;
+      h(1).MarkerEdgeAlpha       = alpha;
+      h(1).Tag                   = 'Fixed';
+      h(1).MarkerEdgeColor       = color/2;
+      
+   end
    axxes = axis;
    h(end+1) = plot(axxes([1 2]),gain*axxes([1 2])+bias,'Color',color,'LineStyle',linestyle,'LineWidth',linewidth,'Tag',tag);
    mov = max(axxes)/10;

@@ -161,7 +161,7 @@ function pb_nicegraph(varargin)
       % 
       % Use as 'range' to match with fitted data plots.
       h = pb_fobj(ax(i),'Type','Patch','-not','Tag','Fixed');
-      PatchCol = pb_statcolor(length(h)+1,[],[],[],'def',5);
+      PatchCol = pb_statcolor(length(h)+1,[],[],[],'def',1);
 
       for iPatch = 1:length(h)
          set(h(iPatch), ...

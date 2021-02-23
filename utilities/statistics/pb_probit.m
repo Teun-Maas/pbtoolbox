@@ -13,7 +13,7 @@ function [h,D] = pb_probit(D, varargin)
    
    %% Initalize
    
-	visibility  = pb_keyval('visibility',varargin,'off');
+	visibility  = pb_keyval('HandelVisibility',varargin,'off');
 	ho          = pb_keyval('ho',varargin,ishold);
 	fig         = pb_keyval('fig',varargin, gcf);
 	ax          = pb_keyval('ax',varargin, gca);
@@ -32,21 +32,23 @@ function [h,D] = pb_probit(D, varargin)
    n     = numel(iRT);
    y     = probitscale((1:n)./n);
    h(1)  = plot(x,y,'Marker','o','Color',gcol,'MarkerFaceColor',gcol,'Linestyle','None');
-   set(h(1),'Tag','rawdata');
+   set(h(1),'Tag','Fixed');
 
 	%% Quantiles & regression
 
    p        = [1,5,10,25,50,75,90, 95, 99]/100;
-   xtick    = sort(-1./(150+[0 pb_oct2bw(50,-1:5)]));
+   xtick    = sort(-1./(120+[0 pb_oct2bw(50,-1:3)]));
 
    prob	= probitscale(p);
    q		= -1./quantile(D,p);
    b     = regstats(prob,q);
 
-   rl    = regline(b.beta,'k--');
-   h(2)  = plot(q,prob,'color',col,'Marker','o','MarkerFaceColor',col,'LineStyle',linestyle);
+   rl          = regline(b.beta,'k--');
+   rl.Color    = gcol;
+   
+   h(2)        = plot(q,prob,'color',col,'Marker','o','MarkerFaceColor',col,'LineStyle',linestyle);
 
-   set(h,'Tag','probit model');
+   set(h,'Tag','Fixed');
    set(rl,'Tag','graphical aid: regline');
    set(rl,'HandleVisibility',visibility);   
    
@@ -63,7 +65,7 @@ function [h,D] = pb_probit(D, varargin)
 
    f = pb_fobj(gca,'Tag','horline');
    if isempty(f)
-      f = pb_hline(0,'visibility','on');
+      f = pb_hline(0,'visibility','off');
       set(f,'Tag','horline');
    end
 

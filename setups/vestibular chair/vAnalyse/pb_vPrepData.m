@@ -10,10 +10,10 @@ function out = pb_vPrepData(varargin)
    % keyval
    V = varargin;
    GV.cdir           = pb_keyval('cd',V,cd);
-   GV.block_idx      = pb_keyval('block',V,1);
+   GV.block_idx      = pb_keyval('block',V,'all');
    GV.stim_idx       = pb_keyval('stim',V,1);
    GV.fn             = pb_keyval('fn',V);
-   GV.gaze_method    = pb_keyval('gaze',V,'ronsse');
+   GV.gaze_method    = pb_keyval('gaze',V,'old');
    GV.heuristic_f    = pb_keyval('heuristic_filter',V,1);
    GV.sgolay_f       = pb_keyval('sgolay_filter',V,1);
    GV.path           = pb_keyval('path',V,cd);
@@ -36,7 +36,9 @@ function out = pb_vPrepData(varargin)
    end
    disp(['>> Data loaded...' newline]);
    
+   
    % parse data
+   GV       = readkeyval(D,GV);
    S        = getstims(D, GV);                                             % read the stimuli
    T        = gettimestamps(D, GV);                                        % correct the LSL timestamps
    [P,GV]	= getdata(D, T, GV);                                           % obtain the response behaviour
@@ -56,6 +58,19 @@ end
 
 % Some nested functions for readability
 
+function GV = readkeyval(Data,GV)
+
+   % Fix blocks
+   if ~isnumeric(GV.block_idx)
+      switch GV.block_idx
+         case 'all'
+            GV.block_idx = 1:length(Data);
+         otherwise
+            GV.block_idx = 1;
+      end
+   end
+end
+
 % Parsing functions
 function [P,GV] = getdata(Data, T, GV)
    % Function will get timestamps for the different streams
@@ -70,9 +85,9 @@ function [P,GV] = getdata(Data, T, GV)
       [pup_idx,opt_idx] = get_fixation_idx(Data(iB),T(iB));
 
       % store timestamps
-      P(iB).pupillabs            = getpupil(Data(iB), T(iB), pup_idx,GV);
+      P(iB).pupillabs            = getpupil(Data(iB), T(iB), pup_idx, GV);
       P(iB).optitrack            = getopti(Data(iB), opt_idx,GV);
-      [P(iB).gaze,P(iB).gaze_n]  = computegaze(Data(iB), T(iB), opt_idx, pup_idx);
+      P(iB).gaze                 = computegaze(Data(iB), T(iB), opt_idx, pup_idx, GV);
       P(iB).chair                = [];
       P(iB).block_idx            = block;
       
@@ -162,7 +177,7 @@ function trace = getopti(block_data,idx,GV)
    trace       = filter_trace(trace,GV);
 end
 
-function [trace, trace_new] = computegaze(block_data, block_time, opt_idx, pup_idx)
+function trace = computegaze(block_data, block_time, opt_idx, pup_idx, GV)
    % Function will compute gaze 
    
    % Head
@@ -217,8 +232,12 @@ function [trace, trace_new] = computegaze(block_data, block_time, opt_idx, pup_i
        MatrixGazenorms(:,n)   = MatrixGaze(:,3,1,n) / norm(MatrixGaze(:,3,1,n));
    end
    
-   trace       = -VCxyz2azel(PGnorms(1,:),PGnorms(2,:),PGnorms(3,:));   % Oude manier om gaze te bepalen, incl translaties
-   trace_new   = -quat2azelAnnemiek(qHead.*qEye);                       % Simpele manier om gaze te bepalen, quaternion multiplicatie dus puur beide rotaties combineren
+   switch GV.gaze_method
+      case 'new'
+         trace       = -quat2azelAnnemiek(qHead.*qEye);                       % Simpele manier om gaze te bepalen, quaternion multiplicatie dus puur beide rotaties combineren
+      otherwise
+         trace       = -VCxyz2azel(PGnorms(1,:),PGnorms(2,:),PGnorms(3,:));   % Oude manier om gaze te bepalen, incl translaties
+   end
 end
 
 function trace = filter_trace(trace,GV)
@@ -390,11 +409,11 @@ function [T,P] = getchair(Data, T, P, GV)
       tsVestibularI(inds)     = [];
       
       %  XCorr synchronization
-      fsPup      	= length(tsVestibularI)/tsVestibularI(end);
-      [r,lag]     = xcorr(vestibular_posDI, sensehat_posD);
-      [~,I]       = max(abs(r));
-      lagDiff     = lag(I)/fsPup;
-      tsVestibularI = tsVestibularI - lagDiff;  
+      fsPup          = length(tsVestibularI)/tsVestibularI(end);
+      [r,lag]        = xcorr(vestibular_posDI, sensehat_posD);
+      [~,I]          = max(abs(r));
+      lagDiff        = lag(I)/fsPup;
+      tsVestibularI  = tsVestibularI - lagDiff;  
 
       % store data
       P(iB).chair                = vestibular_posDI;
