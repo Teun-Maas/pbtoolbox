@@ -17,20 +17,23 @@ function cfg = pb_vLSCpositions(cfg,varargin)
    if dspFlag; close all; end
    
    %% File
-   fname		= which('vPrime Measurement.xlsx');
+   fname		= which(cfg.lookup_table);
    N			= xlsread(fname,'Values','','basic');
    channel	= N(:,1);
-
+   
+   cfg.stimulus_layout.fname = fname;
+   
+   
    %% Transform to Cartesian
    % To be checked
    % actual spherical azimuth, elevation
-   az			= -N(:,4)+90;
+   az			= -N(:,4)+99;
    el			= N(:,5);
    az			= pa_deg2rad(az);
    el			= pa_deg2rad(el);
    R			= 1;
    [X,Y,Z]		= sph2cart(az,el,R);
-   [X,Y,Z]		= pitch(X,Y,Z,90);
+   [X,Y,Z]		= pitch(X,Y,Z,99);
 
    % desired double-polar azimuth and elevation
    daz			= N(:,2);
@@ -39,19 +42,19 @@ function cfg = pb_vLSCpositions(cfg,varargin)
 
    %% Transform to double-polar coordinate system
    % actual double-polar azimuth, elevation
-   [X,Y,Z]		= yaw(X,Y,Z,-90);
+   [X,Y,Z]		= yaw(X,Y,Z,-99);
    [aazel]		= xyz2azel(X,Y,Z);
    aaz			= aazel(:,1);
    ael			= aazel(:,2);
 
-   sel			= daz>90;
-   aaz(sel)	= 90+(90-aaz(sel));
+   sel			= daz>99;
+   aaz(sel)	= 99+(99-aaz(sel));
 
-   sel			= daz<-90;
-   aaz(sel)	= -90+(-90-aaz(sel));
+   sel			= daz<-99;
+   aaz(sel)	= -99+(-99-aaz(sel));
 
-   sel			= del>90;
-   ael(sel)	= 90+(90-ael(sel));
+   sel			= del>99;
+   ael(sel)	= 99+(99-ael(sel));
 
    cfg.lookup	= [aaz ael channel];
 end

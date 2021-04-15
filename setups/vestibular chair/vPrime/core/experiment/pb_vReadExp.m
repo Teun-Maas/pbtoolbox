@@ -127,31 +127,31 @@ function [block,cfg] = pb_vReadExp(cfg)
             mod			= block(iBlck).trial(iTrl).stim(iStm).modality;
             
             if ~isempty(X) % for every stimulus that has an X and Y parameter, determine azimuth and elevation
-               if cfg.Lab==1 % Hoop lab
+               if cfg.Lab == 1 % Hoop lab
                   
                   if strcmpi(mod,'sky')
-                     [Az,El] = hoopsky2azel(X,Y);
+                     [Az,El]  = hoopsky2azel(X,Y);
                   else
                      [Az,El]	= hoopXY2azel(X,Y);
                   end
                   
                elseif ismember(cfg.Lab,[2 3]) % Sphere lab
                   
-                  channel = cfg.interpolant(X,Y);
-                  Az		= cfg.lookup(channel+1,5);
-                  El		= cfg.lookup(channel+1,6);
+                  channel  = cfg.interpolant(X,Y);
+                  Az       = cfg.lookup(channel+1,5);
+                  El       = cfg.lookup(channel+1,6);
                   
                elseif ismember(cfg.Lab,4) % SphereMinor lab
                   
-                  channel = cfg.interpolant(X,Y);
-                  Az		= cfg.lookup(channel+1,4);
-                  El		= cfg.lookup(channel+1,5);
+                  channel  = cfg.interpolant(X,Y);
+                  Az       = cfg.lookup(channel+1,4);
+                  El       = cfg.lookup(channel+1,5);
                   
                elseif ismember(cfg.Lab,5) % vPrime lab
                   
-                  channel = cfg.interpolant(X,Y);
-                  Az		= cfg.lookup(channel+1,4);
-                  El		= cfg.lookup(channel+1,5);
+                  channel  = cfg.interpolant(X,Y);
+                  Az       = cfg.lookup(channel+1,4);
+                  El       = cfg.lookup(channel+1,5);
                   
                end
                block(iBlck).trial(iTrl).stim(iStm).azimuth        = Az;
@@ -205,6 +205,8 @@ function cfg = hread(fid,cfg)
                cfg.(header{cnt})	= fscanf(fid,'%d %d',[2 1]); % 2 integers: minimum and maximum possible inter trial interval
             case 'motor' % Motor
                cfg.(header{cnt})	= fscanf(fid,'%s',1); % String: yes or no
+            case 'stim'
+               cfg.(header{cnt}) = fscanf(fid,'%d',1); %  1 = 63 in / 0 out, 	2 = 15 in / 15 out 
             otherwise
                cfg.(header{cnt})	= fscanf(fid,'%d',1); % Integer
          end

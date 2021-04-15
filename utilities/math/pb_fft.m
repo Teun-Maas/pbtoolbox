@@ -22,7 +22,7 @@ function [Y,f,P] = pb_fft(signal,fs,varargin)
    f = fs*(0:(L/2))/L; 
    
    if display
-      pb_newfig(pb_nextfigurenumber-1);
+      pb_newfig(pb_cfn);
       plot(f,P) 
       title('Single-Sided Amplitude Spectrum of X(t)')
       xlabel('f (Hz)')

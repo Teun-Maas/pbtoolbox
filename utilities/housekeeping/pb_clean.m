@@ -11,7 +11,7 @@ function cfn = pb_clean(varargin)
    fig      = pb_keyval('fig',varargin,true);
    empty    = pb_keyval('clc',varargin,true);
    clr      = pb_keyval('clr',varargin,true);
-   dir      = pb_keyval('cd',varargin);
+   cdir     = pb_keyval('cd',varargin,cd);
    
    if fig; close all hidden; end
    if nargout; cfn = 0; end
@@ -21,9 +21,7 @@ function cfn = pb_clean(varargin)
    else
       pb_clear(clr);
    end
-   if ~isempty(dir)
-      cd(dir);
-   end
+   cd(cdir);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

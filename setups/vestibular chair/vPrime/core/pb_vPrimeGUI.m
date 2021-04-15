@@ -97,7 +97,6 @@ function popExperimenter_Callback(hObject, eventdata, handles)
    handles  = pb_gethandles(handles);
    newpath  = [pb_datapath filesep handles.cfg.expInitials];
    set(handles.editLoad,'string',newpath);
-
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -148,7 +147,7 @@ function buttonRun_Callback(hObject, eventdata, handles)
    if isempty(pb_fext(handles.cfg.expfname))
       msgbox({'Non-valid file selected.';'Please select an expfile before starting an experiment.'});
    else   
-      clc
+      clc;
       pb_vRunExp(handles);
    end
 end

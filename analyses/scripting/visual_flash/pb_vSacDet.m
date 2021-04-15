@@ -31,7 +31,7 @@ fs          = 120;
 duration    = 3;
 samples     = duration * fs;
 
-for iB = 3:Dlen
+for iB = 1:Dlen
 
    % Saving calibrated data
    fname                   = fcheckext(['sacdet_' fn(14:end-5) '_block_' num2str(iB) '_azel'] ,'.hv');

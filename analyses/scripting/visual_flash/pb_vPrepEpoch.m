@@ -85,8 +85,8 @@ for iB = 1:length(Data.timestamps)
       E.ElEyeEpoched   	= [E.ElEyeEpoched, Data.position(iB).eye_interp(idx:idx+samples,2)'];
 
       % Head
-      E.AzHeadEpoched   = [E.AzHeadEpoched,Data.position(iB).head_interp(idx:idx+samples,1)'];
-      E.ElHeadEpoched   = [E.ElHeadEpoched,Data.position(iB).head_interp(idx:idx+samples,2)'];
+      E.AzHeadEpoched   = [E.AzHeadEpoched, Data.position(iB).head_interp(idx:idx+samples,1)'];
+      E.ElHeadEpoched   = [E.ElHeadEpoched, Data.position(iB).head_interp(idx:idx+samples,2)'];
       
       ind = ind + ext;
    end

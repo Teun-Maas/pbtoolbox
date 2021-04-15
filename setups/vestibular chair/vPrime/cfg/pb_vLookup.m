@@ -6,25 +6,29 @@ function cfg = pb_vLookup(cfg,varargin)
 % See also ...
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
-
-
-   if nargin<1
-      cfg = [];
+   
+   switch cfg.Stim
+      case 1
+         cfg.lookup_table = 'vPrime Measurments.xlsx';
+      case 2
+         cfg.lookup_table = 'lookup_table_16_16.xlsx';
+      otherwise 
+         cfg.lookup_table = 'lookup_table_64_0.xlsx';
    end
 
   	%% LED connections
    % [Azimuth (deg) Elevation (deg) LED #]
    % azimuths and elevations were measured by Sebastian Ausili in June 2015
    cfg					= pb_vLSCpositions(cfg);
-   cfg.nstimchan		= 2^6; % number of PLC and MUX channels
-   cfg.nspeakers		= 63; % actual number of speakers
+   cfg.nstimchan		= length(cfg.lookup); % number of PLC and MUX channels
+   cfg.nspeakers		= length(cfg.lookup); % actual number of speakers
    cfg.stimchan		= (1:cfg.nstimchan)-1;
 
    %% Add missing channels
    n                 = size(cfg.lookup,1);
    cfg.lookup			= [cfg.lookup; NaN(cfg.nstimchan-n,3)]; % add missing channel data as NaNs
    sel					= ismember(cfg.stimchan,cfg.lookup(:,3)); % lookup existing channels
-   cfg.missingchan		= cfg.stimchan(~sel); % get missing channels
+   cfg.missingchan   = cfg.stimchan(~sel); % get missing channels
    sel					= isnan(cfg.lookup(:,3)); % search for missing channels in lookup-table
    cfg.lookup(sel,3)	= cfg.missingchan; % put missing channel numbers in lookup-table
    cfg.lookup			= sortrows(cfg.lookup,[3 1 2]); % sort lookup-table by channel number
