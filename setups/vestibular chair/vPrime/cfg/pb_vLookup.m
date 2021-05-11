@@ -15,7 +15,7 @@ function cfg = pb_vLookup(cfg,varargin)
       case 2
          cfg.lookup_table = 'lookup_table_16_16.xlsx';
       otherwise 
-         cfg.lookup_table = 'lookup_table_64_0.xlsx';
+         cfg.lookup_table = 'lookup_table_16_16.xlsx';
    end
 
   	%% LED connections
