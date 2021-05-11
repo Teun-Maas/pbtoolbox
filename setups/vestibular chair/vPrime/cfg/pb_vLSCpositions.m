@@ -33,7 +33,7 @@ function cfg = pb_vLSCpositions(cfg,varargin)
    el			= pa_deg2rad(el);
    R			= 1;
    [X,Y,Z]		= sph2cart(az,el,R);
-   [X,Y,Z]		= pitch(X,Y,Z,99);
+   [X,Y,Z]		= pitch(X,Y,Z,90);
 
    % desired double-polar azimuth and elevation
    daz			= N(:,2);
@@ -42,21 +42,22 @@ function cfg = pb_vLSCpositions(cfg,varargin)
 
    %% Transform to double-polar coordinate system
    % actual double-polar azimuth, elevation
-   [X,Y,Z]		= yaw(X,Y,Z,-99);
+   [X,Y,Z]		= yaw(X,Y,Z,-90);
    [aazel]		= xyz2azel(X,Y,Z);
    aaz			= aazel(:,1);
    ael			= aazel(:,2);
 
-   sel			= daz>99;
-   aaz(sel)	= 99+(99-aaz(sel));
+   sel			= daz>90;
+   aaz(sel)	= 90+(90-aaz(sel));
 
-   sel			= daz<-99;
-   aaz(sel)	= -99+(-99-aaz(sel));
+   sel			= daz<-90;
+   aaz(sel)	= -90+(-90-aaz(sel));
 
-   sel			= del>99;
-   ael(sel)	= 99+(99-ael(sel));
+   sel			= del>90;
+   ael(sel)	= 90+(90-ael(sel));
 
    cfg.lookup	= [aaz ael channel];
+   cfg.lookup(17:end,1) = 90;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
