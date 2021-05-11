@@ -18,7 +18,7 @@ function cfg = pb_vLSCpositions(cfg,varargin)
    
    %% File
    fname		= which(cfg.lookup_table);
-   N			= xlsread(fname,'Values','','basic');
+   N			= xlsread(fname,'Values');
    channel	= N(:,1);
    
    cfg.stimulus_layout.fname = fname;

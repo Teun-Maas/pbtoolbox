@@ -11,7 +11,7 @@ function cfg = pb_vLookup(cfg,varargin)
    
    switch cfg.Stim
       case 1
-         cfg.lookup_table = 'vPrime Measurments.xlsx';
+         cfg.lookup_table = 'vPrime Measurements.xlsx';
       case 2
          cfg.lookup_table = 'lookup_table_16_16.xlsx';
       otherwise 
