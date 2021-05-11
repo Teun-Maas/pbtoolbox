@@ -36,8 +36,8 @@ function handles = pb_getcfgdefaults(handles)
    end
 
    %% Convert experimental trial
-   cfg.Stim             = 1;
-   cfg.lookup_table     = 'lookup_table_64_0.xlsx';
+   cfg.Stim             = 2;
+   cfg.lookup_table     = 'lookup_table_16_16.xlsx';
    cfg						= pb_vLSCpositions(cfg); % lookup structure
 
    %% Data filter coefficients
