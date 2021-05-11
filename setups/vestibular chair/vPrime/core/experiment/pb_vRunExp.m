@@ -57,8 +57,9 @@ function pb_vRunExp(handles)
          pb_lightwarning;
          pb_startServo(vs);
          
-         % Central fixation light
-         [leds,s] = pb_fixled;
+         % Central fixation light during in-swing
+         seq1  = [0 1 2 5 6];
+         [leds,s] = pb_fixled('led',seq1);
          leds.trigger;
          pause(4*pi);            % allow vestibular chair to get in sync with input signal
          leds.trigger;

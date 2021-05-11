@@ -1,7 +1,7 @@
 function D = pb_convertdata(fn,varargin)
 % PB_CONVERTDATA
 %
-% PB_CONVERTDATA() converts and bulks all datafiles for each block in the vestibular setup together
+% PB_CONVERTDATA(fname) converts and bulks all datafiles for each block in the vestibular setup together
 %
 % See also PB_ZIPBLOCKS
 

@@ -10,7 +10,7 @@ function [leds,s] = pb_fixled(varargin)
    target = pb_keyval('led',varargin,5);
    
    import org.zeromq.ZMQ
-   leds  = ledcontroller_pi('dcn-led06','dcn-led07','dcn-led09','dcn-led10');
+   leds  = ledcontroller_pi('dcn-led00');%('dcn-led06','dcn-led07','dcn-led09','dcn-led10');
    
    n     = 2;
    s     = ledpattern(n);

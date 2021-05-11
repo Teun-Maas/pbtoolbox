@@ -9,14 +9,14 @@ function pb_lightwarning()
 
    import org.zeromq.ZMQ
    
-   leds = ledcontroller_pi('dcn-led06','dcn-led07','dcn-led09','dcn-led10');
+   leds = ledcontroller_pi('dcn-led00','dcn-led01');
 
    n     = 6;
    s     = ledpattern(n);
    ir    = 50;
 
    % Sequence needs updating due to new SLC distribution
-   seq1  = [0:9 fliplr(16:1:63)]; %% [0:2:63];
+   seq1  = 0:31;
    
    for iC = 1:n
       if mod(iC,2) == 1

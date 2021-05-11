@@ -125,7 +125,7 @@ function pb_vGenexp_defAud
       if ispc
          dos(['"C:\Program Files\Windows NT\Accessories\wordpad.exe" ' expfile ' &']);
       elseif ismac
-         system(['open -a TextWrangler ' cd filesep expfile]);
+         system(['open -a BBEdit ' cd filesep expfile]);
       end
    end
 end

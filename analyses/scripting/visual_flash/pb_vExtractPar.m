@@ -1,4 +1,4 @@
-zcfn   = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 3/subj/');
+cfn   = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 3/subj/');
 cd(pb_getdir('cdir',cd));
 pause(.1); cdir = cd; pause(.1);
 

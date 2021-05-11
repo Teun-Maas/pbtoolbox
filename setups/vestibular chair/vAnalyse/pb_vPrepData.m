@@ -361,7 +361,7 @@ function S = getstims(Data,GV)
          % store stimuli
          S(iB).azimuth(iT)     = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).azimuth;
          S(iB).elevation(iT)   = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).elevation;
-         S(iB).duration(iT)    = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).offdelay-Data(block).Block_Info.trial(iT).stim(:,1).ondelay;
+         S(iB).duration(iT)    = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).offdelay - Data(block).Block_Info.trial(iT).stim(:,1).ondelay;
       end
       S(iB).block_idx = block;
       disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.block_idx)) ')']);
