@@ -7,7 +7,7 @@ function cfg = pb_vLookup(cfg,varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   if nargin == 0; cfg.Stim = 3; end
+   if nargin == 0; cfg.Stim = 2; end
    
    switch cfg.Stim
       case 1
