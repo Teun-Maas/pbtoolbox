@@ -15,8 +15,8 @@ function pb_lightshow(leds)
    ig    = ir;
 
    % Sequence needs updating due to new SLC distribution
-   seq1  = [0:2:9 fliplr(16:2:63)]; %% [0:2:63];
-   seq2  = [1:2:9 fliplr(17:2:63)]; %% [1:2:63];
+   seq1  = [0:2  5 6 11 12 16:2:31]; %% [0:2:63];
+   seq2  = [3 4 7 8 9 10 13 14 17:2:31]; %% [1:2:63];
    
    for iC = 1:n
       if mod(iC,2) == 0
