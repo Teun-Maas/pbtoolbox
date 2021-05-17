@@ -13,8 +13,10 @@ function signal = pb_vBuildSignal(block)
    signal(2)   = block.hor; 
    
    for iSig = 1:2
-      % correct for vestibular chair's inertia.
-      if strcmp(signal(iSig).type,'sine'); signal(iSig).type = 'predictsine'; end
+      %% THIS IS CURRENTLY NOT WORKING; FIX IMPULSE RESPONSE/TF on VC model.
+      
+      % This will switch to a predicted sine, corrected for vestibular chair's inertia.
+      % if strcmp(signal(iSig).type,'sine'); signal(iSig).type = 'predictsine'; end
    end
 end
  
