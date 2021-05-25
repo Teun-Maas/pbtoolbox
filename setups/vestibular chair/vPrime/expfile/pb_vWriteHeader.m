@@ -1,4 +1,4 @@
-function pb_vWriteHeader(fid,datdir,ITI,Nblcks,Ntrls,Rep,Rnd,Mtr,varargin)
+function pb_vWriteHeader(fid,datdir,ITI,Nblcks,Ntrls,Rep,Rnd,Mtr,Stim,varargin)
 % PB_VWRITEHEADER()
 %
 % PB_VWRITEHEADER()  ...
@@ -27,10 +27,12 @@ function pb_vWriteHeader(fid,datdir,ITI,Nblcks,Ntrls,Rep,Rnd,Mtr,varargin)
    if lab>1
       fprintf(fid,'%s\t\t%d\n','Lab',lab);
    end
+   fprintf(fid,'%s\t\t%s\n','Stim',Stim);
    fprintf(fid,'\n');
    fprintf(fid,'%s %s\t%s\t%s\t%s\t%s\n','%','AX','SIG','AMP','DUR','FREQ');
    fprintf(fid,'%s\n','%');
    fprintf(fid,'\n');
+   
    % Information Line of body
    fprintf(fid,'%s %s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n','%','MOD','X','Y','ID','INT','On','On','Off','Off','Event');
    fprintf(fid,'%s\t\t\t%s\t%s\t%s\t%s\t%s\t%s\n','%','edg','bit','Event','Time','Event','Time');
