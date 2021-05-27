@@ -9,7 +9,7 @@
 %  Load and merge data
 
 %  Clean
-cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/200504/06hz/');
+cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/210525/125Hz');
 
 l = dir([cd filesep 'normalised' filesep '*.mat']);
 
@@ -177,10 +177,10 @@ end
 
 syms G s
 
-H10     = 2.009 / (s+2.033);
-H21     = (2.221 * s + 14.88) / (s^2 + 9.701 * s + 14.89);
-H32     = (2.183 * s^2 + 11.81 * s + 0.06868) / (s^3 + 8.134 * s^2 + 11.84 * s + 0.07004);
-H43     = (2.186 * s^3 + 15.11 * s^2 + 21.58 * s + 0.122) / (s^4 + 9.629 * s^3 + 25.95 * s^2 + 21.65 * s + 0.1239);
+H10     = 1.945 / (s+1.915);
+H21     = (1.941 * s + 0.2243) / (s^2 + 2.022 * s + 0.2259);
+H32     = (-4.945 * s^2 + 442.3 * s + 47.32) / (s^3 + 221.7 * s^2 + 467.2 * s + 47.57);
+H43     = (-4.943 * s^3 + 427.2 * s^2 + 52.12 * s + 19.44) / (s^4 + 213.7 * s^3 + 455.8 * s^2 + 61.55 * s + 19.69);
 
 h10     = ilaplace(H10);
 h21     = ilaplace(H21);
@@ -200,32 +200,3 @@ pb_nicegraph;
 legend('$h_{10}(\tau)$','$h_{21}(\tau)$')
 xlabel('$\tau$')
 ylabel('$A.U.$');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%
-
-
-
-
-return
-
-% Model parameters
-
-iodelay 	= 0;
-
-% Model of your system
-sys      = tfest(idd,npoles,nzeros,iodelay)
-               
- Data.cross_validation(1)

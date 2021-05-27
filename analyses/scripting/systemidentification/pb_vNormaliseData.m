@@ -9,10 +9,10 @@
 %  Load and merge data
 
 %  Clean
-cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/200504/06hz/');
+cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/210525/125Hz/');
 
 % Load data
-fname = 'vc_sysident_gwn_06hz_40amp.mat';
+fname = 'vc_sysident_gwn_125hz_30amp.mat';
 load(fname);
 
 % Globals
@@ -106,7 +106,7 @@ legend('sv','pv');
 Data.GV  = GV;
 
 %  read old data
-fn       = 'normalised_gwn_06Hz_';
+fn       = 'normalised_gwn_125Hz_';
 l        = dir(['normalised' filesep fn '*.mat']);
 
 %  compute filename
