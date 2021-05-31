@@ -37,14 +37,14 @@ function cfg = pb_vLookup(cfg,varargin)
 
    %% Speakers
 
-   cfg.nMUX          = 4; % 2 multiplexers
-   cfg.nMUXbit			= 16; % 16 bits per MUX
+   cfg.nMUX          = 4;                 % 2 multiplexers
+   cfg.nMUXbit			= 16;                % 16 bits per MUX
    cfg.MUXind			= 1:cfg.nMUX;
    cfg.MUXbit			= 1:cfg.nMUXbit;
 
-   LookUp(:,1)			= cfg.stimchan; % Stimulus channel 0-63
+   LookUp(:,1)			= cfg.stimchan;      % Stimulus channel 0-63
    idx					= LookUp(:,1)+1;
-   LookUp(:,2)			= ceil(idx/(2^4));% MUX number
+   LookUp(:,2)			= ceil(idx/(2^4));   % MUX number
    idx					= mod(idx,2^4);
    idx(idx==0)			= 2^4;
    LookUp(:,3)			= idx; % TDT bit
