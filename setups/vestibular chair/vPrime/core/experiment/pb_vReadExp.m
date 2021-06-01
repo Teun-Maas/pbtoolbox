@@ -186,9 +186,9 @@ end
 function cfg = hread(fid,cfg)
    % reads the header from the expfile
 
-   cnt = 0;
-   isBody = false;
-   header = cell(1);
+   cnt      = 0;
+   isBody   = false;
+   header   = cell(1);
    
    while ~isBody
       
@@ -203,10 +203,10 @@ function cfg = hread(fid,cfg)
          switch lower(header{cnt})
             case 'iti' % Inter-trial interval
                cfg.(header{cnt})	= fscanf(fid,'%d %d',[2 1]); % 2 integers: minimum and maximum possible inter trial interval
-            case 'motor' % Motor
-               cfg.(header{cnt})	= fscanf(fid,'%s',1); % String: yes or no
             case 'stim'
                cfg.(header{cnt}) = fscanf(fid,'%d',1); %  1 = 63 in / 0 out, 	2 = 15 in / 15 out 
+            case 'lab'
+               cfg.(header{cnt}) = fscanf(fid,'%d',1);
             otherwise
                cfg.(header{cnt})	= fscanf(fid,'%d',1); % Integer
          end
@@ -218,7 +218,7 @@ end
 function signal = readVest(line)
    % reads VS signal from the expfile
    
-   types = {'none','sine','noise','turn','vor'};
+   types = {'none','sine','noise','turn','vor','sum'};
    n     = str2num(erase(sscanf(line,'%s',2),sscanf(line,'%s',1)));
    type  = types{n};
    signal.type = type;

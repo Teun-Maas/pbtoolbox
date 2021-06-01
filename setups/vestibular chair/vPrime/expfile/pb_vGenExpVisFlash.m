@@ -39,7 +39,7 @@ function pb_vGenExpVisFlash(varargin)
    GV.show_targets   = pb_keyval('showtargets',varargin,true); 
    GV.expfile        = pb_keyval('fname',varargin,[fn '.exp']); 
    GV.datdir         = pb_keyval('datdir',varargin,'');
-   GV.cdir           = pb_keyval('cdir',varargin,userpath);
+   GV.cdir           = pb_keyval('cd',varargin,userpath);
    GV.open_exp       = pb_keyval('open',varargin,true);
    GV.ITI            = pb_keyval('ITI',varargin,[0 0]);
    GV.trials         = pb_keyval('ntrials',varargin,30);
@@ -55,7 +55,6 @@ function pb_vGenExpVisFlash(varargin)
    T     = get_targets(GV);
    S     = get_stimuli(T,GV);
    EXP   = parse_exp(S,GV);
-   
    
    % Write experiment
    c_expfiles = write_exp(EXP,GV);
@@ -113,7 +112,7 @@ function S = get_stimuli(T,GV)
    S.dur   = repmat(dur,[GV.repeats 1]);
    
    if GV.randomise   % shuffle targets
-      rperm    = randperm(length(S.X)); % random key
+      rperm    = randperm(length(S.X));   % random key
       
       % shuffle
       S.X      = S.X(rperm);
@@ -199,6 +198,8 @@ end
 
 function c_expfiles = write_exp(EXP, GV)
    % write the experimental data in expfile.
+   
+   cd(GV.cdir);
    
    % preallocate
    c_expfiles = {};

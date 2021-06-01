@@ -19,18 +19,28 @@ function signal = pb_vSafety(signal)
 
    for iAx = 1:2
       if ~strcmp(signal(iAx).type,'none')
+         
          %  Safe Durations
          if signal(iAx).duration > thresh_dur 
             warning(['Detected unsafe signal. ' vAx{iAx} ' duration too long!']);
             signal(iAx).duration = thresh_dur;
          end
+         
+         % Safe amplitude
          if signal(iAx).amplitude > thresh_amp/iAx
             warning(['Detected unsafe signal. ' vAx{iAx} ' amplitude too large!']);
             signal(iAx).amplitude = thresh_amp/iAx;
          end
+         
+         % Safe threshold
         	if signal(iAx).frequency > thresh_fre
             warning(['Detected unsafe signal. ' vAx{iAx} ' frequency too high!']);
             signal(iAx).frequency = 0.3;
+         end
+         
+         % Safe sum of sines
+         if strcmp(signal(iAx).type,'sum') && signal(iAx).frequency > 0.05
+            signal(iAx).frequency = 0.05;
          end
       end
    end
