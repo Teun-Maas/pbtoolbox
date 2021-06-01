@@ -62,11 +62,15 @@ function pb_vGenExpVisFlash(varargin)
    open_exp(c_expfiles,GV);
 end
 
+
+% Helper functions
+
 function EXP = parse_exp(S,GV)
+   % This function will parse stimuli over different blocks and add
+   % vestibular signal to each block.
 
    nblocks = floor(length(S.X)/GV.trials);    % compute number of blocks
 
-   
    for iB = 1:nblocks
       % divbide stimuli over blocks
       
@@ -86,7 +90,6 @@ function EXP = parse_exp(S,GV)
       EXP.block(iB).Vertical     = struct('Amplitude', 70,  'Signal', 2, 'Duration', 200, 'Frequency', 0.16);
    end
 end
-
 
 
 function S = get_stimuli(T,GV)
@@ -121,6 +124,8 @@ end
 
 
 function T = get_targets(GV)
+   % This function  will obtain all targets from cfg, and remove targets
+   % too close to elevation = 0.
 
    % Get targets
    cfg			= pb_vLookup;                  % lookup target positions
@@ -254,7 +259,6 @@ function open_exp(c_expfiles,GV)
          elseif ispc
             dos(['"C:\Program Files\Windows NT\Accessories\wordpad.exe" ' fn ' &']);
          end
-         
       end
    end
 end
