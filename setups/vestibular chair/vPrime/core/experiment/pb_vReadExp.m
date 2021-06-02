@@ -127,33 +127,32 @@ function [block,cfg] = pb_vReadExp(cfg)
             mod			= block(iBlck).trial(iTrl).stim(iStm).modality;
             
             if ~isempty(X) % for every stimulus that has an X and Y parameter, determine azimuth and elevation
-               if cfg.Lab == 1 % Hoop lab
+               switch cfg.Lab 
+                  case 1      % vPrime lab
                   
-                  if strcmpi(mod,'sky')
-                     [Az,El]  = hoopsky2azel(X,Y);
-                  else
-                     [Az,El]	= hoopXY2azel(X,Y);
-                  end
+                     channel  = cfg.interpolant(X,Y);
+                     Az       = cfg.lookup(channel+1,4);
+                     El       = cfg.lookup(channel+1,5);
+                 
+                  case {2,3}  % Sphere lab
                   
-               elseif ismember(cfg.Lab,[2 3]) % Sphere lab
+                     channel  = cfg.interpolant(X,Y);
+                     Az       = cfg.lookup(channel+1,4);
+                     El       = cfg.lookup(channel+1,5);
                   
-                  channel  = cfg.interpolant(X,Y);
-                  Az       = cfg.lookup(channel+1,5);
-                  El       = cfg.lookup(channel+1,6);
+                  case 4      % SphereMinor lab
                   
-               elseif ismember(cfg.Lab,4) % SphereMinor lab
-                  
-                  channel  = cfg.interpolant(X,Y);
-                  Az       = cfg.lookup(channel+1,4);
-                  El       = cfg.lookup(channel+1,5);
-                  
-               elseif ismember(cfg.Lab,5) % vPrime lab
-                  
-                  channel  = cfg.interpolant(X,Y);
-                  Az       = cfg.lookup(channel+1,4);
-                  El       = cfg.lookup(channel+1,5);
-                  
+                     channel  = cfg.interpolant(X,Y);
+                     Az       = cfg.lookup(channel+1,4);
+                     El       = cfg.lookup(channel+1,5);
+                     
+                  otherwise   % defeault vPrime
+                     
+                     channel  = cfg.interpolant(X,Y);
+                     Az       = cfg.lookup(channel+1,4);
+                     El       = cfg.lookup(channel+1,5);
                end
+               
                block(iBlck).trial(iTrl).stim(iStm).azimuth        = Az;
                block(iBlck).trial(iTrl).stim(iStm).elevation      = El;
             end
