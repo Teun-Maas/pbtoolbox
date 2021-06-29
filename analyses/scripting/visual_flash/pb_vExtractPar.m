@@ -65,7 +65,7 @@ end
 
 %%
 
-DEBUG       = true;
+DEBUG       = false;
 tsEpoch     = (0:359)/120;
 
 for iB = 1:length(Data.timestamps)
@@ -94,7 +94,7 @@ for iB = 1:length(Data.timestamps)
    p_EhStimAz     = [];
 
    % Load saccades
-   l = dir(['JJH-*_block_' num2str(iB) '.AzElGazeAB']);
+   l = dir(['sacdet/sacdet_*_block_' num2str(iB) '*.mat']);
    load(l(1).name,'-mat');
    
    % Select trials with saccades
@@ -259,7 +259,7 @@ col   = pb_selectcolor(NDUR,1);
 % 
 min_latency = 120;      % ms
 max_latency = 800;     % ms
-% 
+
 % R = [];
 % % Plot
 % for iM = 1:NMODEL
@@ -289,7 +289,7 @@ max_latency = 800;     % ms
 
 cfn = pb_newfig(cfn);
 axis('square');
-for iSP = 1:5
+for iSP = 1:4
    pb_probit(L(iSP).RT(L(iSP).RT > min_latency & L(iSP).RT < max_latency),'gcolor',col(iSP,:));
 end
 
@@ -317,7 +317,7 @@ pb_nicegraph;
 cfn = pb_newfig(cfn);
 col = pb_selectcolor(5,1);
 
-for iD = 1:5
+for iD = 1:4
    
    h(iD)=subplot(1,5,iD);
    axis square;
@@ -327,6 +327,48 @@ for iD = 1:5
       plot(L(iD).Rx{iL}, L(iD).Ry{iL},'Color',col(iD,:),'Tag','Fixed');
    end
 end
+
+%% What is the azimuth at stimulus onset for world fixed targets?
+%  Get the target positions
+
+cfn = pb_newfig(cfn);
+hold on;
+
+threshold   = 45;
+cnt         = 0;
+
+for iB = 1:length(Data.stimuli)
+   % For each block
+ 
+   world_fixed_stims = Data.stimuli(iB).azimuth == 90;
+   
+   for iS = 1:length(Data.stimuli(iB).azimuth)
+      % For each stimuli
+      
+      % Check if the stimulus' azimuth is '90' and correct it
+      if Data.stimuli(iB).azimuth(iS) == 90
+         
+         
+
+         
+         stim_onset_idx                = (iS-1)*360+1;                                    % stimulus onset idx in epoch data
+         chair_at_stim_onset           = Data.epoch(iB).AzChairEpoched(stim_onset_idx);   % get chair position
+         Data.stimuli(iB).azimuth(iS)  = -(chair_at_stim_onset);                            % flip the script, brothaaa (- is + en + is -)
+         
+         if abs(Data.stimuli(iB).azimuth(iS)) > threshold
+         	cnt = cnt+1; % update missed targets
+         end
+      end
+   end
+   
+   % plot data
+   plot(Data.stimuli(iB).azimuth(world_fixed_stims),Data.stimuli(iB).elevation(world_fixed_stims),'o');
+end
+xlim([-75 75]);
+ylim([-75 75]);
+pb_vline([-threshold threshold])
+pb_nicegraph;
+title([num2str(cnt) '/197 stimuli out of range']);
 
 
 %%
@@ -341,7 +383,7 @@ switch CONDITION
       S.condition.model_data                    = L;
       
    case 'Head free'
-      load([cdir(1:max(fseps)) 'meta_data1.mat']);
+      %load([cdir(1:max(fseps)) 'meta_data1.mat']);
       
       S.condition(2).condition                     = lower(strrep(CONDITION,' ','_'));
       S.condition(2).preprocessed_data             = Data;

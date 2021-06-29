@@ -42,14 +42,15 @@ function pb_vGenExpVisFlash(varargin)
    GV.cdir           = pb_keyval('cd',varargin,userpath);
    GV.open_exp       = pb_keyval('open',varargin,true);
    GV.ITI            = pb_keyval('ITI',varargin,[0 0]);
-   GV.trials         = pb_keyval('ntrials',varargin,30);
+   GV.trials         = pb_keyval('ntrials',varargin,39);
    GV.stim           = pb_keyval('stim',varargin,2);
    GV.lab            = pb_keyval('lab',varargin,1);
-   GV.repeats        = pb_keyval('repeats',varargin,4);
+   GV.repeats        = pb_keyval('repeats',varargin,2);
    GV.durations      = pb_keyval('duration',varargin,[0.5 1 2 4 16]);
-   GV.int            = pb_keyval('intensity',varargin,[30 50]);
-   GV.onset        	= pb_keyval('onset',varargin,[750 1000]);
+   GV.int            = pb_keyval('intensity',varargin,[40 50]);
+   GV.onset        	= pb_keyval('onset',varargin,[1000 1250]);
    GV.randomise      = pb_keyval('random',varargin,true);
+   GV.chair2world    = pb_keyval('chair2world',varargin,[1 3]);
    
    % Build experiment
    T     = get_targets(GV);
@@ -63,7 +64,6 @@ end
 
 
 % Helper functions
-
 function EXP = parse_exp(S,GV)
    % This function will parse stimuli over different blocks and add
    % vestibular signal to each block.
@@ -86,7 +86,7 @@ function EXP = parse_exp(S,GV)
       EXP.block(iB).Stim.offset  = EXP.block(iB).Stim.onset + EXP.block(iB).Stim.dur;
       
       EXP.block(iB).Horizontal   = struct('Amplitude', 0,  'Signal', 1, 'Duration', 200, 'Frequency', 0.16);
-      EXP.block(iB).Vertical     = struct('Amplitude', 70,  'Signal', 2, 'Duration', 200, 'Frequency', 0.16);
+      EXP.block(iB).Vertical     = struct('Amplitude', 70, 'Signal', 2, 'Duration', 200, 'Frequency', 0.16);
    end
 end
 
@@ -95,8 +95,7 @@ function S = get_stimuli(T,GV)
    % This function will prep all stimuli * durations
 
    % Make stim grid
-   X            	= T(:,1);
-   Y              = T(:,2);
+   [X,Y]          = make_stims(T,GV);
    dur            = GV.durations;
    [X,~,~]      	= ndgrid(X,0,dur);
    [Y,~,dur]     	= ndgrid(Y,0,dur);
@@ -119,6 +118,18 @@ function S = get_stimuli(T,GV)
       S.Y      = S.Y(rperm);
       S.dur   	= S.dur(rperm);
    end
+end
+
+function [X,Y] = make_stims(T,GV)
+   % this function will select the target positions and correct them for the
+   % relative ratio of presenting them (world vs chair fixed targets)
+    
+   world_fixed    = T(:,1) == 90;   % azimuth check, 90 is world fixed
+   X              = [repmat(T(~world_fixed,1), GV.chair2world(1),1); ...
+                     repmat(T(world_fixed,1),  GV.chair2world(2),1)];      
+                  
+   Y              = [repmat(T(~world_fixed,2), GV.chair2world(1),1); ...
+                     repmat(T(world_fixed,2),  GV.chair2world(2),1)];
 end
 
 

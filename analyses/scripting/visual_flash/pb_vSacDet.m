@@ -51,7 +51,19 @@ for iB = 1:Dlen
 end
 
 
+%% Save saccades
+%  check saccades 
 
-%% Run Sacdet
 
+l = dir('sacdet_JJH-0001-21-06-0_block_*.hv');
 
+clear Sac Stim
+for iL = 1:length(l)
+   fn    = l(iL).name(1:end-3);
+   pa_sac2mat([fn '.hv'],[fn '.csv'],[fn '.sac']);
+   
+   % Take only first saccades
+   load(fn,'-mat');
+   Sac   = Sac(Sac(:,2) == 1,:);
+   save(fn, 'Sac', 'Stim');
+end

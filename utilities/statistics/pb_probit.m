@@ -31,7 +31,7 @@ function [h,D] = pb_probit(D, varargin)
    x     = -1./sort(D);
    n     = numel(iRT);
    y     = probitscale((1:n)./n);
-   h(1)  = plot(x,y,'Marker','o','Color',gcol,'MarkerFaceColor',gcol,'Linestyle','None');
+   h     = plot(x,y,'Marker','o','Color',gcol,'MarkerFaceColor',gcol,'Linestyle','None');
    set(h(1),'Tag','Fixed');
 
 	%% Quantiles & regression

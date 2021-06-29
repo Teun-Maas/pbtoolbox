@@ -1,4 +1,4 @@
-function out = pb_vPrepData(varargin)
+function Data = pb_vPrepData(varargin)
 % PB_VPREPDATA
 %
 % PB_VPREPDATA(varargin) will preprocess the raw converted data extracted
@@ -18,20 +18,24 @@ function out = pb_vPrepData(varargin)
    GV.sgolay_f       = pb_keyval('sgolay_filter',V,1);
    GV.path           = pb_keyval('path',V,cd);
    GV.store          = pb_keyval('store',V,0);
+   GV.discern_frames = pb_keyval('frames',V,1);
+   GV.fs             = pb_keyval('fs',V,120);
+   GV.acquisition    = pb_keyval('acquisition',V,3);
+   GV.epoch          = pb_keyval('epoch',V,1);
 
+   
    % load data
    cd(GV.path);
    if exist(GV.fn,'file')==2
       load(GV.fn);
    else
-      [path, prefix, fname, ext] = getfname(GV);                              % get fileparts
-      if ~path                                                                % assert
+      [path, prefix, fname, ext] = getfname(GV);                           % get fileparts
+      if ~path                                                             % assert
          disp('>> pb_vPrepData aborted as no file was selected.');
          return
       else
          GV.fn = [prefix fname ext];
          load([path GV.fn]); 
-         
       end
    end
    disp(['>> Data loaded...' newline]);
@@ -43,9 +47,11 @@ function out = pb_vPrepData(varargin)
    T        = gettimestamps(D, GV);                                        % correct the LSL timestamps
    [P,GV]	= getdata(D, T, GV);                                           % obtain the response behaviour
    [T,P]    = getchair(D, T, P, GV);                                       % add chair rotation
-   out      = pb_struct({'stimuli','timestamps','position'},{S,T,P});
+   Data      = pb_struct({'stimuli','timestamps','position'},{S,T,P});
    
-   if GV.store; save_data(out,GV); end
+   % store data
+   if GV.epoch; Data = epoch_data(Data, GV); end                             % epoch data
+   if GV.store; save_data(Data,GV); end                                     % store data
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
@@ -359,9 +365,14 @@ function S = getstims(Data,GV)
          % iterate over trials
                   
          % store stimuli
-         S(iB).azimuth(iT)     = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).azimuth;
-         S(iB).elevation(iT)   = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).elevation;
-         S(iB).duration(iT)    = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).offdelay - Data(block).Block_Info.trial(iT).stim(:,1).ondelay;
+         S(iB).azimuth(iT)       = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).azimuth;
+         S(iB).elevation(iT)     = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).elevation;
+         S(iB).duration(iT)      = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).offdelay - Data(block).Block_Info.trial(iT).stim(:,1).ondelay;
+         S(iB).frame(iT)         = {'Chair fixed'};
+         
+         if GV.discern_frames && S(iB).azimuth(iT) == 90    % select world fixed frames // transform azimuth position can only be done after epoching
+            S(iB).frame(iT)      = {'World fixed'};
+         end
       end
       S(iB).block_idx = block;
       disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.block_idx)) ')']);
@@ -440,6 +451,112 @@ function [path, prefix, fname, ext] = getfname(GV)
    [ext, fname]   = pb_fext(fname);
    prefix         = fname(1:15);       % 'converted_data_'
    fname          = fname(16:end);
+end
+
+function Data = epoch_data(Data,GV)
+   % function will automatically epoch your data into chuncks as suggested
+   % by the acquisition information
+   
+   samples     = GV.fs*GV.acquisition - 1;
+
+   for iB = 1:length(Data.timestamps)
+
+      % Empty traces
+      E.AzChairEpoched     = [];
+      E.ElChairEpoched     = [];
+      E.AzGazeEpoched      = [];
+      E.ElGazeEpoched      = [];
+      E.AzEyeEpoched       = [];
+      E.ElEyeEpoched       = [];
+      E.AzHeadEpoched      = [];
+      E.ElHeadEpoched      = [];
+
+      % Interpolate Gaze
+      lsl_opti  	= Data.timestamps(iB).optitrack;
+      Data.timestamps(iB).epoch_interp       = 0:1/120:lsl_opti(end)-lsl_opti(1);
+      Data.position(iB).gaze_interp(:,1)     = interp1(lsl_opti-lsl_opti(iB), Data.position(iB).gaze(:,1), Data.timestamps(iB).epoch_interp,'pchip')';
+      Data.position(iB).gaze_interp(:,2)  	= interp1(lsl_opti-lsl_opti(iB), Data.position(iB).gaze(:,2), Data.timestamps(iB).epoch_interp,'pchip')';
+
+      % Interpolate Chair
+      CUT_OFF     = 203;
+      Data.position(iB).chair_interp(:,1)    = interp1(Data.timestamps(iB).chair, Data.position(iB).chair, Data.timestamps(iB).epoch_interp,'pchip')';
+      Data.position(iB).chair_interp(Data.timestamps(iB).epoch_interp>CUT_OFF,1)  = zeros(1,sum(Data.timestamps(iB).epoch_interp>CUT_OFF));              % Correct for extrapolation == 0;
+      Data.position(iB).chair_interp(:,2)    = zeros(size(Data.position(iB).chair_interp(:,1)));
+
+      % Interpolate Eye
+      Data.position(iB).eye_interp(:,1)      = interp1(lsl_opti-lsl_opti(iB), Data.position(iB).pupillabs(:,1), Data.timestamps(iB).epoch_interp,'pchip')';
+      Data.position(iB).eye_interp(:,2)      = interp1(lsl_opti-lsl_opti(iB), Data.position(iB).pupillabs(:,2), Data.timestamps(iB).epoch_interp,'pchip')';
+
+      % Interpolate Head
+      Data.position(iB).head_interp(:,1)      = interp1(lsl_opti-lsl_opti(iB), Data.position(iB).optitrack(:,1), Data.timestamps(iB).epoch_interp,'pchip')';
+      Data.position(iB).head_interp(:,2)      = interp1(lsl_opti-lsl_opti(iB), Data.position(iB).optitrack(:,2), Data.timestamps(iB).epoch_interp,'pchip')';
+
+
+      % Select stimuli indices
+      nstim       = length(Data.stimuli(iB).azimuth);
+      ntriggers   = length(Data.timestamps(iB).stimuli);
+      
+      ind         = GV.stim_idx;
+      ext         = round(nstim/ntriggers);
+
+      for iS = 1:nstim
+         % epoch for stimuli
+         start             = Data.timestamps(iB).stimuli(ind) - lsl_opti(1);
+         [~,idx]           = min(abs(Data.timestamps(iB).epoch_interp-start));
+
+         % Gaze
+         E.AzGazeEpoched  	= [E.AzGazeEpoched, Data.position(iB).gaze_interp(idx:idx+samples,1)'];
+         E.ElGazeEpoched  	= [E.ElGazeEpoched, Data.position(iB).gaze_interp(idx:idx+samples,2)'];
+
+         % Chair
+         E.AzChairEpoched  = [E.AzChairEpoched, Data.position(iB).chair_interp(idx:idx+samples,1)'];
+         E.ElChairEpoched 	= [E.ElChairEpoched, Data.position(iB).chair_interp(idx:idx+samples,2)'];
+
+         % Eye
+         E.AzEyeEpoched   	= [E.AzEyeEpoched, Data.position(iB).eye_interp(idx:idx+samples,1)'];
+         E.ElEyeEpoched   	= [E.ElEyeEpoched, Data.position(iB).eye_interp(idx:idx+samples,2)'];
+
+         % Head
+         E.AzHeadEpoched   = [E.AzHeadEpoched, Data.position(iB).head_interp(idx:idx+samples,1)'];
+         E.ElHeadEpoched   = [E.ElHeadEpoched, Data.position(iB).head_interp(idx:idx+samples,2)'];
+
+         ind = ind + ext;
+      end
+      Data.epoch(iB) = E;
+   end
+   
+   
+   if GV.discern_frames
+      % This part will correct all 90 azimuth angles to stimulus onset
+      % chair fixed reference frames
+      
+      Data = correct_world_fixed_azimuth(Data,GV);
+   end
+end
+
+function Data = correct_world_fixed_azimuth(Data,GV)
+   % this function will magically transform the azimuth position of world
+   % fixed stimuli into a chair based reference frame at stimulus onset.
+
+   for iB = 1:length(Data.stimuli)
+      % For each block
+
+      world_fixed_stims    = ismember(Data.stimuli(iB).frame,'World fixed'); % get world fixed targets
+
+      for iS = 1:length(Data.stimuli(iB).azimuth)
+         % For each stimuli
+
+         % Check if the stimulus' azimuth is '90' and correct it
+         if Data.stimuli(iB).azimuth(iS) == 90
+
+            % select
+            stim_onset_idx                = (iS-1)*360+1;                                    % stimulus onset idx in epoch data
+            chair_at_stim_onset           = Data.epoch(iB).AzChairEpoched(stim_onset_idx);   % get chair position
+            Data.stimuli(iB).azimuth(iS)  = -(chair_at_stim_onset);                            % flip the script, brothaaa (- is + en + is -)
+
+         end
+      end
+   end
 end
 
 function save_data(Data, GV)

@@ -1,7 +1,7 @@
 %% Initialize
 %  Clean, get directory, and load data
 
-cfn   = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 3/subj');
+cfn   = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/');
 path  = pb_getdir('cdir',cd);
 cd(path)
 

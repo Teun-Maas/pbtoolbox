@@ -18,6 +18,7 @@ CSUBJ       = pb_selectcolor(NSUBJ,2);
 MIN_LAT     = 0;
 MAX_LAT     = 400;
 
+
 %% Graph reaction times 
 %  Make probit plots of data
 
@@ -61,7 +62,7 @@ for iC = 1:NCOND
          y = yticks;
          
          included = sum(included,2);
-         t = text(x(3),y(1),[num2str(included(1)/included(2)*100,3) '\% included'],'FontSize',12);
+         t        = text(x(3),y(1),[num2str(included(1)/included(2)*100,3) '\% included'],'FontSize',12);
       end
    end
 end
@@ -227,7 +228,6 @@ for iC = 1:NCOND
                rc_data(1:3,iD)   = table2array(coeff(2:end,1));
                rc_err(1:3,iD)    = table2array(coeff(2:end,2));
             end
-
 
          end
        	errorbar(rc_data(iP,:),rc_err(iP,:),'Tag','Fixed','color',CSUBJ(iS,:));
