@@ -17,7 +17,7 @@ function Data = pb_vPrepData(varargin)
    GV.heuristic_f    = pb_keyval('heuristic_filter',V,1);
    GV.sgolay_f       = pb_keyval('sgolay_filter',V,1);
    GV.path           = pb_keyval('path',V,cd);
-   GV.store          = pb_keyval('store',V,0);
+   GV.store          = pb_keyval('store',V,1);
    GV.discern_frames = pb_keyval('frames',V,1);
    GV.fs             = pb_keyval('fs',V,120);
    GV.acquisition    = pb_keyval('acquisition',V,3);
@@ -497,7 +497,7 @@ function Data = epoch_data(Data,GV)
       ntriggers   = length(Data.timestamps(iB).stimuli);
       
       ind         = GV.stim_idx;
-      ext         = round(nstim/ntriggers);
+      ext         = round(ntriggers/nstim);
 
       for iS = 1:nstim
          % epoch for stimuli
@@ -562,5 +562,6 @@ end
 function save_data(Data, GV)
    % stores the preprocessed data
    fn = strrep(GV.fn,'converted_data_','');
+   cd ..
    save(['preprocessed_data_' fn],'Data')
 end

@@ -6,7 +6,7 @@ path  = pb_getdir('cdir',cd);
 cd(path)
 
 %  Load data
-l     = dir('epoched*.mat');
+l     = dir('preprocessed_*.mat');
 
 if isempty(l); return; end
 fn    = l(1).name;
@@ -34,7 +34,7 @@ samples     = duration * fs;
 for iB = 1:Dlen
 
    % Saving calibrated data
-   fname                   = fcheckext(['sacdet_' fn(14:end-5) '_block_' num2str(iB) '_azel'] ,'.hv');
+   fname                   = fcheckext(['sacdet_' fn(14:end-5) '_block_' num2str(iB,'%03.f') '_azel'] ,'.hv');
    fid                     = fopen([path filesep fname],'w','l');
    AZEL                    = [Data.epoch(iB).AzGazeEpoched; Data.epoch(iB).ElGazeEpoched];
    

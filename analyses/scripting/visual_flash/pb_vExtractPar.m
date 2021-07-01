@@ -21,10 +21,10 @@ MODELPAR    = [1 1 1;
                0 0 0];
 
 % load data
-l = dir('epoched*');
+l = dir('preprocessed_data_*');
 load(l(1).name);
 
-durs     = [0.5000    1.0000    2.0000    4.0000  100.0000];
+durs     = [0.5000    1.0000    2.0000    4.0000  16.0000];
 c        = {'I','II','III','IV','V','VI','VII','VIII'};
 cnt      = 0;
 cnt_c    = 0;
@@ -65,7 +65,7 @@ end
 
 %%
 
-DEBUG       = false;
+DEBUG       = true;
 tsEpoch     = (0:359)/120;
 
 for iB = 1:length(Data.timestamps)
@@ -94,8 +94,8 @@ for iB = 1:length(Data.timestamps)
    p_EhStimAz     = [];
 
    % Load saccades
-   l = dir(['sacdet/sacdet_*_block_' num2str(iB) '*.mat']);
-   load(l(1).name,'-mat');
+   l = dir(['sacdet/sacdet_*_block_*.mat']);
+   load(['sacdet/' l(iB).name],'-mat');
    
    % Select trials with saccades
    trials      = Sac(:,1);
