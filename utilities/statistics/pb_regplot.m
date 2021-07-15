@@ -3,7 +3,7 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
 %
 % plots data, and linear regression.
 %
-% PA_REGPLOT(X,Y,varargin) plots X vs Y, and performs linear regression on X and Y.
+% PB_REGPLOT(X,Y,varargin) plots X vs Y, and performs linear regression on X and Y.
  
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
  

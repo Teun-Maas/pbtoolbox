@@ -451,6 +451,7 @@ function [path, prefix, fname, ext] = getfname(GV)
    [ext, fname]   = pb_fext(fname);
    prefix         = fname(1:15);       % 'converted_data_'
    fname          = fname(16:end);
+   fname          = [fname '_' chair head];
 end
 
 function Data = epoch_data(Data,GV)
@@ -562,6 +563,6 @@ end
 function save_data(Data, GV)
    % stores the preprocessed data
    fn = strrep(GV.fn,'converted_data_','');
-   cd ..
-   save(['preprocessed_data_' fn],'Data')
+   path = fullfile(cd,'..');
+   save([path filesep 'preprocessed_data_' fn],'Data')
 end

@@ -31,10 +31,16 @@ function fn = pb_zipblocks(cdir,varargin)
       end
    end
    
+   % Tag condition
+   if contains(cd, 'dynamic'); chair = 'D'; else; chair = 'S'; end       % (THIS REALLY REQUIRES PROPER DATA MANAGEMENT FOLDER STRUCTURE)
+   if contains(cd, 'free'); head = 'U'; else; head = 'R'; end
+   
+   % get filename
    fn = listing(1).name(1:end-9);
    fn = strrep(fn,'block_info_','converted_data_');
-   fn = [fn '.mat'];
-   save([cd filesep fn], 'D');
+   fn = [fn '_' chair head '.mat'];
+   
+   save([fullfile(cd,'..') filesep fn], 'D');
    disp(['<< Zip complete... (fn: ' fn ')']);
 end
 

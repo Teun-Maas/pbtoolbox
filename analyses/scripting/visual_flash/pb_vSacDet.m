@@ -1,69 +1,54 @@
-%% Initialize
-%  Clean, get directory, and load data
+function pb_vSacDet(Data,varargin)
+% PB_VPREPDATA
+%
+% PB_VPREPDATA(varargin) will preprocess the raw converted data extracted
+%
+% See also ...
 
-cfn   = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 3/subj');
-path  = pb_getdir('cdir',cd);
-cd(path)
+% PBToolbox (2021): JJH: j.heckman@donders.ru.nl
 
-%  Load data
-l     = dir('preprocessed_*.mat');
-
-if isempty(l); return; end
-fn    = l(1).name;
-load(fn);
-
-%  Switch to sacdet folder
-path  = [path filesep 'sacdet'];
-cd(path)
-
-%%	Run sacdet over epoched data
-%  Read converted data file, preprocess all blocks, and store data
-
-l     = dir('*.sac');
-if ~isempty(l); return; end
-
-
-%% Make hv & csv and run sacdet
-
-
-Dlen        = length(Data.epoch);
-fs          = 120;
-duration    = 3;
-samples     = duration * fs;
-
-for iB = 1:Dlen
-
-   % Saving calibrated data
-   fname                   = fcheckext(['sacdet_' fn(14:end-5) '_block_' num2str(iB,'%03.f') '_azel'] ,'.hv');
-   fid                     = fopen([path filesep fname],'w','l');
-   AZEL                    = [Data.epoch(iB).AzGazeEpoched; Data.epoch(iB).ElGazeEpoched];
+   %  Keyval
+   fs          = pb_keyval('fs',varargin,120);
+   duration    = pb_keyval('duration',varargin,3);
+   start_idx   = pb_keyval('start_idx',varargin,1);
+   stop_idx    = pb_keyval('stop_idx',varargin);
+   cdir        = pb_keyval('cd',varargin,cd);   
+   samples     = duration * fs;
    
-   fwrite(fid,AZEL,'float');
-   fclose(fid);
+   % get filename
+   cd(cdir);
+   l     = dir('../preprocessed*.mat');
+   fn    = l(1).name;
    
-   fn_csv = [path filesep fname];
-   VC2csv(fn_csv,fs,samples,1:length(Data.epoch(iB).AzGazeEpoched)/samples);
+   %  Correct for different end positions
+   if isempty(stop_idx) || stop_idx > length(Data.epoch)
+      stop_idx = length(Data.epoch);
+   end
    
-   if ~isfile(fn_csv(1:end-3)) == 1
-       pa_sacdet;
-       pause;
+   for iB = start_idx:stop_idx
+
+      % Saving calibrated data
+      fname                   = fcheckext(['sacdet_' fn(14:end-4) '_block_' num2str(iB,'%03.f') '_azel'] ,'.hv');
+      fid                     = fopen(fname,'w','l');
+      AZEL                    = [Data.epoch(iB).AzGazeEpoched; Data.epoch(iB).ElGazeEpoched];
+
+      fwrite(fid,AZEL,'float');
+      fclose(fid);
+
+      fn_csv = fname;
+      VC2csv(fn_csv,fs,samples,1:length(Data.epoch(iB).AzGazeEpoched)/samples);
+
+      if ~isfile(fn_csv(1:end-3)) == 1
+          pa_sacdet;
+          pause;
+      end
+   end
+   
+   % convert sac 2 mat
+   l = dir('sacdet_*.hv');
+   for iL = 1:length(l)
+      fn    = l(iL).name(1:end-3);
+      pa_sac2mat([fn '.hv'],[fn '.csv'],[fn '.sac']);
    end
 end
 
-
-%% Save saccades
-%  check saccades 
-
-
-l = dir('sacdet_JJH-0001-21-06-0_block_*.hv');
-
-clear Sac Stim
-for iL = 1:length(l)
-   fn    = l(iL).name(1:end-3);
-   pa_sac2mat([fn '.hv'],[fn '.csv'],[fn '.sac']);
-   
-   % Take only first saccades
-   load(fn,'-mat');
-   Sac   = Sac(Sac(:,2) == 1,:);
-   save(fn, 'Sac', 'Stim');
-end

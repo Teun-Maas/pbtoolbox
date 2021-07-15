@@ -1,395 +1,264 @@
-cfn   = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 3/subj/');
-cd(pb_getdir('cdir',cd));
-pause(.1); cdir = cd; pause(.1);
+function pb_vExtractPar(varargin)
+% PB_VPREPDATA
+%
+% PB_VEXTRACTPAR(varargin) will extract the different parameters for
+% dynamic orientation analysis.
+%
+% See also PB_VSACDET, PB_VPREPDATA, PB_ZIPBLOCKS, PB_CONVERTDATA
 
-fseps =  strfind(cdir,filesep);
+% PBToolbox (2021): JJH: j.heckman@donders.ru.nl
 
-% Global
-NDUR        = 5;
-NMODEL      = 8;
-FSAMPLE     = 120;
 
-CONDITION   = pb_sentenceCase(cdir(max(fseps)+1:end));
+   % Keyval
+   GV.cdir           = pb_keyval('cd',varargin,cd);
+   GV.fs             = pb_keyval('fs',varargin,120);
+   GV.acquisition    = pb_keyval('acquisition',varargin,3);  % in seconds
+   GV.debug          = pb_keyval('debug',varargin,true);
+   GV.colour         = pb_keyval('def',varargin,16);
+   
+    
+   % load data
+   cd(GV.cdir);
+   l  = dir('preprocessed_data_*');
+   if ~isempty(l)
+      load(l(1).name,'Data');
+   else
+      error('No preprocessed_data could be found.');
+   end
+   
+   % Get and store paremeters
+   Data = parameterize_data(Data,GV);
+   save(strrep(l(1).name,'preprocessed_','parameter_'),'Data');
+end
 
-MODELPAR    = [1 1 1; 
-               1 1 0; 
-               1 0 1; 
-               1 0 0; 
-               0 1 1;
-               0 1 0;
-               0 0 1;
-               0 0 0];
+function Data = parameterize_data(Data,GV)
+   % This function will parameterize all data. It will read and sort trials
+   % and blocks in world fixed and chair fixed stimuli conditions and store
+   % stimulus predictor information accordingly.
+   
+   nsamples    = (GV.fs * GV.acquisition);
+   tsEpoch     = (0:nsamples-1)/GV.fs;
 
-% load data
-l = dir('preprocessed_data_*');
-load(l(1).name);
-
-durs     = [0.5000    1.0000    2.0000    4.0000  16.0000];
-c        = {'I','II','III','IV','V','VI','VII','VIII'};
-cnt      = 0;
-cnt_c    = 0;
-
-% Build figure
-cfn   = pb_newfig(cfn);
-sgtitle([CONDITION ' (s00' num2str(cdir(fseps(end-1)-1)) ')']);
-for iM = 1:NMODEL
-
-   for iSP = 1:NDUR
-      cnt = cnt+1;
-      h(iM,iSP) = subplot(NMODEL,NDUR,cnt);
+   % Read stimuli
+   uF    = unique(horzcat(Data.stimuli.frame));       % Chair fixed and World fixed frame
+   uD    = unique(horzcat(Data.stimuli.duration));    % stimulus duration
+   
+   for iF = 1:length(uF)
+      % Run over different stimuli frames 
       
-      if cnt < 6; title([num2str(durs(iSP)) ' ms']); end
-      if mod(cnt,5) == 1; cnt_c = cnt_c+1; ylabel(c{cnt_c}); end 
-      
-      hold on;
-      axis square;
-      xlim([-50 50]);
-      ylim([-50 50]);
-      pb_dline;
+      % preallocate parameters
+      par = preallocate_par;
 
-      %  Get parameters for analysis
-      M(iM,iSP).dGy  = [];
-      M(iM,iSP).dGx  = [];
+      for iB = 1:length(Data.epoch)
+         % Run over each block
+
+         % Preallocate
+         clear StartAz StartEl ResultAz ResultEl Sac latency sac_dur  % empty block data
+         p  = preallocate_par;
+         
+         % Load saccades
+         l = dir('sacdet/sacdet_*_block_*.mat');
+         load(['sacdet/' l(iB).name],'-mat','Sac');
+              
+         % Make the selection
+         select_frame = strcmp(Data.stimuli(iB).frame,uF{iF});     % get all trials with the correct frame in the current block
+         
+         % Select trials with saccades
+         sel_trial            = zeros(size(select_frame));        % get all trials with a saccade
+         sel_trial(Sac(:,1))  = 1;
+         sel_trial            = sel_trial & select_frame;         % merge selection: trials with a saccade and the correct stimulus frame
+         trials               = find(sel_trial);                  % find their index number
+         trialslen            = length(trials);
+         
+         % Get stimulus information
+         TcA      = Data.stimuli(iB).azimuth(trials);
+         TcE      = Data.stimuli(iB).elevation(trials);
+         duration = Data.stimuli(iB).duration(trials);
+         
+         for iT = 1:trialslen
+          	% Run over all saccades that are detected to get time indices and positions
+            
+            current_trial = trials(iT);
+            
+            trial_idx = find(Sac(:,1)==current_trial);
+            
+            % Get epoch samplenrs
+            start_trial_idx      = (current_trial-1) * nsamples;
+            stimOn_idx           = Sac(trial_idx,2) + start_trial_idx;
+            SacOn_idx            = Sac(trial_idx,3) + start_trial_idx;
+            SacOff_idx           = Sac(trial_idx,4) + start_trial_idx;
+            sac_dur(iT)          = (SacOff_idx - SacOn_idx) / GV.fs * 1000; 
+            latency(iT)          = Sac(trial_idx,3) / GV.fs * 1000;         % in seconds
+            
+            % Graph trial
+            if GV.debug
+               pb_newfig(231);
+               clf; 
+               title([uF{iF} ' - ' num2str(duration(iT)) ' ms (B' num2str(iB) '/T' num2str(current_trial) ')']);
+               hold on;
+               axis square;
+               
+               colour = pb_selectcolor(2,GV.colour);
+
+               plot(tsEpoch, Data.epoch(iB).AzChairEpoched(stimOn_idx:stimOn_idx+359),'color',[0.8,0.8,0.8],'Linewidth',3,'Tag','Fixed');
+               plot(tsEpoch, Data.epoch(iB).AzEyeEpoched(stimOn_idx:stimOn_idx+359),'color',colour(1,:),'Linewidth',2,'LineStyle',':','Tag','Fixed');
+               plot(tsEpoch, Data.epoch(iB).ElEyeEpoched(stimOn_idx:stimOn_idx+359),'color',colour(2,:),'Linewidth',2,'LineStyle',':','Tag','Fixed');
+               plot(tsEpoch, Data.epoch(iB).AzHeadEpoched(stimOn_idx:stimOn_idx+359),'color',colour(1,:),'Linewidth',2,'LineStyle','--','Tag','Fixed');
+               plot(tsEpoch, Data.epoch(iB).ElHeadEpoched(stimOn_idx:stimOn_idx+359),'color',colour(2,:),'Linewidth',2,'LineStyle','--','Tag','Fixed');
+
+               plot(tsEpoch, Data.epoch(iB).AzGazeEpoched(stimOn_idx:stimOn_idx+359),'color',colour(1,:),'Linewidth',3,'Tag','Fixed');
+               plot(tsEpoch, Data.epoch(iB).ElGazeEpoched(stimOn_idx:stimOn_idx+359),'color',colour(2,:),'Linewidth',3,'Tag','Fixed');
+               
+               plot(tsEpoch(1), TcA(iT),'o','color',colour(1,:),'MarkerFaceColor',colour(1,:),'Linewidth',1,'MarkerSize',10,'Tag','Fixed');
+               plot(tsEpoch(1), TcE(iT),'o','color',colour(2,:),'MarkerFaceColor',colour(2,:),'Linewidth',1,'MarkerSize',10,'Tag','Fixed');
+
+               ylim([-80 80]);
+               pb_vline([tsEpoch(Sac(trial_idx,3)), tsEpoch(Sac(trial_idx,4))])
+               legend('Chair','Eye Az','Eye El','Head Az','Head El','Chair','Gaze Az','Gaze El','Target Az','Target El')
+               pb_nicegraph;
+               pause(1)
+            end
+            
+            
+            % Saccades on/offset positions
+            StartAz(iT)       = Data.epoch(iB).AzGazeEpoched(SacOn_idx);
+            StartEl(iT)       = Data.epoch(iB).ElGazeEpoched(SacOn_idx);
+            ResultAz(iT)      = Data.epoch(iB).AzGazeEpoched(SacOff_idx);
+            ResultEl(iT)      = Data.epoch(iB).ElGazeEpoched(SacOff_idx);
+
+            % Eye
+            p.EhStimAz(iT)    = Data.epoch(iB).AzEyeEpoched(stimOn_idx);
+            p.EhOnAz(iT)      = Data.epoch(iB).AzEyeEpoched(SacOn_idx);
+            p.EhOffAz(iT)     = Data.epoch(iB).AzEyeEpoched(SacOff_idx);  
+
+            p.EhStimEl(iT)    = Data.epoch(iB).ElEyeEpoched(stimOn_idx);
+            p.EhOnEl(iT)      = Data.epoch(iB).ElEyeEpoched(SacOn_idx);
+            p.EhOffEl(iT)     = Data.epoch(iB).ElEyeEpoched(SacOff_idx);
+
+            % Head
+            p.HaStimAz(iT)    = Data.epoch(iB).AzHeadEpoched(stimOn_idx);
+            p.HaOnAz(iT)      = Data.epoch(iB).AzHeadEpoched(SacOn_idx);
+            p.HaOffAz(iT)     = Data.epoch(iB).AzHeadEpoched(SacOff_idx);
+
+            p.HaStimEl(iT)    = Data.epoch(iB).ElHeadEpoched(stimOn_idx);
+            p.HaOnEl(iT)      = Data.epoch(iB).ElHeadEpoched(SacOn_idx);
+            p.HaOffEl(iT)     = Data.epoch(iB).ElHeadEpoched(SacOff_idx);
+
+            % Chair
+            p.HpStim(iT)      = Data.epoch(iB).AzChairEpoched(stimOn_idx);
+            p.HpOn(iT)        = Data.epoch(iB).AzChairEpoched(SacOn_idx);
+            p.HpOff(iT)       = Data.epoch(iB).AzChairEpoched(SacOff_idx);  
+
+
+            % compute instanious eye velocity
+            clear eye_vel ts retinal_slip
+            eye_vel(1,:)         = gradient(Data.epoch(iB).AzEyeEpoched(stimOn_idx:stimOn_idx+359),1/120);
+            eye_vel(2,:)         = gradient(Data.epoch(iB).ElEyeEpoched(stimOn_idx:stimOn_idx+359),1/120);
+            chair_vel            = gradient(Data.epoch(iB).AzChairEpoched(stimOn_idx:stimOn_idx+359),1/120);
+
+            if duration(iT) == 100
+
+               x = Data.epoch(iB).AzEyeEpoched(2:14);
+               y = Data.epoch(iB).ElEyeEpoched(2:14);
+
+               % centralise
+               retinal_slip_x(iT) = {x-x(1)};
+               retinal_slip_y(iT) = {y-y(1)};
+            else
+               x = [0; eye_vel(1,2) * duration(iT) / 1000];
+               y = [0; eye_vel(2,2) * duration(iT) / 1000];
+
+               retinal_slip_x(iT) = {x};
+               retinal_slip_y(iT) = {y};
+            end
+            sign_chair(iT) = sign(chair_vel(2));
+         end
+
+         % Actual gaze shift
+         GazeShiftAz = ResultAz - StartAz;
+         GazeShiftEl = ResultEl - StartEl;
+
+         % Head
+         dCs      = p.HpOn-p.HpStim;
+         dCs(2,:) = zeros(size(dCs));
+
+         p.dCs       = dCs;
+         p.dHc       = [p.HaOnAz - p.HaStimAz; p.HaOnEl - p.HaStimEl];
+         p.dEh       = [p.EhOnAz - p.EhStimAz; p.EhOnEl - p.EhStimEl];
+         p.G         = [GazeShiftAz; GazeShiftEl];
+
+         % Target various coordinates
+         p.Tc        = [TcA; TcE];                                % Chair coordinates
+         p.Tr        = [TcA - p.EhStimAz; TcE - p.EhStimEl];   	% Retinal coordinates
+         p.Ts        = [TcA + p.HpStim; TcE];                     % World coordinates
+         
+         % Stimulus and saccade temporal information
+         p.StimDur   = duration;          % stimulus duration
+         p.SacLat    = latency;           % saccade latency
+         p.SacDur    = sac_dur;           % saccade duration
+
+
+         par         = append_parameters(par,p);
+      end
       
-      L(iSP).RT      = [];
-      L(iSP).Cs      = [];
-      L(iSP).Hc      = [];
-      L(iSP).Eh      = [];
-      L(iSP).Tr      = [];
-      L(iSP).G       = [];
-      L(iSP).Rx      = [];
-      L(iSP).Ry      = [];
-      L(iSP).sC      = [];
+      % Store data for each frame
+      par
+      Data.frame(iF).parameters  = par;
+      Data.frame(iF).frame       = uF{iF};
    end
 end
 
-%%
+function par = append_parameters(par,p)
 
-DEBUG       = true;
-tsEpoch     = (0:359)/120;
-
-for iB = 1:length(Data.timestamps)
-   % Run over all blocks for participant
+   c_fields = fields(p);
    
-   % % Preallocate empty variables
-   clear StartAz StartEl ResultAz ResultEl Sac
-      
-   p_HpOn         = [];
-   p_HpOff        = [];
-
-   p_HaOnAz       = [];
-   p_HaOffAz      = [];
-   p_EhOnAz       = [];
-   p_EhOffAz      = [];
-
-   p_HaOnEl       = [];
-   p_HaOffEl      = [];
-   p_EhOnEl       = [];
-   p_EhOffEl      = [];
-   
-   p_HpStim       = [];
-   p_HaStimEl     = [];
-   p_HaStimAz     = [];
-   p_EhStimEl     = [];
-   p_EhStimAz     = [];
-
-   % Load saccades
-   l = dir(['sacdet/sacdet_*_block_*.mat']);
-   load(['sacdet/' l(iB).name],'-mat');
-   
-   % Select trials with saccades
-   trials      = Sac(:,1);
-   trialslen   = length(trials);
-   
-   % Get stimulus information
-   TcA      = Data.stimuli(iB).azimuth(trials);
-   TcE      = Data.stimuli(iB).elevation(trials);
-   duration = Data.stimuli(iB).duration(trials);
-   
-   
-   for iT = 1:trialslen
-      % Run over all saccades that are detected to get time indices and positions
-      
-      % Get epoch samplenrs
-      start_trial_idx   = (trials(iT)-1)*360;
-      stimOn_idx        = Sac(iT,2) + start_trial_idx;
-      SacOn_idx         = Sac(iT,3) + start_trial_idx;
-      SacOff_idx        = Sac(iT,4) + start_trial_idx;
-      latency(iT)       = Sac(iT,3) / FSAMPLE * 1000;
-      
-      % graph
-      if DEBUG
-         pb_newfig(231);
-         clf; 
-         title([num2str(duration(iT)) ' ms'])
-         hold on;
-         axis square;
-         
-         plot(tsEpoch, Data.epoch(iB).AzGazeEpoched(stimOn_idx:stimOn_idx+359));
-         plot(tsEpoch, Data.epoch(iB).ElGazeEpoched(stimOn_idx:stimOn_idx+359));
-         plot(tsEpoch, Data.epoch(iB).AzEyeEpoched(stimOn_idx:stimOn_idx+359));
-         plot(tsEpoch, Data.epoch(iB).ElEyeEpoched(stimOn_idx:stimOn_idx+359));
-         plot(tsEpoch, Data.epoch(iB).AzHeadEpoched(stimOn_idx:stimOn_idx+359));
-         plot(tsEpoch, Data.epoch(iB).ElHeadEpoched(stimOn_idx:stimOn_idx+359));
-         plot(tsEpoch, Data.epoch(iB).AzChairEpoched(stimOn_idx:stimOn_idx+359));
-         plot(tsEpoch(1), TcA(iT),'*');
-         plot(tsEpoch(1), TcE(iT),'*');
-         
-         pb_vline([tsEpoch(Sac(iT,3)), tsEpoch(Sac(iT,4))])
-         legend('Gaze Az','Gaze El','Eye Az','Eye El','Head Az','Head El','Chair','Target Az','Target El')
-         pb_nicegraph('linewidth',2,'def',1);
-      end
-      
-      
-      % Saccades on/offset positions
-      StartAz(iT)       = Data.epoch(iB).AzGazeEpoched(SacOn_idx);
-      StartEl(iT)       = Data.epoch(iB).ElGazeEpoched(SacOn_idx);
-      ResultAz(iT)      = Data.epoch(iB).AzGazeEpoched(SacOff_idx);
-      ResultEl(iT)      = Data.epoch(iB).ElGazeEpoched(SacOff_idx);
-      
-      % Eye
-      p_EhStimAz(iT)    = Data.epoch(iB).AzEyeEpoched(stimOn_idx);
-      p_EhOnAz(iT)      = Data.epoch(iB).AzEyeEpoched(SacOn_idx);
-      p_EhOffAz(iT)     = Data.epoch(iB).AzEyeEpoched(SacOff_idx);  
-      
-      p_EhStimEl(iT)    = Data.epoch(iB).ElEyeEpoched(stimOn_idx);
-      p_EhOnEl(iT)      = Data.epoch(iB).ElEyeEpoched(SacOn_idx);
-      p_EhOffEl(iT)     = Data.epoch(iB).ElEyeEpoched(SacOff_idx);
-
-      % Head
-      p_HaStimAz(iT)    = Data.epoch(iB).AzHeadEpoched(stimOn_idx);
-      p_HaOnAz(iT)      = Data.epoch(iB).AzHeadEpoched(SacOn_idx);
-      p_HaOffAz(iT)     = Data.epoch(iB).AzHeadEpoched(SacOff_idx);
-      
-      p_HaStimEl(iT)    = Data.epoch(iB).ElHeadEpoched(stimOn_idx);
-      p_HaOnEl(iT)      = Data.epoch(iB).ElHeadEpoched(SacOn_idx);
-      p_HaOffEl(iT)     = Data.epoch(iB).ElHeadEpoched(SacOff_idx);
-
-      % Chair
-      p_HpStim(iT)      = Data.epoch(iB).AzChairEpoched(stimOn_idx);
-      p_HpOn(iT)        = Data.epoch(iB).AzChairEpoched(SacOn_idx);
-      p_HpOff(iT)       = Data.epoch(iB).AzChairEpoched(SacOff_idx);  
-
-      
-      % compute instanious eye velocity
-      clear eye_vel ts retinal_slip
-      eye_vel(1,:)         = gradient(Data.epoch(iB).AzEyeEpoched(stimOn_idx:stimOn_idx+359),1/120);
-      eye_vel(2,:)         = gradient(Data.epoch(iB).ElEyeEpoched(stimOn_idx:stimOn_idx+359),1/120);
-      chair_vel            = gradient(Data.epoch(iB).AzChairEpoched(stimOn_idx:stimOn_idx+359),1/120);
-      
-      if duration(iT) == 100
-         
-         x = Data.epoch(iB).AzEyeEpoched(2:14);
-         y = Data.epoch(iB).ElEyeEpoched(2:14);
-         
-         % centralise
-         retinal_slip_x(iT) = {x-x(1)};
-         retinal_slip_y(iT) = {y-y(1)};
-      else
-         x = [0; eye_vel(1,2) * duration(iT) / 1000];
-         y = [0; eye_vel(2,2) * duration(iT) / 1000];
-         
-         retinal_slip_x(iT) = {x};
-         retinal_slip_y(iT) = {y};
-      end
-      sign_chair(iT) = sign(chair_vel(2));
+   for iF = 1:length(c_fields)
+      par.(c_fields{iF}) = [par.(c_fields{iF}), p.(c_fields{iF})];
    end
-   
-   % Actual gaze shift
-   GazeShiftAz = ResultAz - StartAz;
-   GazeShiftEl = ResultEl - StartEl;
+end
+
+
+function p = preallocate_par
+   % this will create empty strict p for the different parameters
+
+   % Chair
+   p.HpOn         = [];
+   p.HpOff        = [];
 
    % Head
-   dCs      = p_HpOn-p_HpStim;
-   dCs(2,:) = zeros(size(dCs));
+   p.HaOnAz       = [];
+   p.HaOffAz      = [];
+   p.EhOnAz       = [];
+   p.EhOffAz      = [];
 
-   dHc      = [p_HaOnAz-p_HaStimAz;
-               p_HaOnEl-p_HaStimEl];
-
+   p.HaOnEl       = [];
+   p.HaOffEl      = [];
+   p.EhOnEl       = [];
+   p.EhOffEl      = [];
+   
    % Eye
-   dEh      = [p_EhOnAz - p_EhStimAz;
-               p_EhOnEl - p_EhStimEl];
-
-   % Target in retinal coordinates
-   TrA = TcA - p_EhStimAz;
-   TrE = TcE - p_EhStimEl;
+   p.HpStim       = [];
+   p.HaStimEl     = [];
+   p.HaStimAz     = [];
+   p.EhStimEl     = [];
+   p.EhStimAz     = [];
    
-   for iM = 1:NMODEL
-      pars = MODELPAR(iM,:);
-      
-      for iSP = 1:NDUR
-         sel_sac              = duration == durs(iSP);
-         
-         new_targets          = [TrA(sel_sac)', TrE(sel_sac)'];
-         new_responses        = [GazeShiftAz(sel_sac)',GazeShiftEl(sel_sac)'];
-         corrected_targets 	= [];
-         
-        	X = dCs(:,sel_sac);
-       	Y = dHc(:,sel_sac);
-       	Z = dEh(:,sel_sac);
-         
-         for iN = 1:sum(sel_sac) 
-            %  Run for the number of stimuli selected
-            corrected_targets(iN) = new_targets(iN,1) - (pars(1)*X(iN) - (pars(2)*Y(iN)) - (pars(3)*Z(iN)));
-         end
-         
-         M(iM,iSP).dGx     = [M(iM,iSP).dGx; corrected_targets'];
-         M(iM,iSP).dGy     = [M(iM,iSP).dGy; new_responses];
-         
-         if iM == 1
-            new_latency = latency(sel_sac)';
-            L(iSP).RT   = [L(iSP).RT; new_latency];
-            L(iSP).Tr   = [L(iSP).Tr; new_targets];
-            L(iSP).Cs   = [L(iSP).Cs; X'];
-            L(iSP).Hc   = [L(iSP).Hc; Y'];
-            L(iSP).Eh   = [L(iSP).Eh; Z'];
-            L(iSP).G    = [L(iSP).G; new_responses];
-            L(iSP).Rx   = [L(iSP).Rx, retinal_slip_x(sel_sac)];
-            L(iSP).Ry   = [L(iSP).Ry, retinal_slip_y(sel_sac)];
-            L(iSP).sC   = [L(iSP).sC; sign_chair(sel_sac)'];
-         end
-      end
-   end
+   % Saccades
+   p.SacLat       = [];    % the reaction time
+   p.SacDur       = [];    % the duration of the saccade in ms
+   P.Sac          = [];    % in azimuth / elevation
+   
+   % Stimuli & saccade positions
+   p.Tc           = [];    % Chair
+   p.Tr           = [];    % Retina
+   p.Ts           = [];    % Space
+   p.StimDur      = [];    % Stimulus duration
+   p.G            = [];
+   
+   p.dCs          = [];
+   p.dHc          = [];
+   p.dEh          = [];
+
+   
 end
-
-%% Graph: Fill in data
-% 
-% Select colors
-col   = pb_selectcolor(NDUR,1);
-% 
-min_latency = 120;      % ms
-max_latency = 800;     % ms
-
-% R = [];
-% % Plot
-% for iM = 1:NMODEL
-%    for iSP = 1:NDUR
-%       axes(h(iM,iSP));
-%       
-%       % Select saccades
-%       sel_sac_lat = L(iSP).RT > min_latency & L(iSP).RT < max_latency ;
-%       dGx = M(iM,iSP).dGx(sel_sac_lat);
-%       dGy = M(iM,iSP).dGy(sel_sac_lat);
-%       
-%       % Plot data
-%       [h_lines,b,r] = pb_regplot(dGx, dGy);
-%       R(end+1) = r;
-%       
-%       % Set colors
-%       h_lines(1).Color = [0 0 0];
-%       h_lines(1).MarkerFaceColor = col(iSP,:);
-%       h_lines(1).Tag = 'Fixed';
-%       
-%    end
-% end
-% 
-% pb_nicegraph;
-
-%% probit
-
-cfn = pb_newfig(cfn);
-axis('square');
-for iSP = 1:4
-   pb_probit(L(iSP).RT(L(iSP).RT > min_latency & L(iSP).RT < max_latency),'gcolor',col(iSP,:));
-end
-
-h = pb_fobj(gca,'Tag','probit model');
-h_dat = h(1:2:end);
-h_sum = h(2:2:end);
-
-for iH = 1:length(h_dat)
-   h_dat(iH).Color               = col(iH,:);
-   h_dat(iH).MarkerFaceColor     = col(iH,:);
-   h_dat(iH).MarkerSize          = 10;
    
-   h_sum(iH).MarkerSize          = 10;
-   h_sum(iH).HandleVisibility    = 'off';
-   
-   h_dat(iH).Tag = 'Fixed';
-   h_sum(iH).Tag = 'Fixed';
-end
-
-pb_nicegraph;
-
-
-%%
-
-cfn = pb_newfig(cfn);
-col = pb_selectcolor(5,1);
-
-for iD = 1:4
-   
-   h(iD)=subplot(1,5,iD);
-   axis square;
-   hold on;
-   
-   for iL = 1:length(L(iD).Rx)
-      plot(L(iD).Rx{iL}, L(iD).Ry{iL},'Color',col(iD,:),'Tag','Fixed');
-   end
-end
-
-%% What is the azimuth at stimulus onset for world fixed targets?
-%  Get the target positions
-
-cfn = pb_newfig(cfn);
-hold on;
-
-threshold   = 45;
-cnt         = 0;
-
-for iB = 1:length(Data.stimuli)
-   % For each block
- 
-   world_fixed_stims = Data.stimuli(iB).azimuth == 90;
-   
-   for iS = 1:length(Data.stimuli(iB).azimuth)
-      % For each stimuli
-      
-      % Check if the stimulus' azimuth is '90' and correct it
-      if Data.stimuli(iB).azimuth(iS) == 90
-         
-         
-
-         
-         stim_onset_idx                = (iS-1)*360+1;                                    % stimulus onset idx in epoch data
-         chair_at_stim_onset           = Data.epoch(iB).AzChairEpoched(stim_onset_idx);   % get chair position
-         Data.stimuli(iB).azimuth(iS)  = -(chair_at_stim_onset);                            % flip the script, brothaaa (- is + en + is -)
-         
-         if abs(Data.stimuli(iB).azimuth(iS)) > threshold
-         	cnt = cnt+1; % update missed targets
-         end
-      end
-   end
-   
-   % plot data
-   plot(Data.stimuli(iB).azimuth(world_fixed_stims),Data.stimuli(iB).elevation(world_fixed_stims),'o');
-end
-xlim([-75 75]);
-ylim([-75 75]);
-pb_vline([-threshold threshold])
-pb_nicegraph;
-title([num2str(cnt) '/197 stimuli out of range']);
-
-
-%%
-
-switch CONDITION
-   case 'Head fixed'
-      S.subj_id                                 = ['00' num2str(cdir(fseps(end-1)-1))];
-      S.model_parameters                        = MODELPAR;
-      S.condition.condition                     = lower(strrep(CONDITION,' ','_'));
-      S.condition.preprocessed_data             = Data;
-      S.condition.merged_saccade_data           = M;
-      S.condition.model_data                    = L;
-      
-   case 'Head free'
-      %load([cdir(1:max(fseps)) 'meta_data1.mat']);
-      
-      S.condition(2).condition                     = lower(strrep(CONDITION,' ','_'));
-      S.condition(2).preprocessed_data             = Data;
-      S.condition(2).merged_saccade_data           = M;
-      S.condition(2).model_data                    = L;
-end
-      
-save([cdir(1:max(fseps)) 'meta_data1.mat'],'S');
-
