@@ -15,7 +15,11 @@ function pb_vExtractPar(varargin)
    GV.acquisition    = pb_keyval('acquisition',varargin,3);  % in seconds
    GV.debug          = pb_keyval('debug',varargin,true);
    GV.colour         = pb_keyval('def',varargin,16);
-   
+   GV.rm_outliers    = pb_keyval('remove_outliers',varargin,true);
+   GV.min_RT         = pb_keyval('min_rt',varargin,100);
+   GV.max_RT         = pb_keyval('max_rt',varargin,450);
+   GV.radius         = pb_keyval('radius',varargin,0.5);          % 0-1
+   GV.max_targets    = pb_keyval('max_rt',varargin,50);
     
    % load data
    cd(GV.cdir);
@@ -121,10 +125,10 @@ function Data = parameterize_data(Data,GV)
             
             
             % Saccades on/offset positions
-            StartAz(iT)       = Data.epoch(iB).AzGazeEpoched(SacOn_idx);
-            StartEl(iT)       = Data.epoch(iB).ElGazeEpoched(SacOn_idx);
-            ResultAz(iT)      = Data.epoch(iB).AzGazeEpoched(SacOff_idx);
-            ResultEl(iT)      = Data.epoch(iB).ElGazeEpoched(SacOff_idx);
+            p.StartAz(iT)       = Data.epoch(iB).AzGazeEpoched(SacOn_idx);
+            p.StartEl(iT)       = Data.epoch(iB).ElGazeEpoched(SacOn_idx);
+            p.ResultAz(iT)      = Data.epoch(iB).AzGazeEpoched(SacOff_idx);
+            p.ResultEl(iT)      = Data.epoch(iB).ElGazeEpoched(SacOff_idx);
 
             % Eye
             p.EhStimAz(iT)    = Data.epoch(iB).AzEyeEpoched(stimOn_idx);
@@ -175,8 +179,8 @@ function Data = parameterize_data(Data,GV)
          end
 
          % Actual gaze shift
-         GazeShiftAz = ResultAz - StartAz;
-         GazeShiftEl = ResultEl - StartEl;
+         GazeShiftAz = p.ResultAz - p.StartAz;
+         GazeShiftEl = p.ResultEl - p.StartEl;
 
          % Head
          dCs      = p.HpOn-p.HpStim;
@@ -189,7 +193,8 @@ function Data = parameterize_data(Data,GV)
 
          % Target various coordinates
          p.Tc        = [TcA; TcE];                                % Chair coordinates
-         p.Tr        = [TcA - p.EhStimAz; TcE - p.EhStimEl];   	% Retinal coordinates
+         p.Tr        = [TcA - p.EhStimAz - p.HaStimAz; TcE - p.EhStimEl - p.HaStimEl];   	% Retinal coordinates
+         %p.Tr        = [TcA - p.EhStimAz; TcE - p.EhStimEl];   	% Retinal coordinates
          p.Ts        = [TcA + p.HpStim; TcE];                     % World coordinates
          
          % Stimulus and saccade temporal information
@@ -197,19 +202,21 @@ function Data = parameterize_data(Data,GV)
          p.SacLat    = latency;           % saccade latency
          p.SacDur    = sac_dur;           % saccade duration
 
-
-         par         = append_parameters(par,p);
+         par         = append_parameters(par,p,GV);
       end
       
       % Store data for each frame
-      par
       Data.frame(iF).parameters  = par;
       Data.frame(iF).frame       = uF{iF};
    end
 end
 
-function par = append_parameters(par,p)
+function par = append_parameters(par,p,GV)
 
+   if GV.rm_outliers
+      p = remove_outliers(p,GV);
+   end
+   
    c_fields = fields(p);
    
    for iF = 1:length(c_fields)
@@ -259,6 +266,82 @@ function p = preallocate_par
    p.dHc          = [];
    p.dEh          = [];
 
-   
+   p.StartAz      = [];
+   p.StartEl     	= [];
+   p.ResultAz     = [];
+   p.ResultEl     = [];
 end
+
+function p = remove_outliers(p,GV)
+   %  This function will discard the outliers
    
+
+   
+   discard = false(1,size(p.Tr,2));
+   
+   for iD = 1:length(discard)
+      
+      %  Minimum RT
+      if p.SacLat(iD) < GV.min_RT 
+         discard(iD) = true;
+      end
+      
+      %  Max RT
+      if p.SacLat(iD) > GV.max_RT
+         discard(iD) = true;
+      end
+      
+      %  Goal directed
+      
+      Tr    = p.Tr(:,iD)';
+      Tc    = p.Tc(:,iD)';
+      Gon   = [p.StartAz(iD), p.StartEl(iD)];
+      Goff  = [p.ResultAz(iD), p.ResultEl(iD)];
+      
+      r     = GV.radius * abs(pdist([0 0; Tc-Gon]));
+      dist  = pdist([p.ResultAz(iD) p.ResultEl(iD); p.Tc(:,iD)']);
+      
+      if r < dist
+         discard(iD) = true;
+      end
+      
+      % Within vision
+      if any(abs(p.Tc(:,iD)) > GV.max_targets)
+         discard(iD) = true;
+      end
+      
+      % show keepers
+      if ~discard(iD) %&& false
+         pb_newfig(231);
+         hold on;
+         axis square;
+         xlim([-50 50]);
+         ylim([-50 50]);
+         pb_vline;
+         pb_hline;
+      
+         title('Goal directed saccades')
+      
+         % Display
+         col = pb_selectcolor(2,1);
+
+         plot(Tc(1)-Gon(1),Tc(2)-Gon(2),'o','color',col(1,:)/2,'MarkerFaceColor',col(1,:),'linewidth',2,'MarkerSize',10,'Tag','Fixed');        % show target chair coordinatew
+         plot(Gon(1)-Gon(1),Gon(2)-Gon(2),'x','color',col(2,:),'MarkerFaceColor',col(2,:),'linewidth',2,'MarkerSize',10,'Tag','Fixed');
+         plot(Goff(1)-Gon(1),Goff(2)-Gon(2),'x','color',col(2,:)/2,'MarkerFaceColor',col(2,:),'linewidth',2,'MarkerSize',10,'Tag','Fixed');
+
+
+         th = 0:pi/50:2*pi;
+         xunit = r * cos(th) + Tc(1)-Gon(1);
+         yunit = r * sin(th) + Tc(2)-Gon(2);
+         plot(xunit, yunit,'color',col(1,:)/2,'Tag','Fixed');
+
+         pb_nicegraph;
+         pause(1);
+      end
+   end
+   
+   c_fields = fields(p);
+   for iF = 1:length(c_fields)
+      p.(c_fields{iF}) = p.(c_fields{iF})(:,~discard);
+   end
+end
