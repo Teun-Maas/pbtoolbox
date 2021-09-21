@@ -17,7 +17,7 @@ function Data = pb_vPrepData(varargin)
    GV.heuristic_f    = pb_keyval('heuristic_filter',V,1);
    GV.sgolay_f       = pb_keyval('sgolay_filter',V,1);
    GV.median_f       = pb_keyval('median_filter',V,1);
-   GV.path           = pb_keyval('path',V,cd);
+   GV.path           = pb_keyval('path',V,[cd filesep '..']);
    GV.store          = pb_keyval('store',V,1);
    GV.discern_frames = pb_keyval('frames',V,1);
    GV.fs             = pb_keyval('fs',V,120);
@@ -196,16 +196,13 @@ function trace = getdilation(block_data,block_time,idx,GV)
    diameterl               = length(raw_diameter);
    blink_bool              = false(diametersz);
    blink_bool(blinks_zero) = true;
-   
-   sum(blink_bool)
+
    window = 5;
    
    % front cut
    for iS = window+1:diameterl-(window+1)
       if blink_bool(iS); blink_bool(iS-window:iS) = true; end
    end
-   
-   sum(blink_bool)
    
    % back cut
    rev_blink_bool = flipud(blink_bool);
@@ -214,7 +211,6 @@ function trace = getdilation(block_data,block_time,idx,GV)
    end
    
    blink_bool = flipud(rev_blink_bool);
-   sum(blink_bool)
    
    diameter_filt(blink_bool) = nan;
 
@@ -229,7 +225,7 @@ function trace = getdilation(block_data,block_time,idx,GV)
    trace    = highpass(trace,'Fc',0.1,'Fs',GV.fs)';
 	trace    = lowpass(trace,'Fc',2,'Fs',GV.fs)';
    
-   %trace     = medfilt1(trace,10);
+
    
 %    % Graph
 %    pb_newfig(231);
@@ -241,7 +237,6 @@ function trace = getdilation(block_data,block_time,idx,GV)
 %    axis square;
 %    legend('none','interpolate')
    
-   trace = diameter_filt;
 end
 
 function trace = getopti(block_data,idx,GV)
@@ -540,7 +535,6 @@ function [path, prefix, fname, ext] = getfname(GV)
    [ext, fname]   = pb_fext(fname);
    prefix         = fname(1:15);       % 'converted_data_'
    fname          = fname(16:end);
-   fname          = [fname];     % Chair = {D,S} % Head = {R,U}
 end
 
 function Data = epoch_data(Data,GV)
@@ -652,6 +646,6 @@ end
 function save_data(Data, GV)
    % stores the preprocessed data
    fn = strrep(GV.fn,'converted_data_','');
-   path = fullfile(cd,'..');
-   save([path filesep 'preprocessed_data_' fn],'Data')
+   fpath = fullfile(cd);
+   save([fpath filesep 'preprocessed_data_' fn],'Data')
 end

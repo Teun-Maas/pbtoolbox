@@ -30,6 +30,7 @@ function pb_vSacDet(Data,varargin)
 
       % Saving calibrated data
       fname                   = fcheckext(['sacdet_' fn(14:end-4) '_block_' num2str(iB,'%03.f') '_azel'] ,'.hv');
+      condition               = read_condition(fname);
       fid                     = fopen(fname,'w','l');
       
       % 0. get data
@@ -40,27 +41,34 @@ function pb_vSacDet(Data,varargin)
       saz       = medfilt1(az,7); saz(1) = az(1);
       sel       = medfilt1(el,7); sel(1) = el(1);
       
-      % 2. diff
-      vaz      = gradient(saz,1./fs);
-      vel      = gradient(sel,1./fs);
-      svaz     = pa_gsmooth(vaz,fs,sd);
-      svel     = pa_gsmooth(vel,fs,sd);
+      if contains(condition,'D') % That is when the experiment was dynamic
+
+         % 2. diff
+         vaz      = gradient(saz,1./fs);
+         vel      = gradient(sel,1./fs);
+         svaz     = pa_gsmooth(vaz,fs,sd);
+         svel     = pa_gsmooth(vel,fs,sd);
+
+         % 3. filter
+         svaz_f      = medfilt1(svaz,200); svaz_f(1) = svaz(1);
+         svaz_f      = svaz-svaz_f;
+         svel_f     = medfilt1(el,200); svel_f(1) = svel(1);
+         svel_f      = svel-svel_f;
+
+         % 4. integrate
+         paz         = cumsum(svaz_f)/fs;      
+         pel         = cumsum(svel_f)/fs;
+
+         % 5. correct drift
+         paz         = detrend(paz,1);
+         pel         = detrend(pel,1); 
+
+
+         AZEL = [paz; pel];
+      else
+         AZEL = [saz; sel];
+      end
       
-      % 3. filter
-      svaz_f      = medfilt1(svaz,200); svaz_f(1) = svaz(1);
-      svaz_f      = svaz-svaz_f;
-      svel_f     = medfilt1(el,200); svel_f(1) = svel(1);
-      svel_f      = svel-svel_f;
-      
-      % 4. integrate
-      paz         = cumsum(svaz_f)/fs;      
-      pel         = cumsum(svel_f)/fs;
-     
-      % 5. correct drift
-      paz         = detrend(paz,1);
-      pel         = detrend(pel,1); 
-      
-      AZEL = [paz; pel];
 
       fwrite(fid,AZEL,'float');
       fclose(fid);
@@ -92,4 +100,11 @@ function det = det_criteria
     det.start                  	= 0;        % ms, starting-time of detection
     det.end                     	= 2500;    	% ms, end-time of detection
     det.acc                    	= 0;
+end
+
+function condition = read_condition(fn)
+   %  Get the correct condition;
+   
+   idx         = strfind(fn,'block');
+   condition   = fn(idx-3:idx-2);
 end
