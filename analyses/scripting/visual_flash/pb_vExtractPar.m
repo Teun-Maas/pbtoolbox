@@ -19,7 +19,7 @@ function pb_vExtractPar(varargin)
    GV.min_RT         = pb_keyval('min_rt',varargin,100);
    GV.max_RT         = pb_keyval('max_rt',varargin,450);
    GV.radius         = pb_keyval('radius',varargin,0.5);          % 0-1
-   GV.max_targets    = pb_keyval('max_rt',varargin,50);
+   GV.max_targets    = pb_keyval('max_targets',varargin,50);
     
    % load data
    cd(GV.cdir);
@@ -84,7 +84,7 @@ function Data = parameterize_data(Data,GV)
             
             current_trial = trials(iT);
             
-            trial_idx = find(Sac(:,1)==current_trial);
+            trial_idx = find(Sac(:,1)==current_trial,1);
             
             % Get epoch samplenrs
             start_trial_idx      = (current_trial-1) * nsamples;

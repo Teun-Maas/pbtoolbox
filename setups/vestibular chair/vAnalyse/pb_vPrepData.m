@@ -16,6 +16,7 @@ function Data = pb_vPrepData(varargin)
    GV.gaze_method    = pb_keyval('gaze',V,'old');
    GV.heuristic_f    = pb_keyval('heuristic_filter',V,1);
    GV.sgolay_f       = pb_keyval('sgolay_filter',V,1);
+   GV.median_f       = pb_keyval('median_filter',V,1);
    GV.path           = pb_keyval('path',V,cd);
    GV.store          = pb_keyval('store',V,1);
    GV.discern_frames = pb_keyval('frames',V,1);
@@ -92,6 +93,7 @@ function [P,GV] = getdata(Data, T, GV)
 
       % store timestamps
       P(iB).pupillabs            = getpupil(Data(iB), T(iB), pup_idx, GV);
+      P(iB).pupilometry          = getdilation(Data(iB), T(iB), pup_idx, GV);
       P(iB).optitrack            = getopti(Data(iB), opt_idx,GV);
       P(iB).gaze                 = computegaze(Data(iB), T(iB), opt_idx, pup_idx, GV);
       P(iB).chair                = [];
@@ -169,6 +171,77 @@ function trace = getpupil(block_data,block_time,idx,GV)
    
    trace       = -quat2azelAnnemiek(qEye);
    trace       = filter_trace(trace,GV);
+end
+
+function trace = getdilation(block_data,block_time,idx,GV)
+   % Function will read, filter, and interpolate eye traces
+   
+   % PREPROCESSING  Collects pupil traces from the raw data set and
+   %                creates a list that codes for valid and invalid traces
+   %                based on the percentage of blinks.
+   % LINEAR INT     Fills in gaps created by blinks.
+   %                Note that blinks will also create gaps in eye-movement
+   %                data. This is not covered in this workshop.
+   % MOVING AVE     Moving average filter for smoothing data.
+   % AVERAGING      Average over all traces is calculated.
+   
+   % 1. Preprocessing
+   raw_diameter     = block_data.Pup.Data.base_data.diameter_3d;
+   time              = (1:length(raw_diameter))/GV.fs; 
+   diameter_filt  = raw_diameter;
+   
+   % find blinks
+   blinks_zero             = find(raw_diameter==0);
+   diametersz              = size(raw_diameter);
+   diameterl               = length(raw_diameter);
+   blink_bool              = false(diametersz);
+   blink_bool(blinks_zero) = true;
+   
+   sum(blink_bool)
+   window = 5;
+   
+   % front cut
+   for iS = window+1:diameterl-(window+1)
+      if blink_bool(iS); blink_bool(iS-window:iS) = true; end
+   end
+   
+   sum(blink_bool)
+   
+   % back cut
+   rev_blink_bool = flipud(blink_bool);
+   for iS = window+1:diameterl-(window+1)
+      if rev_blink_bool(iS); rev_blink_bool(iS-window:iS) = true; end
+   end
+   
+   blink_bool = flipud(rev_blink_bool);
+   sum(blink_bool)
+   
+   diameter_filt(blink_bool) = nan;
+
+   % 2. Linear interpolation
+	trace             = diameter_filt;
+	sel					= double(isnan(trace));
+	sel					= double(movavg(sel,8)>0);
+	trace             = interp1(time(~sel),trace(~sel),time,'linear','extrap');
+   
+   % 3. Bandpass smooth
+   trace    = movavg(trace,5);
+   trace    = highpass(trace,'Fc',0.1,'Fs',GV.fs)';
+	trace    = lowpass(trace,'Fc',2,'Fs',GV.fs)';
+   
+   %trace     = medfilt1(trace,10);
+   
+%    % Graph
+%    pb_newfig(231);
+%    hold on;
+%    plot(time,raw_diameter)
+%    plot(time,trace);
+%    
+%    pb_nicegraph;
+%    axis square;
+%    legend('none','interpolate')
+   
+   trace = diameter_filt;
 end
 
 function trace = getopti(block_data,idx,GV)
@@ -258,6 +331,11 @@ function trace = filter_trace(trace,GV)
    if GV.sgolay_f 
       trace = sgolay_filtering(trace);
    end
+   
+   % remove spikes with median filter
+   if GV.median_f
+      trace = median_filtering(trace);
+   end
 end
 
 
@@ -323,6 +401,17 @@ function trace = sgolay_filtering(trace)
       trace(:,iO) = sgolayfilt(trace(:,iO),order,framelen);
    end
 end
+
+function trace = median_filtering(trace)
+   
+   %  settings
+   window    = 7; 
+   
+   for iO = 1:size(trace,2)
+      trace(:,iO) = medfilt1(trace(:,iO),window);
+   end
+end
+
 
 
 function T = gettimestamps(Data,GV)
@@ -440,7 +529,7 @@ function [path, prefix, fname, ext] = getfname(GV)
    % Function selects data 
    
    % select dir
-   [fname, path]  = pb_getfile('cd',GV.cdir);
+   [fname, path]  = pb_getfile('cd',[GV.cdir filesep '..'],'ext','converted_data_.mat'); % Open the converted data
    if ~isa(fname,'char')
       prefix   = false; 
       ext      = false;
@@ -451,7 +540,7 @@ function [path, prefix, fname, ext] = getfname(GV)
    [ext, fname]   = pb_fext(fname);
    prefix         = fname(1:15);       % 'converted_data_'
    fname          = fname(16:end);
-   fname          = [fname '_' chair head];
+   fname          = [fname];     % Chair = {D,S} % Head = {R,U}
 end
 
 function Data = epoch_data(Data,GV)
