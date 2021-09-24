@@ -10,27 +10,24 @@ function [ses,str] = pb_runLSL(varargin)
 % check if all streams are necesary
 
    de = pb_keyval('de', varargin, true);
-   pl = pb_keyval('pl', varargin, false);
-   gz = pb_keyval('gz', varargin, true);
-   pd = pb_keyval('pd', varargin, false);
+   pl = pb_keyval('pl', varargin, true);
    ot = pb_keyval('ot', varargin, true);
    sh = pb_keyval('sh', varargin, true);
    
    tmp = {};
    
    streams  = {'type=''Digital Events @ lslder01'' and name=''Digital Events 0''', ...
-               'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Python Representation - Eye 0''', ...
-               'type=''Pupil Capture @ pupil-desktop'' and name=''Gaze Python Representation''', ...
-               'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
+               'type=''Pupil Gaze @ pupil-desktop'' and name= ''Pupil Capture LSL Relay v2''', ...
+               %'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Python Representation - Eye 0''', ...
+               %'type=''Pupil Capture @ pupil-desktop'' and name=''Gaze Python Representation''', ...
+               %'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
                'type=''OptiTrack Mocap @ DCN-OT01'' and name=''Rigid Bodies''', ...
                'type=''IMU Pose @ raspi-gw'' and name=''IMU Pose'''};
    
    if de; tmp(end+1) = streams(1); end
    if pl; tmp(end+1) = streams(2); end 
-   if gz; tmp(end+1) = streams(3); end
-   if pd; tmp(end+1) = streams(4); end
-   if ot; tmp(end+1) = streams(5); end
-   if sh; tmp(end+1) = streams(6); end
+   if ot; tmp(end+1) = streams(3); end
+   if sh; tmp(end+1) = streams(4); end
    
    streams = tmp;
    clear tmp;
@@ -61,8 +58,6 @@ function [ses,str] = pb_runLSL(varargin)
    c = 1;
    if de; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
    if pl; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
-   if gz; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
-   if pd; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
    if ot; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
    if sh; addlistener(str(c),'DataAvailable', @listener); end
 end

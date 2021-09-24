@@ -170,7 +170,7 @@ function trace = getpupil(block_data,block_time,idx,GV)
    qEye        = quaternion.rotateutov([0 0 1]',gaze_normalsrotOpt',1,1);
    
    trace       = -quat2azelAnnemiek(qEye);
-   trace       = filter_trace(trace,GV);
+   %trace       = filter_trace(trace,GV);
 end
 
 function trace = getdilation(block_data,block_time,idx,GV)
@@ -224,19 +224,6 @@ function trace = getdilation(block_data,block_time,idx,GV)
    trace    = movavg(trace,5);
    trace    = highpass(trace,'Fc',0.1,'Fs',GV.fs)';
 	trace    = lowpass(trace,'Fc',2,'Fs',GV.fs)';
-   
-
-   
-%    % Graph
-%    pb_newfig(231);
-%    hold on;
-%    plot(time,raw_diameter)
-%    plot(time,trace);
-%    
-%    pb_nicegraph;
-%    axis square;
-%    legend('none','interpolate')
-   
 end
 
 function trace = getopti(block_data,idx,GV)
