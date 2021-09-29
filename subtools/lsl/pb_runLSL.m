@@ -49,7 +49,7 @@ function [ses,str,meta_pup] = pb_runLSL(varargin)
       if isempty(l); error('No streams found'); end
 
       % Check for meta data (due to new version of pupil labs)
-      if contains(str(iStrm),'pupil')
+      if contains(streams(iStrm),'pupil')
          meta_pup = lsl_metadata_gaze(plstr);
          p        = metadata.as_struct(); 
       end
