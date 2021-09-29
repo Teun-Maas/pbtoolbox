@@ -1,4 +1,4 @@
-function pb_vStoreData(h, dat, bn, str)
+function pb_vStoreData(h, dat, bn, str,meta_pup)
 % PB_VSTOREBLOCKDAT
 %
 % PB_VSTOREBLOCKDAT(cfg, dat)  stores 'Dat' Data in files.
@@ -14,6 +14,7 @@ function pb_vStoreData(h, dat, bn, str)
    dat(bn).optitrack     = str(3).read;
    dat(bn).sensehat      = str(4).read;
    dat(bn).block_info    = h.block(bn);
+   dat(bn).meta_pup      = meta_pup;
 
    [~,fn] = pb_fext(cfg.fname);
    file = [cfg.dname filesep 'block_info_' fn '.mat'];

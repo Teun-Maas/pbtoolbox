@@ -30,9 +30,9 @@ function pb_vRunExp(handles)
    Dat         = pb_dataobj(nblocks);
     
    %  initialize recordings
-   rc             = pb_runPupil; 
-   [ses,str]      = pb_runLSL;
-   expTime        = tic;
+   rc                      = pb_runPupil; 
+   [ses,str, meta_pup]     = pb_runLSL; %meta_pup
+   expTime                 = tic;
    
    %% START BLOCK 
    %  iterate experimental blocks 
@@ -106,7 +106,7 @@ function pb_vRunExp(handles)
       pb_stopLSL(ses); 
       
       %  store data
-      pb_vStoreData(handles, Dat, iBlck,str);
+      pb_vStoreData(handles, Dat, iBlck, str,meta_pup);
 
       %  update block information
       handles.cfg = pb_updatecount(handles.cfg,'block','count');
