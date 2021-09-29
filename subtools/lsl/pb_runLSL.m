@@ -51,7 +51,7 @@ function [ses,str,meta_pup] = pb_runLSL(varargin)
       % Check for meta data (due to new version of pupil labs)
       if contains(str(iStrm),'pupil')
          meta_pup = lsl_metadata_gaze(plstr);
-         p        =　metadata.as_struct(); 
+         p        = metadata.as_struct(); 
       end
       
       str(iStrm) = lsl_istream(info{1});
