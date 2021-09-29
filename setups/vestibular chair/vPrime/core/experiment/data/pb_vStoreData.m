@@ -15,8 +15,8 @@ function pb_vStoreData(h, dat, bn, str,meta_pup)
    dat(bn).sensehat      = str(4).read;
    dat(bn).block_info    = h.block(bn);
    
-   
-   dat(bn).pupil_labds.meta_pup      = meta_pup;
+   % store the meta data
+   dat(bn).pupil_labs.meta_pup      = meta_pup;
 
    [~,fn] = pb_fext(cfg.fname);
    file = [cfg.dname filesep 'block_info_' fn '.mat'];
