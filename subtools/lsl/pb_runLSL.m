@@ -49,7 +49,7 @@ function [ses,str,meta] = pb_runLSL(varargin)
       ses.add_stream(str(iStrm));
       
       % Check meta data for pupil labs
-      if contains(stream(iStrm),'pupil')
+      if contains(streams(iStrm),'pupil')
          meta = lsl_metadata_gaze(str(iStrm));
       end
    end
