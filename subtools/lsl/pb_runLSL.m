@@ -1,4 +1,4 @@
-function [ses,str,meta_pup] = pb_runLSL(varargin)
+function [ses,str] = pb_runLSL(varargin)
 % PB_RUNLSL
 %
 % PB_RUNLSL(varargin) creates a LSL session for VC.
@@ -14,16 +14,15 @@ function [ses,str,meta_pup] = pb_runLSL(varargin)
    ot = pb_keyval('ot', varargin, true);
    sh = pb_keyval('sh', varargin, true);
    
-   tmp         = {};
-   meta_pup    = [];
+   tmp = {};
    
-   streams     = {'type=''Digital Events @ lslder01'' and name=''Digital Events 0''', ...
-                  'type=''Pupil Gaze @ pupil-desktop'' and name= ''Pupil Capture LSL Relay v2''', ...
-                  %'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Python Representation - Eye 0''', ...
-                  %'type=''Pupil Capture @ pupil-desktop'' and name=''Gaze Python Representation''', ...
-                  %'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
-                  'type=''OptiTrack Mocap @ DCN-OT01'' and name=''Rigid Bodies''', ...
-                  'type=''IMU Pose @ raspi-gw'' and name=''IMU Pose'''};
+   streams  = {'type=''Digital Events @ lslder01'' and name=''Digital Events 0''', ...
+               'type=''Pupil Gaze @ pupil-desktop'' and name= ''Pupil Capture LSL Relay v2''', ...
+               %'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Python Representation - Eye 0''', ...
+               %'type=''Pupil Capture @ pupil-desktop'' and name=''Gaze Python Representation''', ...
+               %'type=''Pupil Capture @ pupil-desktop'' and name=''Pupil Primitive Data - Eye 0''', ...
+               'type=''OptiTrack Mocap @ DCN-OT01'' and name=''Rigid Bodies''', ...
+               'type=''IMU Pose @ raspi-gw'' and name=''IMU Pose'''};
    
    if de; tmp(end+1) = streams(1); end
    if pl; tmp(end+1) = streams(2); end 
@@ -48,12 +47,10 @@ function [ses,str,meta_pup] = pb_runLSL(varargin)
       if isempty(info.infos); error(['lsl resolver cannot make connection with:  ' tmp]); end   % Pupil labs? check if 'LSL relay' is tickmarked in pupil capture 
       if isempty(l); error('No streams found'); end
 
-      % Check for meta data (due to new version of pupil labs)
-      if contains(streams(iStrm),'pupil')
-         meta_pup = lsl_metadata_gaze(plstr);
-         p        = metadata.as_struct(); 
+      for iList = 1:size(l,1)
+        %fprintf('%d: name: ''%s'' type: ''%s''\n',iList,l(iList).name,l(iList).type);
       end
-      
+
       str(iStrm) = lsl_istream(info{1});
       ses.add_stream(str(iStrm));
    end
@@ -68,12 +65,3 @@ end
 function listener(~, event)
    %disp(event);
 end
-
-
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-%                                                           %
-%       Part of Programmeer Beer Toolbox (PBToolbox)        %
-%       Written by: Jesse J. Heckman (2018)                 %
-%                                                           %
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-

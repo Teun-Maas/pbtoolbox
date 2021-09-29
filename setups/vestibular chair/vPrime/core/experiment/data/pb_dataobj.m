@@ -8,12 +8,12 @@ classdef pb_dataobj < handle
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
     
     properties (Access=public)
-       vestibular_signal = [];
-       event_data = [];
-       pupil_labs = [];
-       optitrack = [];
-       sensehat = [];
-       block_info = [];
+       vestibular_signal   = [];
+       event_data          = [];
+       pupil_labs          = [];
+       optitrack           = [];
+       sensehat            = [];
+       block_info          = [];
     end
 
     methods
@@ -31,18 +31,6 @@ classdef pb_dataobj < handle
             % DELETE - destructor
             delete(obj);
         end
-        
-%         function split(obj)
-%            if size(obj)>1
-%               cdir = '~/Desktop/';
-%               path = pb_getdir('cdir',cdir);
-%               if path
-%                  for i = 1:length(obj)
-%                     save([],obj(i))
-%                  end
-%               end
-%            end 
-%         end
                 
         function dump(this)
             % DUMP - show the content of the internal variables
