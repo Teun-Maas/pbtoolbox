@@ -110,7 +110,7 @@ function pb_vGenExp_VisFlash(varargin)
    fixled.pause   = 1000;
    
    modality       = 2;                 % 2=VISUAL
-   int				= [50];              % w/ [i1, i2, i3...]
+   int				= [40 =:50];              % w/ [i1, i2, i3...]
    dur            = 2.^(0:7)*0.5;      % stim duration in ms 2.^(0:7)*.5
    col            = [1];               % w/ [R,G]
    
@@ -122,6 +122,11 @@ function pb_vGenExp_VisFlash(varargin)
    int            = int(:);
    col            = col(:);
    dur            = dur(:);
+   
+   
+   X = [X;X;X]
+   
+   
 
    %% Number and size
    Sz             = size(X);

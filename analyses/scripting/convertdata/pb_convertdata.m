@@ -27,7 +27,7 @@ function D = pb_convertdata(fn,varargin)
       if isa(pup.Data,'cell')
          pup.Data       = lsl_pupil_convert2soa(pup);
       elseif isa(pup.Data,'double')
-         pup.Data       = lsl_pupil_dbl2soa(pup,dat(iSig).meta_pup);
+         %pup.Data       = lsl_pupil_dbl2soa(pup,dat(iSig).meta_pup);
       end
 
       opt            = dat(iSig).optitrack;

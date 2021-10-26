@@ -14,6 +14,7 @@ classdef pb_dataobj < handle
        optitrack           = [];
        sensehat            = [];
        block_info          = [];
+       meta_pup            = [];
     end
 
     methods

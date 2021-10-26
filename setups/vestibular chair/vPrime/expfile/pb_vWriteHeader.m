@@ -9,16 +9,17 @@ function pb_vWriteHeader(fid,nblocks,ntrials,GV)
    
    % Header of exp-file
    fprintf(fid,'%s\n','%');
-   fprintf(fid,'%s\n',['%% Experiment: C:\DATA\' GV.datdir]);
+   fprintf(fid,'%s\n',['%% Experiment: C:\DATA\' GV.exp_datdir]);
    fprintf(fid,'%s\n','%');
    fprintf(fid,'\n');
    fprintf(fid,'%s %s\n','%%','HEADER');
    
-   fprintf(fid,'%s\t\t%d\t%d\n','ITI', GV.ITI(1), GV.ITI(2));
+   fprintf(fid,'%s\t\t%d\t%d\n','ITI', GV.exp_ITI(1), GV.exp_ITI(2));
    fprintf(fid,'%s\t%d\n','Blocks', nblocks);
    fprintf(fid,'%s\t%d\n','Trials', ntrials);
-   fprintf(fid,'%s\t\t%d\n','Lab',GV.lab);
-   fprintf(fid,'%s\t%d\n','Stim',GV.stim);
+   fprintf(fid,'%s\t\t%d\n','Lab',GV.exp_lab);
+   fprintf(fid,'%s\t%d\n','Stim',GV.exp_stimframe);
+   fprintf(fid,'%s\t%d\n','Duration',GV.exp_trialduration);
    fprintf(fid,'\n');
    
    % block comment

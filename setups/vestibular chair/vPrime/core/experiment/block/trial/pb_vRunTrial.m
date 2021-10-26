@@ -19,9 +19,20 @@ function pb_vRunTrial(zbus, cfg)
    t           = tic;
    
    if ~cfg.trig
+      
+      % Wait if no trial duration!
+      if cfg.trialdur == 0
+         while ~cfg.RZ6_1.GetTagVal('Wait'); pause(0.05); end 
+      end
+      
+      % If trialduration is set then wait for trial to end
       while toc(t) < cfg.trialdur; pause(0.05); end 
+      
    else
+     
+      % If there is a trigger wait for the trigger
       while ~cfg.RZ6_1.GetTagVal('Wait'); pause(0.05); end 
+      
    end
 end
  
