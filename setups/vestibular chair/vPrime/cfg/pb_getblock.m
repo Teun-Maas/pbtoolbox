@@ -40,7 +40,7 @@ function handles = pb_getblock(handles)
    %% CHECK-OUT
    %  Define trial duration, correct stimulus positions, and store handles. 
 
-   if ~isfield(cfg, 'duration')
+   if ~isfield(cfg, 'Duration')
       cfg.Duration    	= getdurations(block);
    end
    
