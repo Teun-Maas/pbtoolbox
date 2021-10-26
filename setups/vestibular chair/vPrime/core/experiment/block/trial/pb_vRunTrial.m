@@ -23,6 +23,7 @@ function pb_vRunTrial(zbus, cfg)
       % Wait if no trial duration!
       if cfg.Duration == 0
          while ~cfg.RZ6_1.GetTagVal('Wait'); pause(0.05); end 
+         pause(0.25);         % then wait another 250 ms for data acquisition
       end
       
       % If trialduration is set then wait for trial to end
