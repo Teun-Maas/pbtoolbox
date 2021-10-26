@@ -40,7 +40,10 @@ function handles = pb_getblock(handles)
    %% CHECK-OUT
    %  Define trial duration, correct stimulus positions, and store handles. 
 
-   cfg.trialdur    	= getdurations(block);
+   if isempty(cfg.trialdur)
+      cfg.trialdur    	= getdurations(block);
+   end
+   
    handles.block    	= pb_vPrimeZ(block,cfg);
    handles.cfg      	= cfg;
 end

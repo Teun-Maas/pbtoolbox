@@ -206,6 +206,8 @@ function cfg = hread(fid,cfg)
                cfg.(header{cnt}) = fscanf(fid,'%d',1); %  1 = 63 in / 0 out, 	2 = 15 in / 15 out 
             case 'lab'
                cfg.(header{cnt}) = fscanf(fid,'%d',1);
+            case 'duration'
+               cfg.(header{cnt}) = fscanf(fid,'%d',1);
             otherwise
                cfg.(header{cnt})	= fscanf(fid,'%d',1); % Integer
          end
