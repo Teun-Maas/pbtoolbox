@@ -40,7 +40,7 @@ function handles = pb_getblock(handles)
    %% CHECK-OUT
    %  Define trial duration, correct stimulus positions, and store handles. 
 
-   if isfield(cfg, 'trialdur')
+   if ~isfield(cfg, 'trialdur')
       cfg.trialdur    	= getdurations(block);
    end
    
