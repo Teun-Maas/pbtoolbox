@@ -43,7 +43,7 @@ function Data = pb_vPrepData(varargin)
    
    
    % parse data
-   GV       = readkeyval(D,GV);
+   GV       = readkeyval(D,GV);                                            % convert some GV inputs
    S        = getstims(D, GV);                                             % read the stimuli
    T        = gettimestamps(D, GV);                                        % correct the LSL timestamps
    [P,GV]	= getdata(D, T, GV);                                           % obtain the response behaviour
@@ -51,7 +51,7 @@ function Data = pb_vPrepData(varargin)
    Data      = pb_struct({'stimuli','timestamps','position'},{S,T,P});
    
    % store data
-   if GV.epoch; Data = epoch_data(Data, GV); end                             % epoch data
+   if GV.epoch; Data = epoch_data(Data, GV); end                           % epoch data
    if GV.store; save_data(Data,GV); end                                     % store data
 end
  
@@ -120,8 +120,8 @@ function [pup_idx, opt_idx] = get_fixation_idx(block_data,block_time)
    z     = block_data.Pup.Data.gaze_normal_3d(:,3);
    
    % azel
-   azel_opt       = quat2azelAnnemiek(q);
-   azel_eye       = -VCxyz2azel(x,y,z);
+   azel_opt       = quat2azelAnnemiek(q);                                  %% FIX THIS SHITT ITS NOT IN YOUR TOOLBOX!
+   azel_eye       = -VCxyz2azel(x,y,z);                                    %% FIX THIS SHITT ITS NOT IN YOUR TOOLBOX!
 
    % graph
    cfn = pb_newfig(231);
@@ -169,8 +169,8 @@ function trace = getpupil(block_data,block_time,idx,GV)
 
    qEye        = quaternion.rotateutov([0 0 1]',gaze_normalsrotOpt',1,1);
    
-   trace       = -quat2azelAnnemiek(qEye);
-   %trace       = filter_trace(trace,GV);
+   trace       = -quat2azelAnnemiek(qEye);                                 %% FIX THIS SHITT ITS NOT IN YOUR TOOLBOX!
+   trace       = filter_trace(trace,GV);
 end
 
 function trace = getdilation(block_data,block_time,idx,GV)
