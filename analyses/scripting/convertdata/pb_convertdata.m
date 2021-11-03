@@ -26,8 +26,6 @@ function D = pb_convertdata(fn,varargin)
       
       if isa(pup.Data,'cell')
          pup.Data       = lsl_pupil_convert2soa(pup);
-      elseif isa(pup.Data,'double')
-         %pup.Data       = lsl_pupil_dbl2soa(pup,dat(iSig).meta_pup);
       end
 
       opt            = dat(iSig).optitrack;
@@ -53,11 +51,6 @@ function D = pb_convertdata(fn,varargin)
       dat(iSig).block_info.fn = fn;
       D(iSig).Block_Info      = dat(iSig).block_info;
    end
-end
-
-function Data  = lsl_pupil_dbl2soa(pup,meta)
-   Data = pup.data;
-
 end
 
  

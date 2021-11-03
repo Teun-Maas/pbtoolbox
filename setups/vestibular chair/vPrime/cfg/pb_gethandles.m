@@ -21,22 +21,12 @@ function handles = pb_gethandles(handles)
    cfg.expdir			= [cfg.fpath filesep cfg.expInitials filesep 'EXP' filesep]; % exp directory name
    cfg.snddir			= [cfg.fpath filesep cfg.expInitials filesep 'SND' filesep]; % wav directory name
 
-   % get exp and cfg files
+   % get exp and cal files
    str					= [cfg.expdir filesep '*.exp'];
-   d                 = dir(str); % default exp folder
+   d                 = dir(str);                                           % default exp folder
    cfg.expfiles		= {d.name};
-   if isempty(cfg.expfiles); end
-   
-%    set(handles.popupmenu_exp,'String',cfg.expfiles)
-%    expfileIdx			= get(handles.popupmenu_exp,'Value');
-%    cfg.expfname		= cfg.expfiles{expfileIdx};
    cfg.expfname		= get(handles.editLoad,'String');
 
-%    d                 = dir([cfg.expdir filesep '*.cfg']);
-%    cfg.cfgfiles		= {d.name};
-%    set(handles.popupmenu_cfg,'String',cfg.cfgfiles);
-%    cfgfileIdx			= get(handles.popupmenu_cfg,'Value');
-%    cfg.cfgfname		= cfg.cfgfiles{cfgfileIdx};
    
    handles.cfg			= cfg;
 end

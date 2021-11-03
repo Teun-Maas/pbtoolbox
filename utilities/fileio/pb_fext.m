@@ -10,13 +10,13 @@ function [ext,name] = pb_fext(fname)
    index = strfind(fname, '.');
 
    if isempty(index) 
-      ext = [];
-      name = fname;
+      ext   = [];
+      name  = fname;
    elseif length(index) > 1
       error('Filenames cannot contain more than 1 full stop.')
    else
-      name = fname(1:index-1);
-      ext = fname(index:end);
+      name  = fname(1:index-1);
+      ext   = fname(index:end);
    end
 end
 

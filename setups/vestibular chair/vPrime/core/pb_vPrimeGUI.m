@@ -143,12 +143,18 @@ function buttonRun_Callback(hObject, eventdata, handles)
    
    handles = pb_gethandles(handles);
    
-
-   if isempty(pb_fext(handles.cfg.expfname))
-      msgbox({'Non-valid file selected.';'Please select an expfile before starting an experiment.'});
-   else   
-      clc;
-      pb_vRunExp(handles);
+   ext = pb_fext(handles.cfg.expfname);
+   
+   if ~isempty(ext)
+      switch ext
+         case {'.exp', '.cal'}
+            clc;
+            pb_vRunExp(handles);
+         otherwise
+            msgbox({'Non-valid file selected.';'Please select an expfile before starting an experiment.'});
+      end
+   else
+      msgbox({'Non-valid file selected.';'Please select an expfile before starting an experiment.'})
    end
 end
 
@@ -174,7 +180,7 @@ function buttonLoad_Callback(hObject, eventdata, handles)
    [ext, ~] = pb_fext(path);
    if isempty(ext); cdir = path; else; fol = dir(path); cdir = fol.folder; end
    
-   [fn, path] = pb_getfile('dir',cdir,'ext','*.exp','title','Load exp-file..' );
+   [fn, path] = pb_getfile('dir',cdir,'ext',{'*.exp;*.cal'},'title','Load exp-file..' );
    if fn ~= 0
       expfile = [path fn];
       set(handles.editLoad,'string',expfile);

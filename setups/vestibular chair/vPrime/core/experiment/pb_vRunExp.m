@@ -24,14 +24,19 @@ function pb_vRunExp(handles)
    handles     = pb_vInitialize(handles, true);
    
    %  set block information
-
    block       = handles.block;  
    nblocks     = handles.cfg.Blocks;
-   Dat         = pb_dataobj(nblocks);
-    
+   
+   switch pb_fext(handles.cfg.expfname)
+      case '.cal'
+         Dat         = pb_calobj(nblocks);
+      case '.exp'
+         Dat         = pb_dataobj(nblocks);
+   end
+   
    %  initialize recordings
    rc                      = pb_runPupil; 
-   [ses,str, meta_pup]     = pb_runLSL; %meta_pup
+   [ses,str, meta_pup]     = pb_runLSL;         %meta_pup
    expTime                 = tic;
    
    %% START BLOCK 
@@ -50,7 +55,8 @@ function pb_vRunExp(handles)
       pb_startPupil(rc);
       
       %  start vestibular chair
-      if ~ismac && ~debug     
+      if ~ismac && ~debug   
+         
          % Start chair
          vs            	= pb_sendServo(profile);
          blockTime    	= tic; 
