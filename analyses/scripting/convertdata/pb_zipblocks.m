@@ -12,13 +12,13 @@ function fn = pb_zipblocks(cdir,varargin)
    if nargin == 0; cdir = pb_getdir('cdir','/Users/jjheckman/Documents/Data/PhD/Experiment'); end
    cd(cdir);
    
-   listing = dir('block_info_*.mat');
+   bi_listing     = dir('block_info_*.mat');
    
    D     = struct([]);
-   for iL = 1:length(listing)
-      disp(['>> Unpacking: ' listing(iL).name '...']);
+   for iL = 1:length(bi_listing)
+      disp(['>> Unpacking: ' bi_listing(iL).name '...']);
       disp('    >> Converting data...');
-      tmp   = pb_convertdata([cd filesep listing(iL).name]);
+      tmp   = pb_convertdata([cd filesep bi_listing(iL).name]);
       disp('    << Data succesfully converted.');
       tmpsz = length(tmp);
       
@@ -30,13 +30,13 @@ function fn = pb_zipblocks(cdir,varargin)
          disp(['    << ' num2str(tmpsz) ' block(s) appended.']);
       end
    end
-   
+     
    % Tag condition
    if contains(cd, 'dynamic'); chair = 'D'; else; chair = 'S'; end       % (THIS REALLY REQUIRES PROPER DATA MANAGEMENT FOLDER STRUCTURE)
    if contains(cd, 'free'); head = 'U'; else; head = 'R'; end
    
    % get filename
-   fn = listing(1).name(1:end-9);
+   fn = bi_listing(1).name(1:end-9);
    fn = strrep(fn,'block_info_','converted_data_');
    fn = [fn '_' chair head '.mat'];
    

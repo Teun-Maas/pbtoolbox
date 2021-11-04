@@ -20,7 +20,7 @@ function Data = pb_vPrepData(varargin)
    GV.path           = pb_keyval('path',V,[cd filesep '..']);
    GV.store          = pb_keyval('store',V,1);
    GV.discern_frames = pb_keyval('frames',V,1);
-   GV.fs             = pb_keyval('fs',V,120);
+   GV.fs             = pb_keyval('fs',V,200);
    GV.acquisition    = pb_keyval('acquisition',V,3);
    GV.epoch          = pb_keyval('epoch',V,1);
 
@@ -40,6 +40,11 @@ function Data = pb_vPrepData(varargin)
       end
    end
    disp(['>> Data loaded...' newline]);
+   
+   % Calibrate
+   if ~isfield(D,'Calibration')
+         D  = train_calibration(D,GV);                                     % train calibration network
+   end
    
    
    % parse data
@@ -63,9 +68,8 @@ end
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
 
-% Some nested functions for readability
-
 function GV = readkeyval(Data,GV)
+% Read and correct keyvals
 
    % Fix blocks
    if ~isnumeric(GV.block_idx)
@@ -75,6 +79,54 @@ function GV = readkeyval(Data,GV)
          otherwise
             GV.block_idx = 1;
       end
+   end
+end
+
+function Data = train_calibration(Data,GV)
+% This will train neural network to map pupillabs norm position to real
+% world azimuth/elevation values.
+
+   if isempty(Data.Calibration); return; end % Check if data exists
+   
+   % Prep calibration data
+   calsz    = [length(Data.Calibration.block_info.trial) 2];
+   plx      = Data.Calibration.pupil_labs.Data(2,:);     % normposx
+   ply      = Data.Calibration.pupil_labs.Data(3,:);     % normposy
+   
+   ts_pup   = Data.Calibration.pupil_labs.Timestamps;
+   ts_ed    = Data.Calibration.event_data.Timestamps;
+   ts_pup   = ts_pup - ts_ed(1);                         % synch with respect to event data
+   ts_ed    = ts_ed - ts_ed(1);
+   
+   
+   % preallocate training data
+   inputs   = zeros(calsz);
+   targets  = zeros(calsz);
+   
+   for iT = 1:length(inputs)
+
+      % Get the index for median x and y input positions
+      idx            = iT*2; 
+      ts_buttonpress = ts_ed(idx);
+      idx_pup        = find(ts_pup>=ts_buttonpress,1);
+      range          = idx_pup:(idx_pup + floor(GV.fs/5));
+      med_x          = median(plx(range));
+      med_y          = median(ply(range));
+      
+      % Store inputs
+      inputs(iT,1) = med_x;
+      inputs(iT,2) = imed_y;
+     
+      % get targets from block info
+      targets(iT,1) = Data.Calibration.block_info.trial(1).stim.azimuth;
+      targets(iT,2) = Data.Calibration.block_info.trial(1).stim.elevation;
+   end
+      
+   % Train neural network N-FOLD
+   for iF = 1:length(inputs)
+      % DO SOMETHIGN HERE TO MAKE THE FUCKING NETWORK TRAIN HOERTJE
+      % THIS IS NOT FUCKING DONE, DONT FORGET TO CONTINUE HEREEEE.
+      % LOOK UP TRAINING SYNTAX TMP78.M or VOLTERRA TRAINING
    end
 end
 
@@ -146,31 +198,54 @@ end
 function trace = getpupil(block_data,block_time,idx,GV)
    % Function will read, filter, and interpolate eye traces
    
-   % compute offset
-   normv    = block_data.Pup.Data.gaze_normal_3d(idx:idx+20,:);
-   normv    = median(normv);
-
-   % estimate rotation matrix
-   GG       = @(A,B) [dot(A,B) -norm(cross(A,B)) 0;
-                     norm(cross(A,B)) dot(A,B)  0;
-               0              0           1];
-
-   FFi   = @(A,B) [ A (B-dot(A,B)*A)/norm(B-dot(A,B)*A) cross(B,A) ];
-   UU    = @(Fi,G) Fi * G / Fi;
-   b     = normv'; 
-   a     = [0 0 1]';
-   Rot   = UU(FFi(a,b), GG(a,b));
-
-   % Rotate
-   gaze_normalsrot            = block_data.Pup.Data.gaze_normal_3d * Rot;
-   gaze_normalsrotOpt(:,1)    = -interp1(block_time.pupillabs, gaze_normalsrot(:,1), block_time.optitrack,'pchip');
-   gaze_normalsrotOpt(:,2)    = interp1(block_time.pupillabs, gaze_normalsrot(:,2), block_time.optitrack,'pchip');
-   gaze_normalsrotOpt(:,3)    = interp1(block_time.pupillabs, gaze_normalsrot(:,3), block_time.optitrack,'pchip');
-
-   qEye        = quaternion.rotateutov([0 0 1]',gaze_normalsrotOpt',1,1);
+   if isfield(block_data,'Calibration') % check if data is old or new format and contains a calibration field
+      
+      % check if calibration data is added to field
+      if ~isempty(block_data.Calibration)    
+         trace = calibrate_pupil_position(block_data,block_time,idx,GV);
+      else
+         trace = compute_pupil_position(block_data,block_time,idx,GV);
+      end
+         
+   else % If there is no calibration data
+      trace = compute_pupil_position(block_data,block_time,idx,GV); % old method
+   end
    
-   trace       = -quat2azelAnnemiek(qEye);                                 %% FIX THIS SHITT ITS NOT IN YOUR TOOLBOX!
    trace       = filter_trace(trace,GV);
+end
+
+
+function trace = calibrate_pupil_position(block_data,block_time,idx,GV)
+   trace = [];
+   
+   for iT = 1:length(block_data.stimuli)
+
+end
+
+function trace = compute_pupil_position(block_data,block_time,idx,GV)
+      % compute offset
+      normv    = block_data.Pup.Data.gaze_normal_3d(idx:idx+20,:);
+      normv    = median(normv);
+
+      % estimate rotation matrix
+      GG       = @(A,B) [dot(A,B) -norm(cross(A,B)) 0;
+                        norm(cross(A,B)) dot(A,B)  0;
+                  0              0           1];
+
+      FFi   = @(A,B) [ A (B-dot(A,B)*A)/norm(B-dot(A,B)*A) cross(B,A) ];
+      UU    = @(Fi,G) Fi * G / Fi;
+      b     = normv'; 
+      a     = [0 0 1]';
+      Rot   = UU(FFi(a,b), GG(a,b));
+
+      % Rotate
+      gaze_normalsrot            = block_data.Pup.Data.gaze_normal_3d * Rot;
+      gaze_normalsrotOpt(:,1)    = -interp1(block_time.pupillabs, gaze_normalsrot(:,1), block_time.optitrack,'pchip');
+      gaze_normalsrotOpt(:,2)    = interp1(block_time.pupillabs, gaze_normalsrot(:,2), block_time.optitrack,'pchip');
+      gaze_normalsrotOpt(:,3)    = interp1(block_time.pupillabs, gaze_normalsrot(:,3), block_time.optitrack,'pchip');
+
+      qEye        = quaternion.rotateutov([0 0 1]',gaze_normalsrotOpt',1,1);
+      trace       = -quat2azelAnnemiek(qEye);                                 %% FIX THIS SHITT ITS NOT IN YOUR TOOLBOX!
 end
 
 function trace = getdilation(block_data,block_time,idx,GV)

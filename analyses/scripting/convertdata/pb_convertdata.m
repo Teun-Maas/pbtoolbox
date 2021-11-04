@@ -1,4 +1,4 @@
-function D = pb_convertdata(fn,varargin)
+function D = pb_convertdata(path,fn,varargin)
 % PB_CONVERTDATA
 %
 % PB_CONVERTDATA(fname) converts and bulks all datafiles for each block in the vestibular setup together
@@ -10,10 +10,11 @@ function D = pb_convertdata(fn,varargin)
    %  Prep Data
    load(fn);
    datl        = length(dat);
-   D           = struct('Pup',[],'Opt',[],'Sensehat',[],'VC',[],'Timestamp',[]);
+   D           = struct('Pup',[],'Opt',[],'Sensehat',[],'VC',[],'Timestamp',[],'Calibration',[]);
    D(datl).Pup = [];
 
    fn          = pb_fsplit(fn);
+   l           = dir([path filesep 'calibration_*.mat']);                  % Look for calibration data
    
    %% Get Data
    %  Convert Pupil & Optitrack data, synchronize and store.
@@ -28,11 +29,11 @@ function D = pb_convertdata(fn,varargin)
          pup.Data       = lsl_pupil_convert2soa(pup);
       end
 
-      opt            = dat(iSig).optitrack;
-      opt.Data       = lsl_optitrack_convert2soa(opt);
+      opt               = dat(iSig).optitrack;
+      opt.Data          = lsl_optitrack_convert2soa(opt);
       
-      event          = dat(iSig).event_data;
-      sensehat       = dat(iSig).sensehat;
+      event             = dat(iSig).event_data;
+      sensehat          = dat(iSig).sensehat;
 
       D(iSig).Pup       = pup;
       D(iSig).Opt       = opt;
@@ -46,6 +47,12 @@ function D = pb_convertdata(fn,varargin)
       % If no event data is being stored, event_data is not the right object type (lsl_data).
       if ~isempty(dat(iSig).event_data)
          D(iSig).Timestamp.Stim  = lsl_correct_lsl_timestamps(event);
+      end
+      
+      % If there is calibration data store it
+      if ~isempty(l)
+         cal                  = load([l(1).folder filesep l(1).name]);     % Load the calibration file if it is stored within the folder containing the block data
+         D(iSig).Calibration  = cal.Data;
       end
             
       dat(iSig).block_info.fn = fn;
