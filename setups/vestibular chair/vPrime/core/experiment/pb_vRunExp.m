@@ -30,8 +30,10 @@ function pb_vRunExp(handles)
    switch pb_fext(handles.cfg.expfname)
       case '.cal'
          Dat         = pb_calobj(nblocks);
+         cal         = true;
       case '.exp'
          Dat         = pb_dataobj(nblocks);
+         cal         = false;
    end
    
    %  initialize recordings
@@ -55,7 +57,7 @@ function pb_vRunExp(handles)
       pb_startPupil(rc);
       
       %  start vestibular chair
-      if ~ismac && ~debug   
+      if ~ismac && ~debug && ~cal
          
          % Start chair
          vs            	= pb_sendServo(profile);
@@ -98,7 +100,7 @@ function pb_vRunExp(handles)
       %  stop chair, pupil labs, optitrack and LSL, save data
       
       %  stop vestibular chair
-      if ~ismac && ~debug  
+      if ~ismac && ~debug && ~cal
          elapsedTime = toc(blockTime);                
          if elapsedTime < dur; pause(dur-floor(elapsedTime)+(4*pi)); end        % wait untill chair is finished running before disabling.
          pb_lightwarning;
