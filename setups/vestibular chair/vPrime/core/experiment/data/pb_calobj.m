@@ -14,7 +14,7 @@ classdef pb_calobj < handle
     end
 
     methods
-        function obj = pb_dataobj(n)
+        function obj = pb_calobj(n)
             % constructor            
             if nargin ~= 0 
                 if nargin < 1

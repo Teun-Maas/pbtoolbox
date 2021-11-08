@@ -57,7 +57,7 @@ function Data = pb_vPrepData(varargin)
    
    % store data
    if GV.epoch; Data = epoch_data(Data, GV); end                           % epoch data
-   if GV.store; save_data(Data,GV); end                                     % store data
+   if GV.store; save_data(Data,GV); end                                    % store data
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
@@ -90,12 +90,12 @@ function Data = train_calibration(Data,GV)
    
    % Prep calibration data
    calsz    = [length(Data.Calibration.block_info.trial) 2];
-   plx      = Data.Calibration.pupil_labs.Data(2,:);     % normposx
-   ply      = Data.Calibration.pupil_labs.Data(3,:);     % normposy
+   plx      = Data.Calibration.pupil_labs.Data(2,:);                       % normposx
+   ply      = Data.Calibration.pupil_labs.Data(3,:);                       % normposy
    
    ts_pup   = Data.Calibration.pupil_labs.Timestamps;
    ts_ed    = Data.Calibration.event_data.Timestamps;
-   ts_pup   = ts_pup - ts_ed(1);                         % synch with respect to event data
+   ts_pup   = ts_pup - ts_ed(1);                                           % synch with respect to event data
    ts_ed    = ts_ed - ts_ed(1);
    
    
@@ -120,14 +120,15 @@ function Data = train_calibration(Data,GV)
       % get targets from block info
       targets(iT,1) = Data.Calibration.block_info.trial(1).stim.azimuth;
       targets(iT,2) = Data.Calibration.block_info.trial(1).stim.elevation;
+      ntargets      = targtes./max(max(targets));
    end
       
-   % Train neural network N-FOLD
-   for iF = 1:length(inputs)
-      % DO SOMETHIGN HERE TO MAKE THE FUCKING NETWORK TRAIN HOERTJE
-      % THIS IS NOT FUCKING DONE, DONT FORGET TO CONTINUE HEREEEE.
-      % LOOK UP TRAINING SYNTAX TMP78.M or VOLTERRA TRAINING
-   end
+   % Train network
+   net = feedforwardnet(3); 
+   net = train(net,inputs',ntargets');
+   
+   % Store
+   Data.Calibration = net;
 end
 
 % Parsing functions
