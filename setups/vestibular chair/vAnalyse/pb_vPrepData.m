@@ -42,7 +42,7 @@ function Data = pb_vPrepData(varargin)
    disp(['>> Data loaded...' newline]);
    
    % Calibrate
-   if ~isfield(D,'Calibration')
+   if isfield(D,'Calibration')
          D  = train_calibration(D,GV);                                     % train calibration network
    end
    
@@ -89,12 +89,12 @@ function Data = train_calibration(Data,GV)
    if isempty(Data.Calibration); return; end % Check if data exists
    
    % Prep calibration data
-   calsz    = [length(Data.Calibration.block_info.trial) 2];
-   plx      = Data.Calibration.pupil_labs.Data(2,:);                       % normposx
-   ply      = Data.Calibration.pupil_labs.Data(3,:);                       % normposy
+   calsz    = [length(Data.Calibration.Data.block_info.trial) 2];
+   plx      = Data.Calibration.Data.pupil_labs.Data(2,:);                       % normposx
+   ply      = Data.Calibration.Data.pupil_labs.Data(3,:);                       % normposy
    
-   ts_pup   = Data.Calibration.pupil_labs.Timestamps;
-   ts_ed    = Data.Calibration.event_data.Timestamps;
+   ts_pup   = Data.Calibration.Data.pupil_labs.Timestamps;
+   ts_ed    = Data.Calibration.Data.event_data.Timestamps;
    ts_pup   = ts_pup - ts_ed(1);                                           % synch with respect to event data
    ts_ed    = ts_ed - ts_ed(1);
    
@@ -115,20 +115,22 @@ function Data = train_calibration(Data,GV)
       
       % Store inputs
       inputs(iT,1) = med_x;
-      inputs(iT,2) = imed_y;
+      inputs(iT,2) = med_y;
      
       % get targets from block info
-      targets(iT,1) = Data.Calibration.block_info.trial(1).stim.azimuth;
-      targets(iT,2) = Data.Calibration.block_info.trial(1).stim.elevation;
-      ntargets      = targtes./max(max(targets));
+      targets(iT,1) = Data.Calibration.Data.block_info.trial(iT).stim.azimuth;
+      targets(iT,2) = Data.Calibration.Data.block_info.trial(iT).stim.elevation;
    end
+   
+   Data.Calibration.scaler = max(max(targets));
+   ntargets                = targets ./ Data.Calibration.scaler;
       
    % Train network
-   net = feedforwardnet(3); 
-   net = train(net,inputs',ntargets');
+   net = feedforwardnet(3);               % Train network with 3 hidden units 
+   net = train(net,inputs',ntargets');    % Note the orientation for neural network inputs/outputs
    
-   % Store
-   Data.Calibration = net;
+   % Store nn
+   Data.Calibration.Net = net;
 end
 
 % Parsing functions
@@ -146,9 +148,9 @@ function [P,GV] = getdata(Data, T, GV)
 
       % store timestamps
       P(iB).pupillabs            = getpupil(Data(iB), T(iB), pup_idx, GV);
-      P(iB).pupilometry          = getdilation(Data(iB), T(iB), pup_idx, GV);
+      P(iB).pupilometry          = getdilation(Data(iB), GV);
       P(iB).optitrack            = getopti(Data(iB), opt_idx,GV);
-      P(iB).gaze                 = computegaze(Data(iB), T(iB), opt_idx, pup_idx, GV);
+      P(iB).gaze                 = computegaze(P,Data(iB), T(iB), opt_idx, pup_idx, GV);
       P(iB).chair                = [];
       P(iB).block_idx            = block;
       
@@ -161,26 +163,31 @@ function [pup_idx, opt_idx] = get_fixation_idx(block_data,block_time)
    % Function will read, filter, and interpolate eye traces
    
    % optitrack
-   qw   	= block_data.Opt.Data.qw; 
-   qx   	= block_data.Opt.Data.qx; 
-   qy   	= block_data.Opt.Data.qy; 
-   qz   	= block_data.Opt.Data.qz;
-   q   	= quaternion(qw,qx,qy,qz);
+   qw          = block_data.Opt.Data.qw; 
+   qx          = block_data.Opt.Data.qx; 
+   qy          = block_data.Opt.Data.qy; 
+   qz          = block_data.Opt.Data.qz;
+   q           = quaternion(qw,qx,qy,qz);
+   azel_head   = convert_quat2azel(q);
    
    % pupillabs
-   x     = block_data.Pup.Data.gaze_normal_3d(:,1);
-   y     = block_data.Pup.Data.gaze_normal_3d(:,2);
-   z     = block_data.Pup.Data.gaze_normal_3d(:,3);
+   if isfield(block_data,'Calibration')
+      if ~isempty(block_data.Calibration.Net)
+         azel_eye    = mapeye_norm2azel(block_data);
+      end
+   else
+      x           = block_data.Pup.Data.gaze_normal_3d(:,1);
+      y           = block_data.Pup.Data.gaze_normal_3d(:,2);
+      z           = block_data.Pup.Data.gaze_normal_3d(:,3);
+      
+      azel_eye    = convert_xyz2azel(x,y,z);
+   end
    
-   % azel
-   azel_opt       = quat2azelAnnemiek(q);                                  %% FIX THIS SHITT ITS NOT IN YOUR TOOLBOX!
-   azel_eye       = -VCxyz2azel(x,y,z);                                    %% FIX THIS SHITT ITS NOT IN YOUR TOOLBOX!
-
    % graph
    cfn = pb_newfig(231);
    hold on;
 
-   plot(block_time.optitrack - block_time.optitrack(1), azel_opt - azel_opt(1,1));
+   plot(block_time.optitrack - block_time.optitrack(1), azel_head - azel_head(1,1));
    plot(block_time.pupillabs - block_time.optitrack(1), azel_eye - azel_eye(1,:));
    
    legend('Head azimuth','Head elevation','Eye azimuth','Eye elevation')
@@ -188,12 +195,49 @@ function [pup_idx, opt_idx] = get_fixation_idx(block_data,block_time)
    ylim([-50 50])
    pb_nicegraph;
    
-   [input_x,~] = ginput(1);
+   [input_x,~]    = ginput(1);
 
-   [~, pup_idx] = min(abs(block_time.pupillabs - block_time.optitrack(1) - input_x));
-   [~, opt_idx] = min(abs(block_time.optitrack - block_time.optitrack(1) - input_x));
+   [~, pup_idx]   = min(abs(block_time.pupillabs - block_time.optitrack(1) - input_x));
+   [~, opt_idx]   = min(abs(block_time.optitrack - block_time.optitrack(1) - input_x));
    
    close(cfn);
+end
+
+function azel = mapeye_norm2azel(block_data)
+   % This function takes the input norm data and converts it to azel using
+   % neural network and scaler.
+
+      % Input
+      normx             = block_data.Pup.Data(2,:);
+      normy             = block_data.Pup.Data(3,:);
+
+      % Simulate network
+      net               = block_data.Calibration.Net;
+      azel              = sim(net,[normx; normy])';                        % NOTE, FLIP BACK ORIENTATION
+      azel              = azel .* block_data.Calibration.scaler;           % Scale back for normalization
+end
+
+function azel   = convert_xyz2azel(x,y,z)
+   % Convert xyz 2 azel
+
+   RTD = 180/pi;
+   azel = zeros(length(x),2);
+
+   p   = sqrt(x.*x + z.*z);
+   azel(:,1) = RTD * atan2 (x, sqrt (y.^2 + z.^2));
+   azel(:,2) = RTD * atan2(y,z);
+end
+
+function azel = convert_quat2azel(q)
+   % convert quaternions 2 xyz 2 azel
+
+   vp    = RotateVector(q,[0 0 1]',1);
+
+   y     = vp(2,:);
+   z     = vp(3,:);
+   x     = vp(1,:);
+
+   azel  = convert_xyz2azel(x,y,z);
 end
 
 function trace = getpupil(block_data,block_time,idx,GV)
@@ -203,27 +247,20 @@ function trace = getpupil(block_data,block_time,idx,GV)
       
       % check if calibration data is added to field
       if ~isempty(block_data.Calibration)    
-         trace = calibrate_pupil_position(block_data,block_time,idx,GV);
+         trace = mapeye_norm2azel(block_data);
       else
-         trace = compute_pupil_position(block_data,block_time,idx,GV);
+         trace = compute_pupil_position(block_data,block_time,idx);
       end
          
    else % If there is no calibration data
-      trace = compute_pupil_position(block_data,block_time,idx,GV); % old method
+      trace    = compute_pupil_position(block_data,block_time,idx); % old method
    end
    
    trace       = filter_trace(trace,GV);
 end
 
+function trace = compute_pupil_position(block_data,block_time,idx)
 
-function trace = calibrate_pupil_position(block_data,block_time,idx,GV)
-   trace = [];
-   
-   for iT = 1:length(block_data.stimuli)
-
-end
-
-function trace = compute_pupil_position(block_data,block_time,idx,GV)
       % compute offset
       normv    = block_data.Pup.Data.gaze_normal_3d(idx:idx+20,:);
       normv    = median(normv);
@@ -246,10 +283,10 @@ function trace = compute_pupil_position(block_data,block_time,idx,GV)
       gaze_normalsrotOpt(:,3)    = interp1(block_time.pupillabs, gaze_normalsrot(:,3), block_time.optitrack,'pchip');
 
       qEye        = quaternion.rotateutov([0 0 1]',gaze_normalsrotOpt',1,1);
-      trace       = -quat2azelAnnemiek(qEye);                                 %% FIX THIS SHITT ITS NOT IN YOUR TOOLBOX!
+      trace       = -convert_quat2azel(qEye);
 end
 
-function trace = getdilation(block_data,block_time,idx,GV)
+function trace = getdilation(block_data,GV)
    % Function will read, filter, and interpolate eye traces
    
    % PREPROCESSING  Collects pupil traces from the raw data set and
@@ -260,6 +297,8 @@ function trace = getdilation(block_data,block_time,idx,GV)
    %                data. This is not covered in this workshop.
    % MOVING AVE     Moving average filter for smoothing data.
    % AVERAGING      Average over all traces is calculated.
+   
+   if isfield(block_data,'Calibration'); trace = []; return; end
    
    % 1. Preprocessing
    raw_diameter     = block_data.Pup.Data.base_data.diameter_3d;
@@ -310,12 +349,19 @@ function trace = getopti(block_data,idx,GV)
    qRot        = q(idx);                        % compute offset
    
    % convert to azel
-   trace       = -quat2azelAnnemiek(q*qRot');   
+   trace       = -convert_quat2azel(q*qRot');   
    trace       = filter_trace(trace,GV);
 end
 
-function trace = computegaze(block_data, block_time, opt_idx, pup_idx, GV)
+function trace = computegaze(P,block_data, block_time, opt_idx, pup_idx, GV)
    % Function will compute gaze 
+   
+   % if data already exists                                                % THIS IS FALSE, IT DOES NOT TAKE INTO ACCOUNT
+                                                                           % THE OFFSET. INSTEAD USE NEW P.OPTITRACK TO COMPUTE 
+   if isfield(block_data,'Calibration')
+      trace = P.pupillabs + P.optitrack;
+      return
+   end
    
    % Head
    q           = quaternion(block_data.Opt.Data.qw, block_data.Opt.Data.qx, block_data.Opt.Data.qy, block_data.Opt.Data.qz);
@@ -371,10 +417,12 @@ function trace = computegaze(block_data, block_time, opt_idx, pup_idx, GV)
    
    switch GV.gaze_method
       case 'new'
-         trace       = -quat2azelAnnemiek(qHead.*qEye);                       % Simpele manier om gaze te bepalen, quaternion multiplicatie dus puur beide rotaties combineren
+         trace       = -convert_quat2azel(qHead.*qEye);                       % Simpele manier om gaze te bepalen, quaternion multiplicatie dus puur beide rotaties combineren
       otherwise
-         trace       = -VCxyz2azel(PGnorms(1,:),PGnorms(2,:),PGnorms(3,:));   % Oude manier om gaze te bepalen, incl translaties
+         trace       = -convert_xyz2azel(PGnorms(1,:),PGnorms(2,:),PGnorms(3,:));   % Oude manier om gaze te bepalen, incl translaties
    end
+   
+   
 end
 
 function trace = filter_trace(trace,GV)
@@ -483,13 +531,23 @@ function T = gettimestamps(Data,GV)
          
       % correct pupil labs
       lsl_tsPupRaw         = Data(block).Timestamp.Pup;
-      lsl_tsPup            = Data(block).Pup.Data.timestamp' - Data(block).Pup.Data.timestamp(6) + lsl_tsPupRaw(6);
+      
+      if iscell(Data.Pup.Data)
+         lsl_tsPup            = Data(block).Pup.Data.timestamp' - Data(block).Pup.Data.timestamp(6) + lsl_tsPupRaw(6);
+      else
+         lsl_tsPup            = Data(block).Pup.Timestamps - Data(block).Pup.Timestamps(6) + lsl_tsPupRaw(6);
+      end
+      
       diffs                = abs(lsl_tsPup-lsl_tsPupRaw);
       lsl_tsPup(diffs>10)  = lsl_tsPupRaw(diffs>10);
 
       % store timestamps
       T(iB).pupillabs            = lsl_tsPup;
-      T(iB).optitrack            = Data(block).Timestamp.Opt;
+      if ~isempty(Data(block).Opt)
+         T(iB).optitrack            = Data(block).Timestamp.Opt;
+      else
+         T(iB).optitrack         = lsl_tsPup;
+      end
       T(iB).stimuli              = Data(block).Timestamp.Stim;
       T(iB).chair                = [];
       T(iB).block_idx            = block;
@@ -550,33 +608,41 @@ function [T,P] = getchair(Data, T, P, GV)
       tsSense           = lsl_tsSense - correctie;                       	% Set ts(1) = 0
       tsVestibular    	= (0:length(vestibular_posD)-1)/fs;                % Create VC timestamps (0:0.1:Nx)
       
-      % interpolate data
-      if isempty(vestibular_posD)
-         vestibular_posD   = Data(block).VC.pv.vertical;
-         tsVestibular      = (0:length(vestibular_posD)-1)/fs;
-         vestibular_posDI  = interp1(tsVestibular, vestibular_posD, tsSense, 'pchip');
-         tsVestibularI     = tsSense;
+      if strcmp(Data.Block_Info.signal.ver.type,'none')
+         
+         T(iB).chair = tsSense;
+         P(iB).chair = zeros(size(tsSense))';
+         
       else
-         vestibular_posDI  = interp1(tsVestibular, vestibular_posD, tsSense, 'pchip');
-         tsVestibularI     = tsSense;
-      end
-      
-      % clip extrapolation
-      inds                    = find(tsVestibularI >= max(tsVestibular));        % find index extrapolated values
-      vestibular_posDI(inds)  = [];
-      tsVestibularI(inds)     = [];
-      
-      %  XCorr synchronization
-      fsPup          = length(tsVestibularI)/tsVestibularI(end);
-      [r,lag]        = xcorr(vestibular_posDI, sensehat_posD);
-      [~,I]          = max(abs(r));
-      lagDiff        = lag(I)/fsPup;
-      tsVestibularI  = tsVestibularI - lagDiff;  
+         
+         % interpolate data
+         if isempty(vestibular_posD)
+            vestibular_posD   = Data(block).VC.pv.vertical;
+            tsVestibular      = (0:length(vestibular_posD)-1)/fs;
+            vestibular_posDI  = interp1(tsVestibular, vestibular_posD, tsSense, 'pchip');
+            tsVestibularI     = tsSense;
+         else
+            vestibular_posDI  = interp1(tsVestibular, vestibular_posD, tsSense, 'pchip');
+            tsVestibularI     = tsSense;
+         end
 
-      % store data
-      P(iB).chair                = vestibular_posDI;
-      T(iB).chair                = tsVestibularI;
-      
+         % clip extrapolation
+         inds                    = find(tsVestibularI >= max(tsVestibular));        % find index extrapolated values
+         vestibular_posDI(inds)  = [];
+         tsVestibularI(inds)     = [];
+
+         % XCorr synchronization
+         fsPup          = length(tsVestibularI)/tsVestibularI(end);
+         [r,lag]        = xcorr(vestibular_posDI, sensehat_posD);
+         [~,I]          = max(abs(r));
+         lagDiff        = lag(I) / fsPup;
+         tsVestibularI  = tsVestibularI - lagDiff;  
+         
+         % store data
+         P(iB).chair                = vestibular_posDI;
+         T(iB).chair                = tsVestibularI;
+      end
+
       disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.block_idx)) ')']);
    end
    disp(newline)
@@ -677,11 +743,11 @@ function Data = epoch_data(Data,GV)
       % This part will correct all 90 azimuth angles to stimulus onset
       % chair fixed reference frames
       
-      Data = correct_world_fixed_azimuth(Data,GV);
+      Data = correct_world_fixed_azimuth(Data );
    end
 end
 
-function Data = correct_world_fixed_azimuth(Data,GV)
+function Data = correct_world_fixed_azimuth(Data)
    % this function will magically transform the azimuth position of world
    % fixed stimuli into a chair based reference frame at stimulus onset.
 
@@ -699,8 +765,7 @@ function Data = correct_world_fixed_azimuth(Data,GV)
             % select
             stim_onset_idx                = (iS-1)*360+1;                                    % stimulus onset idx in epoch data
             chair_at_stim_onset           = Data.epoch(iB).AzChairEpoched(stim_onset_idx);   % get chair position
-            Data.stimuli(iB).azimuth(iS)  = -(chair_at_stim_onset);                            % flip the script, brothaaa (- is + en + is -)
-
+            Data.stimuli(iB).azimuth(iS)  = -(chair_at_stim_onset);                         	% flip the script, brothaaa (- is + en + is -)
          end
       end
    end
@@ -708,7 +773,9 @@ end
 
 function save_data(Data, GV)
    % stores the preprocessed data
-   fn = strrep(GV.fn,'converted_data_','');
-   fpath = fullfile(cd);
+
+   fn       = strrep(GV.fn,'converted_data_','');
+   fpath    = fullfile(cd);
+   
    save([fpath filesep 'preprocessed_data_' fn],'Data')
 end
