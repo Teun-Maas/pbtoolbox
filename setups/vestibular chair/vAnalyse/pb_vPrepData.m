@@ -126,8 +126,8 @@ function Data = train_calibration(Data,GV)
    ntargets                = targets ./ Data.Calibration.scaler;
       
    % Train network
-   net = feedforwardnet(3);               % Train network with 3 hidden units 
-   net = train(net,inputs',ntargets');    % Note the orientation for neural network inputs/outputs
+   net = feedforwardnet(3);                  % Train network with 3 hidden units 
+   net = train(net,inputs',ntargets');       % Note the orientation for neural network inputs/outputs
    
    % Store nn
    Data.Calibration.Net = net;
@@ -306,7 +306,7 @@ function trace = getdilation(block_data,GV)
    diameter_filt  = raw_diameter;
    
    % find blinks
-   blinks_zero             = find(raw_diameter==0);
+   blinks_zero             = raw_diameter==0;
    diametersz              = size(raw_diameter);
    diameterl               = length(raw_diameter);
    blink_bool              = false(diametersz);

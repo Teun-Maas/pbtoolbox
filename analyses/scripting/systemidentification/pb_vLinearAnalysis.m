@@ -9,6 +9,8 @@
 %  Load and merge data
 
 %  Clean
+
+%cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/200504/06Hz');
 cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/210525/125Hz');
 
 l = dir([cd filesep 'normalised' filesep '*.mat']);
