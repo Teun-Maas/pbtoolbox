@@ -17,10 +17,8 @@ function obj = read_network(obj)
    obj.netpar.ninput                = input;
    obj.netpar.activation_function   = net.layers{1}.transferFcn;
    
-   %obj.process.input                = net.inputs{1}.processSettings{1};
-   %obj.process.output               = net.outputs{2}.processSettings{1};
 end
- 
+%  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %

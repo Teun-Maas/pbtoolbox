@@ -5,7 +5,6 @@ classdef pb_volterra < matlab.mixin.Copyable
    
    properties (GetAccess = public, SetAccess = public)
       feedforwardnet
-      model
       kernels
    end
    
@@ -43,16 +42,16 @@ classdef pb_volterra < matlab.mixin.Copyable
             
             %  Constructor functions
             obj = read_network(obj);
-            obj = set_normalisation(obj,'mapminmax');
+            obj = set_normalisation(obj);
             obj = compute_polynomial_coefficients(obj);
          end
       end
-      obj = set_normalisation(obj,method);
+      obj = set_normalisation(obj,varargin);
       obj = set_polynomial_method(obj,poly_method);  
       obj = compute_polynomial_coefficients(obj);
       obj = compute_volterra_kernels(obj,order);
       obj = update_kernels(obj,nets);
-      obj = predict_volterra_series(obj,input);
+      y  = predict_volterra_series(obj,input);
       obj = compare(obj,input,output);
    end
    

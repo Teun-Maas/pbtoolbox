@@ -1,4 +1,4 @@
-function obj = predict_volterra_series(obj,input)
+function y = predict_volterra_series(obj,input)
 % SET_POLYNOMIAL_METHOD()
 %
 % SET_POLYNOMIAL_METHOD()  ...
@@ -8,24 +8,25 @@ function obj = predict_volterra_series(obj,input)
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
    
    N        = length(obj.kernels);
-   DELAYS   = obj.netpar.ninput;
+   DELAYS   = obj.netpar.ninput - 1;
 
    % Get data parameters
    xlen     = length(input);
-   %range    = 1:DELAYS;
    t        = DELAYS:length(input)-1;
 
-   %  Preprocess: apply normalise input data
-   if strcmp(obj.process.normalisation,'mapminmax')
-      input      = pb_mapminmax(input,'mapx',obj.process.x.mapx);
-   end
-
-   y = zeros(1,length(input)-DELAYS);% + obj.kernels(1).kernel; % Pre-allocate output
+   %  pre-post processing: apply and reverse normalise to input and output data
+   preprocess  = obj.process.normalisation.input;
+   postprocess = obj.process.normalisation.output;
+   
+   input = preprocess(input);
+   y     = zeros(1,length(input)-DELAYS);      % Pre-allocate output // NOTE: Should I add the h0 kernel?
+   
+   
    for iS = 1:length(input)-DELAYS
       
       %  Prep your sample memory
-      current  = iS+DELAYS-1;
-      range    = current-DELAYS+1:current;
+      current  = iS+DELAYS;
+      range    = current-DELAYS:current;
       xin      = fliplr(input(range));  % relevant x's
       
       if N >= 2 
@@ -113,13 +114,7 @@ function obj = predict_volterra_series(obj,input)
       end
    end
    
-   %  Postprocess: reverse normalization
-   if strcmp(obj.process.normalisation,'mapminmax')
-      y = pb_mapminmax(y,'mapx',obj.process.y.mapx,'direction','reverse');
-   end
-   
-   obj.model.y = y;
-   obj.model.t = t;
+   y = postprocess(y);
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

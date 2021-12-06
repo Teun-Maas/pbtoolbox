@@ -10,8 +10,8 @@
 
 %  Clean
 
-%cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/200504/06Hz');
-cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/210525/125Hz');
+cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/200504/06Hz');
+%cfn = pb_clean('cd','/Users/jjheckman/Desktop/PhD/Data/Chapter 1/noise/210525/125Hz');
 
 l = dir([cd filesep 'normalised' filesep '*.mat']);
 
@@ -19,7 +19,7 @@ l = dir([cd filesep 'normalised' filesep '*.mat']);
 load([l(end).folder filesep l(end).name]);
 
 % Add extra globals
-Data.GV.MAX_POLES    = 4;
+Data.GV.MAX_POLES    = 3;
 Data.GV.MAX_ZEROES   = Data.GV.MAX_POLES-1;
 iodelay              = 0;
 
@@ -202,3 +202,15 @@ pb_nicegraph;
 legend('$h_{10}(\tau)$','$h_{21}(\tau)$')
 xlabel('$\tau$')
 ylabel('$A.U.$');
+
+
+
+%% Bode plot
+
+for iM = 1:3
+   
+   cfn = pb_newfig(cfn);
+   bode(Data.models(iM).sys);
+   pb_nicegraph;
+   
+end

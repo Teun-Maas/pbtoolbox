@@ -1,4 +1,4 @@
-function obj = set_normalisation(obj,method)
+function obj = set_normalisation(obj,varargin)
 % SET_NORMALISATION
 %
 % SET_NORMALISATION(OBJ,METHOD) sets normalisation method for pre and
@@ -8,14 +8,13 @@ function obj = set_normalisation(obj,method)
 
 % PBToolbox (2020): JJH: j.heckman@donders.ru.nl
 
-   switch method
-      case 'mapminmax'
-         method = 'mapminmax';
-      otherwise
-         method = 'none';
-   end
-
-   obj.process.normalisation = method;
+   input       = pb_keyval('input',varargin, @(x)x);           % no normalisation
+   output      = pb_keyval('output',varargin, @(x)x);
+   
+   if output(10)<10; output = matlabFunction(finverse(sym(output))); end
+   
+   obj.process.normalisation.input     = input;
+   obj.process.normalisation.output    = output;
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
