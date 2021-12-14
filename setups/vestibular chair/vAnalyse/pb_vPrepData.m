@@ -122,7 +122,7 @@ function Data = train_calibration(Data,GV)
       targets(iT,2) = Data.Calibration.Data.block_info.trial(iT).stim.elevation;
    end
    
-   Data.Calibration.scaler = max(max(targets));
+   Data.Calibration.scaler = max(max(abs(targets)));
    ntargets                = targets ./ Data.Calibration.scaler;
       
    % Train network

@@ -9,23 +9,28 @@ function [ses,str,meta] = pb_runLSL(varargin)
 
 % check if all streams are necesary
 
-   de = pb_keyval('de', varargin, true);
+
    pl = pb_keyval('pl', varargin, true);
    ot = pb_keyval('ot', varargin, true);
    sh = pb_keyval('sh', varargin, true);
+   di = pb_keyval('di', varargin, true);
+   do = pb_keyval('do', varargin, true);
+      
    
    tmp      = {};
    meta     = [];
    
-   streams  = {'type=''Digital Events @ lslder01'' and name=''Digital Events 0''', ...
-               'type=''Pupil Gaze @ dcn-pl02'' and name= ''Pupil Capture LSL Relay v2''', ...
+   streams  = {'type=''Pupil Gaze @ dcn-pl02'' and name= ''Pupil Capture LSL Relay v2''', ...
                'type=''OptiTrack Mocap @ DCN-OT01'' and name=''Rigid Bodies''', ...
-               'type=''IMU Pose @ raspi-gw'' and name=''IMU Pose'''};
+               'type=''IMU Pose @ raspi-gw'' and name=''IMU Pose''',...
+               'type=''Digital Events @ lslder01'' and name=''Digital Events 0''', ...
+               'type=''Digital Events @ lslder01'' and name=''Digital Events 7'''};
    
-   if de; tmp(end+1) = streams(1); end
-   if pl; tmp(end+1) = streams(2); end 
-   if ot; tmp(end+1) = streams(3); end
-   if sh; tmp(end+1) = streams(4); end
+   if pl; tmp(end+1) = streams(1); end 
+   if ot; tmp(end+1) = streams(2); end
+   if sh; tmp(end+1) = streams(3); end
+   if di; tmp(end+1) = streams(4); end
+   if do; tmp(end+1) = streams(5); end
    
    streams = tmp;
    clear tmp;
@@ -55,10 +60,12 @@ function [ses,str,meta] = pb_runLSL(varargin)
    end
    
    c = 1;
-   if de; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
+   
    if pl; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
    if ot; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
-   if sh; addlistener(str(c),'DataAvailable', @listener); end
+   if sh; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
+   if di; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
+   if do; addlistener(str(c),'DataAvailable', @listener); c = c+1; end
 end
 
 function listener(~, event)
