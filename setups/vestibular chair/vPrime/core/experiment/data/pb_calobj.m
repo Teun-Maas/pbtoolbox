@@ -8,8 +8,9 @@ classdef pb_calobj < handle
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
     
     properties (Access=public)
-       event_data          = [];
        pupil_labs          = [];
+       event_in            = [];
+       event_out           = [];
        block_info          = [];
     end
 

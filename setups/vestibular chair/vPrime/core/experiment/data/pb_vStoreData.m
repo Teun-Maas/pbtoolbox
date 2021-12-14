@@ -13,20 +13,22 @@ function pb_vStoreData(h, dat, bn, str,meta_pup)
       case '.cal'
          
          % Write calibration data
-         dat(bn).event_data    = str(1).read;
-         dat(bn).pupil_labs    = str(2).read;
-         dat(bn).block_info    = h.block(bn);
+         dat(bn).pupil_labs      = str(1).read;
+         dat(bn).event_in        = str(4).read;
+         dat(bn).event_out       = str(5).read;
+         dat(bn).block_info      = h.block(bn);
          
          prefix = 'calibration_';
 
       case '.exp'
          
          % Write experimental data
-         dat(bn).event_data    = str(1).read;
-         dat(bn).pupil_labs    = str(2).read;
-         dat(bn).optitrack     = str(3).read;
-         dat(bn).sensehat      = str(4).read;
-         dat(bn).block_info    = h.block(bn);
+         dat(bn).pupil_labs      = str(1).read;
+         dat(bn).optitrack       = str(2).read;
+         dat(bn).sensehat        = str(3).read;
+         dat(bn).event_in        = str(4).read;
+         dat(bn).event_out       = str(5).read;
+         dat(bn).block_info      = h.block(bn);
 
          % store the meta data
          dat(bn).meta_pup      = meta_pup;

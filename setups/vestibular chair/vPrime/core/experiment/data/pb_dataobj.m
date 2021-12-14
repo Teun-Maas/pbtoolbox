@@ -9,10 +9,11 @@ classdef pb_dataobj < handle
     
     properties (Access=public)
        vestibular_signal   = [];
-       event_data          = [];
        pupil_labs          = [];
        optitrack           = [];
        sensehat            = [];
+       event_in            = [];
+       event_out           = [];
        block_info          = [];
        meta_pup            = [];
     end
