@@ -37,7 +37,10 @@ classdef pb_dataobj < handle
         function dump(this)
             % DUMP - show the content of the internal variables
             this.vestibular_signal
-            this.event_data
+            this.event_in
+            this.event_out
+            this.sensehat
+            this.optitrack
             this.pupil_labs 
             this.block_info
         end
