@@ -59,7 +59,7 @@ function pb_vRunExp(handles)
          pb_startServo(vs);
       end
       
-         pb_swinglight;       % Central fixation light during in-swing
+      pb_swinglight;       % Central fixation light during in-swing
 
       %% RUN TRIALS
       %  iterate over trials per block
