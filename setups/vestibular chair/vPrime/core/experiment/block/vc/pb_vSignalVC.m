@@ -1,4 +1,4 @@
-function [profile,dur] = pb_vSignalVC(handles)
+function [profile,dur,bool_mov] = pb_vSignalVC(handles)
 % PB_VSIGNALVC
 %
 % PB_VSIGNALVC(handles) reads vestibular signal from handles, writes
@@ -8,15 +8,12 @@ function [profile,dur] = pb_vSignalVC(handles)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-   %% INITIALIZE 
-   %  Selects relevant handles
    
+   %  Selects relevant handles
    block       = handles.block;
    bnumber     = handles.cfg.blocknumber;
    
-   %% SIGNALS
-   %  Creates safe vestibular signals.
-   
+   %  Creates safe vestibular signals.   
    %  Read & create signals
    signal      = pb_vBuildSignal(block(bnumber).signal);  
    signal      = pb_vSafety(signal); 
@@ -37,13 +34,14 @@ function [profile,dur] = pb_vSignalVC(handles)
    [hSafe,~]      = pb_vCheckVelSignal(profile.h);
    [vSafe,~]      = pb_vCheckVelSignal(profile.v);
    
-   if ~hSafe || ~vSafe || strcmp(signal(2).type,'vor') || strcmp(signal(2).type,'turn') % FORBIDDEN WITH HORIZONTAL AXIS
+   if ~hSafe || ~vSafe || strcmp(signal(2).type,'vor') || strcmp(signal(2).type,'turn')      % FORBIDDEN WITH HORIZONTAL AXIS
       error('Vestibular signals were not safe!');
    end
    
-   %% FEEDBACK GUI
-   %  interacts with GUI for feedback
+   % Will chair move?
+   bool_mov = any(profile.h) | any(profile.v);
    
+   %  interacts with GUI for feedback  
    updateBlock(handles, signal);
 
    handles  = pb_gethandles(handles);

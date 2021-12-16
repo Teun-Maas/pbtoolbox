@@ -14,7 +14,7 @@ function pb_vRunExp(handles)
    %  load & read experiment
    
    %  set debug mode
-   debug = false;
+   bool_debug = false;
    
    %  set handles
    pb_setupShow(handles);
@@ -30,10 +30,10 @@ function pb_vRunExp(handles)
    switch pb_fext(handles.cfg.expfname)
       case '.cal'
          Dat         = pb_calobj(nblocks);
-         cal         = true;
+         bool_cal         = true;
       case '.exp'
          Dat         = pb_dataobj(nblocks);
-         cal         = false;
+         bool_cal         = false;
    end
    
    %  initialize recordings
@@ -47,17 +47,17 @@ function pb_vRunExp(handles)
    for iBlck = 1:nblocks
       
       %  set block information
-      nTrials          	= length(block(iBlck).trial);
-      handles          	= pb_updatecount(handles,'trial','reset');
-      [profile,dur]    	= pb_vSignalVC(handles);
-      pb_vCheckServo(~ismac && ~debug);
+      nTrials                    = length(block(iBlck).trial);
+      handles                    = pb_updatecount(handles,'trial','reset');
+      [profile,dur,bool_mov]    	= pb_vSignalVC(handles);
+      pb_vCheckServo(~bool_debug );
       
       %  start recording
       pb_startLSL(ses);
       pb_startPupil(rc);
       
       %  start vestibular chair
-      if ~ismac && ~debug && ~cal
+      if ~bool_debug && ~bool_cal && bool_mov
          
          % Start chair
          vs            	= pb_sendServo(profile);
@@ -100,7 +100,7 @@ function pb_vRunExp(handles)
       %  stop chair, pupil labs, optitrack and LSL, save data
       
       %  stop vestibular chair
-      if ~ismac && ~debug && ~cal
+      if ~bool_debug && ~bool_cal && bool_mov
          elapsedTime = toc(blockTime);                
          if elapsedTime < dur; pause(dur-floor(elapsedTime)+(4*pi)); end        % wait untill chair is finished running before disabling.
          pb_lightwarning;
