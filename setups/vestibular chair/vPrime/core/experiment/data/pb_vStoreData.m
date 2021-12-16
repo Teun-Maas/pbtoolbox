@@ -40,6 +40,8 @@ function pb_vStoreData(h, dat, bn, str,meta_pup)
    [~,fn]      = pb_fext(cfg.fname);
    file        = [cfg.dname filesep prefix fn '.mat'];
    save(file, 'dat');
+   
+   evalin('base','dat'); % open data
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
