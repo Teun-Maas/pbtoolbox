@@ -10,7 +10,7 @@ function pb_swinglight
    seq1  = [0 1 2 5 6];
    [leds,s] = pb_fixled('led',seq1);
    leds.trigger;
-   pause(4*pi);            % allow vestibular chair to get in sync with input signal
+   pause(1.5*pi);            % allow vestibular chair to get in sync with input signal
    leds.trigger;
    pb_delobj(leds, s);
 end
