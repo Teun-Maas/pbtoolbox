@@ -8,7 +8,6 @@ function rc = pb_startPupil(rc)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
 
-    rc.time_sync(0.0);
     rc.start_recording;
 end
  

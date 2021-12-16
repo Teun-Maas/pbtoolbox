@@ -24,22 +24,14 @@ function pb_vRunExp(handles)
    handles     = pb_vInitialize(handles, true);
    
    %  set block information
-   block       = handles.block;  
-   nblocks     = handles.cfg.Blocks;
-   
-   switch pb_fext(handles.cfg.expfname)
-      case '.cal'
-         Dat         = pb_calobj(nblocks);
-         bool_cal         = true;
-      case '.exp'
-         Dat         = pb_dataobj(nblocks);
-         bool_cal         = false;
-   end
+   block             = handles.block;  
+   nblocks           = handles.cfg.Blocks;
+   [Dat,bool_cal]    = pb_setexp(handles);
    
    %  initialize recordings
    rc                      = pb_runPupil; 
-   [ses,str, meta_pup]     = pb_runLSL;         % meta_pup
-   expTime                 = tic;
+   [ses,str, meta_pup]     = pb_runLSL;
+   exptime                 = tic;
    
    %% START BLOCK 
    %  iterate experimental blocks 
@@ -50,7 +42,7 @@ function pb_vRunExp(handles)
       nTrials                    = length(block(iBlck).trial);
       handles                    = pb_updatecount(handles,'trial','reset');
       [profile,dur,bool_mov]    	= pb_vSignalVC(handles);
-      pb_vCheckServo(~bool_debug );
+      pb_vCheckServo(~bool_debug);
       
       %  start recording
       pb_startLSL(ses);
@@ -61,17 +53,11 @@ function pb_vRunExp(handles)
          
          % Start chair
          vs            	= pb_sendServo(profile);
-         blockTime    	= tic; 
+         blocktime    	= tic; 
+         
          pb_lightwarning;
          pb_startServo(vs);
-         
-         % Central fixation light during in-swing
-         seq1  = [0 1 2 5 6];
-         [leds,s] = pb_fixled('led',seq1);
-         leds.trigger;
-         pause(4*pi);            % allow vestibular chair to get in sync with input signal
-         leds.trigger;
-         pb_delobj(leds, s);
+         pb_swinglight;       % Central fixation light during in-swing
       end
 
       %% RUN TRIALS
@@ -101,8 +87,8 @@ function pb_vRunExp(handles)
       
       %  stop vestibular chair
       if ~bool_debug && ~bool_cal && bool_mov
-         elapsedTime = toc(blockTime);                
-         if elapsedTime < dur; pause(dur-floor(elapsedTime)+(4*pi)); end        % wait untill chair is finished running before disabling.
+         elapsedtime = toc(blocktime);                
+         if elapsedtime < dur; pause(dur-floor(elapsedtime)+(4*pi)); end        % wait untill chair is finished running before disabling.
          pb_lightwarning;
          pb_stopServo(vs);
          Dat(iBlck) = pb_readServo(vs, Dat(iBlck));
@@ -127,7 +113,7 @@ function pb_vRunExp(handles)
    pb_vEndExp;
    pb_vInitialize(handles, false);
    pb_delobj(ses, rc, str);
-   toc(expTime);
+   toc(exptime);
 end
 
 
