@@ -44,8 +44,7 @@ function Data = pb_vPrepData(varargin)
    % Calibrate
    if isfield(D,'Calibration')
          D  = train_calibration(D,GV);                                     % train calibration network
-   end
-   
+   end 
    
    % parse data
    GV       = readkeyval(D,GV);                                            % convert some GV inputs
@@ -86,51 +85,134 @@ function Data = train_calibration(Data,GV)
 % This will train neural network to map pupillabs norm position to real
 % world azimuth/elevation values.
 
-   if isempty(Data.Calibration); return; end % Check if data exists
+   DEBUG = true;
+
+   Cal = Data(1).Calibration.Data;
+
+   if isempty(Cal); return; end % Check if data exists
    
    % Prep calibration data
-   calsz    = [length(Data.Calibration.Data.block_info.trial) 2];
-   plx      = Data.Calibration.Data.pupil_labs.Data(2,:);                       % normposx
-   ply      = Data.Calibration.Data.pupil_labs.Data(3,:);                       % normposy
+   calsz    = [length(Cal.block_info.trial) 2];
+   plx      = Cal.pupil_labs.Data(2,:);                       % normposx
+   ply      = Cal.pupil_labs.Data(3,:);                       % normposy
    
-   ts_pup   = Data.Calibration.Data.pupil_labs.Timestamps;
-   ts_ed    = Data.Calibration.Data.event_data.Timestamps;
-   ts_pup   = ts_pup - ts_ed(1);                                           % synch with respect to event data
-   ts_ed    = ts_ed - ts_ed(1);
+   trace = filter_trace([plx; ply]',GV);
+   plx_f = trace(:,1)';
+   ply_f = trace(:,2)';
    
+   ts_pup   = lsl_correct_lsl_timestamps(Cal.pupil_labs);
+   %ts_pup   = lsl_correct_pupil_timestamps(Cal.pupil_labs);
+   ts_ei    = lsl_correct_lsl_timestamps(Cal.event_in);
+   ts_eo    = lsl_correct_lsl_timestamps(Cal.event_out);
+
+   ts_ei    = ts_ei - ts_eo(1);
+   ts_pup   = ts_pup - ts_eo(1);                                           % synch with respect to event data
+   ts_eo    = ts_eo - ts_eo(1);
+      
+   idx_p    = find(ts_pup>0,1);
+   idx_t    = find(ts_pup>ts_eo(end));
+   ts_pup   = ts_pup(idx_p:idx_t);
+   plx_f    = plx_f(idx_p:idx_t);
+   ply_f    = ply_f(idx_p:idx_t);
+   
+   ts_eoc   = ts_ei;
+   %ts_eoc   = ts_eo(3:3:end)+0.1;
+
+   % remove dubble kliks
+   ts_bool  = true(size(ts_ei));
+   
+   for iT = 2:length(ts_ei)
+      if ts_ei(iT) - ts_ei(iT-1) < 1
+         ts_bool(iT) = false;
+      end
+   end
+   ts_ei = ts_ei(ts_bool);
    
    % preallocate training data
    inputs   = zeros(calsz);
    targets  = zeros(calsz);
    
+   if DEBUG
+      col = pb_selectcolor(2,2);
+
+      est_x = [0.1, 0.48, 0.87, 0.13, 0.16, 0.48, 0.47, 0.86, 0.82, 0.24, 0.28, 0.46, 0.455, 0.75, 0.65];
+      est_y = [0.4, 0.46, 0.30, 0.60, 0.28, 0.68, 0.30, 0.53, 0.20, 0.84, 0.20, 0.88, 0.150, 0.80, 0.10];
+      
+      cfn = pb_newfig(231); 
+      colormap winter
+
+      title('Calibration (trial = 1')
+      hold on;
+      axis square;
+      xlim([0 1]);
+      ylim([0 1]);
+      xlabel('X-coordinate');
+      ylabel('Y-coordinate');
+      
+      pb_nicegraph;
+
+      c     = linspace(1,10,length(plx_f));
+      alpha = 0.2;
+      scatter(plx_f,ply_f,15,c,'filled','markerfacealpha',alpha,'markeredgealpha',alpha); %,'markerfacecolor', col(1,:),'markeredgecolor',col(1,:),'markerfacealpha',0.2);
+      plot(est_x,est_y,'o','color',col(2,:),'Markersize',30,'linewidth',2);
+      legend('Gaze','AutoUpdate',false);
+   end
+   
    for iT = 1:length(inputs)
 
       % Get the index for median x and y input positions
-      idx            = iT*2; 
-      ts_buttonpress = ts_ed(idx);
-      idx_pup        = find(ts_pup>=ts_buttonpress,1);
-      range          = idx_pup:(idx_pup + floor(GV.fs/5));
-      med_x          = median(plx(range));
-      med_y          = median(ply(range));
+      ts_buttonpress = ts_ei(iT);
+      idx_pup        = find(ts_pup >= ts_buttonpress,1);
+      range          = idx_pup:(idx_pup + floor(GV.fs/10));
+      med_x          = median(plx_f(range));
+      med_y          = median(ply_f(range));
       
       % Store inputs
       inputs(iT,1) = med_x;
       inputs(iT,2) = med_y;
      
       % get targets from block info
-      targets(iT,1) = Data.Calibration.Data.block_info.trial(iT).stim.azimuth;
-      targets(iT,2) = Data.Calibration.Data.block_info.trial(iT).stim.elevation;
+      targets(iT,1) = Cal.block_info.trial(iT).stim.azimuth;
+      targets(iT,2) = Cal.block_info.trial(iT).stim.elevation;
+      
+      if DEBUG
+         el = Cal.block_info.trial(iT).stim.elevation;
+         az = Cal.block_info.trial(iT).stim.azimuth;
+         
+         
+         title(['Calibration (trial = ' num2str(iT) ')']); 
+         scatter(plx_f(range),ply_f(range),'markerfacecolor',col(1,:),'markeredgecolor',col(1,:),'markerfacealpha',0.9);
+         plot(med_x,med_y,'x','color',col(1,:),'markersize',30,'linewidth',5);
+         plot(est_x(iT),est_y(iT),'o','color',col(1,:),'markersize',30,'linewidth',3);
+         
+         
+         pb_delete;
+         pb_delete;
+         pb_delete
+      end
    end
    
-   Data.Calibration.scaler = max(max(abs(targets)));
-   ntargets                = targets ./ Data.Calibration.scaler;
+   remove_poor_data = [2, 4, 5, 6, 7, 8, 9, 10, 12, 14]; 
+   %remove_poor_data = 1:15;
+   inputs   = inputs(remove_poor_data,:);
+   targets  = targets(remove_poor_data,:);
+   
+   scaler         = max(max(abs(targets)));
+   ntargets     	= targets ./ scaler;
       
    % Train network
-   net = feedforwardnet(3);                  % Train network with 3 hidden units 
+   net = feedforwardnet(3);                  % Train network with 3 hidden units
+   net.divideParam.trainRatio = 1;
+   net.divideParam.testRatio = 0;
+   net.divideParam.valRatio = 0;
+
    net = train(net,inputs',ntargets');       % Note the orientation for neural network inputs/outputs
    
    % Store nn
-   Data.Calibration.Net = net;
+   for iB = 1:size(Data)
+      Data(iB).Calibration.net      = net;
+      Data(iB).Calibration.scaler   = scaler;
+   end
 end
 
 % Parsing functions
@@ -172,7 +254,7 @@ function [pup_idx, opt_idx] = get_fixation_idx(block_data,block_time)
    
    % pupillabs
    if isfield(block_data,'Calibration')
-      if ~isempty(block_data.Calibration.Net)
+      if ~isempty(block_data.Calibration.net)
          azel_eye    = mapeye_norm2azel(block_data);
       end
    else
@@ -212,7 +294,7 @@ function azel = mapeye_norm2azel(block_data)
       normy             = block_data.Pup.Data(3,:);
 
       % Simulate network
-      net               = block_data.Calibration.Net;
+      net               = block_data.Calibration.net;
       azel              = sim(net,[normx; normy])';                        % NOTE, FLIP BACK ORIENTATION
       azel              = azel .* block_data.Calibration.scaler;           % Scale back for normalization
 end
@@ -356,9 +438,14 @@ end
 function trace = computegaze(P,block_data, block_time, opt_idx, pup_idx, GV)
    % Function will compute gaze 
    
-   % if data already exists                                                % THIS IS FALSE, IT DOES NOT TAKE INTO ACCOUNT
-                                                                           % THE OFFSET. INSTEAD USE NEW P.OPTITRACK TO COMPUTE 
+   % if data already exists                                               
    if isfield(block_data,'Calibration')
+      
+      if ~isequal(size(P.pupillabs),size(P.optitrack))
+         P.optitrack(:,1) = interp1(block_time.optitrack, P.optitrack(:,1), block_time.pupillabs,'pchip');
+         P.optitrack(:,2) = interp1(block_time.optitrack, P.optitrack(:,2), block_time.pupillabs,'pchip');
+      end
+      
       trace = P.pupillabs + P.optitrack;
       return
    end
@@ -437,6 +524,8 @@ function trace = filter_trace(trace,GV)
    if GV.sgolay_f 
       trace = sgolay_filtering(trace);
    end
+   
+   % Butterworf maybe ?
    
    % remove spikes with median filter
    if GV.median_f
@@ -519,7 +608,6 @@ function trace = median_filtering(trace)
 end
 
 
-
 function T = gettimestamps(Data,GV)
    % Function will get timestamps for the different streams
    disp('>> Obtaining LSL timestamps...');
@@ -532,7 +620,7 @@ function T = gettimestamps(Data,GV)
       % correct pupil labs
       lsl_tsPupRaw         = Data(block).Timestamp.Pup;
       
-      if iscell(Data.Pup.Data)
+      if iscell(Data(block).Pup.Data)
          lsl_tsPup            = Data(block).Pup.Data.timestamp' - Data(block).Pup.Data.timestamp(6) + lsl_tsPupRaw(6);
       else
          lsl_tsPup            = Data(block).Pup.Timestamps - Data(block).Pup.Timestamps(6) + lsl_tsPupRaw(6);

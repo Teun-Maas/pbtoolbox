@@ -12,6 +12,8 @@ classdef pb_calobj < handle
        event_in            = [];
        event_out           = [];
        block_info          = [];
+       net                 = []; 
+       scaler              = [];
     end
 
     methods
