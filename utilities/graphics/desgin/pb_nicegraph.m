@@ -56,7 +56,7 @@ function pb_nicegraph(varargin)
       setAx.XGrid         = 'on';
       setAx.XColor        = [.3 .3 .3];
       setAx.YColor        = [.3 .3 .3];
-      setAx.FontSize      = 13;
+      setAx.FontSize      = 15;
       setAx.YDir          = 'normal';
       setAx.LineWidth     = 1;
       

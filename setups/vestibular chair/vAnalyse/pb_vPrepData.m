@@ -3,51 +3,34 @@ function Data = pb_vPrepData(varargin)
 %
 % PB_VPREPDATA(varargin) will preprocess the raw converted data extracted
 %
-% See also ...
+% See also PB_ZIPBLOCKS, PB_CONVERTDATA
 
-% PBToolbox (2020): JJH: j.heckman@donders.ru.nl
+% PBToolbox (2022): JJH: j.heckman@donders.ru.nl
    
-   % keyval
-   V = varargin;
-   GV.cdir           = pb_keyval('cd',V,cd);
-   GV.block_idx      = pb_keyval('block',V,'all');
-   GV.stim_idx       = pb_keyval('stim',V,1);
-   GV.fn             = pb_keyval('fn',V);
-   GV.gaze_method    = pb_keyval('gaze',V,'old');
-   GV.heuristic_f    = pb_keyval('heuristic_filter',V,1);
-   GV.sgolay_f       = pb_keyval('sgolay_filter',V,1);
-   GV.median_f       = pb_keyval('median_filter',V,1);
-   GV.path           = pb_keyval('path',V,[cd filesep '..']);
-   GV.store          = pb_keyval('store',V,1);
-   GV.discern_frames = pb_keyval('frames',V,1);
-   GV.fs             = pb_keyval('fs',V,200);
-   GV.acquisition    = pb_keyval('acquisition',V,3);
-   GV.epoch          = pb_keyval('epoch',V,1);
+   % Parse parameters
+   GV.cdir           = pb_keyval('cd', varargin, cd);
+   GV.block_idx      = pb_keyval('block', varargin, 'all');
+   GV.stim_idx       = pb_keyval('stim', varargin, 1);
+   GV.fn             = pb_keyval('fn', varargin);
+   GV.gaze_method    = pb_keyval('gaze', varargin, 'old');
+   GV.heuristic_f    = pb_keyval('heuristic_filter', varargin, 1);
+   GV.sgolay_f       = pb_keyval('sgolay_filter', varargin, 0);
+   GV.median_f       = pb_keyval('median_filter', varargin, 0);
+   GV.butter_f       = pb_keyval('butter_filter', varargin, 1);
+   GV.path           = pb_keyval('path', varargin, [cd filesep '..']);
+   GV.store          = pb_keyval('store', varargin, 1);
+   GV.discern_frames = pb_keyval('frames', varargin, 1);
+   GV.fs             = pb_keyval('fs', varargin, 200);
+   GV.acquisition    = pb_keyval('acquisition', varargin, 3);
+   GV.epoch          = pb_keyval('epoch', varargin, 1);
+   GV.debug          = pb_keyval('debug', varargin, true);
+   GV.chrono_pup     = pb_keyval('chrono',varargin, true);
 
+   % Load and clean data
+   [D,GV]         = load_data(GV);                                         % Will load the data
+   [D,GV]         = clean_data(D,GV);                                      % filters, and removes any inconsentensies from raw data
    
-   % load data
-   cd(GV.path);
-   if exist(GV.fn,'file')==2
-      load(GV.fn);
-   else
-      [path, prefix, fname, ext] = getfname(GV);                           % get fileparts
-      if ~path                                                             % assert
-         disp('>> pb_vPrepData aborted as no file was selected.');
-         return
-      else
-         GV.fn = [prefix fname ext];
-         load([path GV.fn]); 
-      end
-   end
-   disp(['>> Data loaded...' newline]);
-   
-   % Calibrate
-   if isfield(D,'Calibration')
-         D  = train_calibration(D,GV);                                     % train calibration network
-   end 
-   
-   % parse data
-   GV       = readkeyval(D,GV);                                            % convert some GV inputs
+   % Parse data
    S        = getstims(D, GV);                                             % read the stimuli
    T        = gettimestamps(D, GV);                                        % correct the LSL timestamps
    [P,GV]	= getdata(D, T, GV);                                           % obtain the response behaviour
@@ -66,6 +49,51 @@ end
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
+function [D,GV] = load_data(GV)
+   cd(GV.path);
+   if exist(GV.fn,'file')==2
+      load(GV.fn);
+   else
+      [path, prefix, fname, ext] = getfname(GV);                           % get fileparts
+      if ~path                                                             % assert
+         disp('>> pb_vPrepData aborted as no file was selected.');
+         return
+      else
+         GV.fn = [prefix fname ext];
+         load([path GV.fn],'D'); 
+      end
+   end
+   disp(['>> Data loaded...' newline]);
+end
+
+function [D,GV] = clean_data(Data,GV)
+
+   % Read keyval
+   GV       = readkeyval(Data,GV);                                            % convert some GV inputs
+   
+   % Temporally restructure and filter pupil data
+   Data     = chronolize_pupil(Data,GV);
+   Data     = filter_pupil(Data,GV);
+   
+   % Calibrate
+   if isfield(Data,'Calibration')
+         D  = train_calibration(Data, GV);                                     % train calibration network
+   end 
+end
+
+function Data = filter_pupil(Data, GV)
+   
+   trace    = [Data.Pup.Data(2,:);Data.Pup.Data(3,:)]';
+   conf     = Data.Pup.Data(1,:);
+   
+   trace    = heckman_filtering(trace,conf,GV);
+   trace    = stampe_filtering(trace,GV);
+   trace    = bw_filtering(trace,GV);
+
+   % Store filtered data
+   Data.Pup.Data(2,:) = trace(:,1)';
+   Data.Pup.Data(3,:) = trace(:,2)';
+end
 
 function GV = readkeyval(Data,GV)
 % Read and correct keyvals
@@ -81,12 +109,41 @@ function GV = readkeyval(Data,GV)
    end
 end
 
+function Data = chronolize_pupil(Data,GV)
+   % This function will restructure the pupil labs data in chronocological
+   % order.
+   
+   if GV.chrono_pup     % Make sure this is true
+   
+      % Get timestamps
+      ts       = Data.Timestamp.Pup;
+      [~,idx]  = sort(ts);
+      ts       = ts(idx);
+      
+      % Correct pupil Data and timestamps
+      Data.Pup.Data(:,idx);
+      Data.Pup.Timestamps(idx);
+      Data.Timestamp.Pup = ts;
+      
+      % Correct pupil time corrections
+      for iC = 1:length(Data.Pup.TimeCorrection)
+         idx_c    = Data.Pup.TCindex(iC);
+         new_idx  = find(idx == idx_c);
+         Data.Pup.TCindex(iC) = new_idx;
+      end
+      
+      % Resort them
+      [~,idx] = sort(Data.Pup.TCindex);
+      Data.Pup.TCindex           = Data.Pup.TCindex(idx);
+      Data.Pup.TimeCorrection    =  Data.Pup.TimeCorrection(idx);
+   end
+end
+
 function Data = train_calibration(Data,GV)
 % This will train neural network to map pupillabs norm position to real
 % world azimuth/elevation values.
 
-   DEBUG = true;
-
+   
    Cal = Data(1).Calibration.Data;
 
    if isempty(Cal); return; end % Check if data exists
@@ -96,13 +153,17 @@ function Data = train_calibration(Data,GV)
    plx      = Cal.pupil_labs.Data(2,:);                       % normposx
    ply      = Cal.pupil_labs.Data(3,:);                       % normposy
    
-   trace = filter_trace([plx; ply]',GV);
+   %trace = filter_trace([plx; ply]',GV);
+   trace = [plx; ply]';
    plx_f = trace(:,1)';
    ply_f = trace(:,2)';
    
    ts_pup   = lsl_correct_lsl_timestamps(Cal.pupil_labs);
-   %ts_pup   = lsl_correct_pupil_timestamps(Cal.pupil_labs);
+   %ts_pup   = lsl_correct_pupil_timestamps(Cal.pupil_labs)
+   ts_ei    = [];
+   if ~isempty(Cal.event_in)
    ts_ei    = lsl_correct_lsl_timestamps(Cal.event_in);
+   end
    ts_eo    = lsl_correct_lsl_timestamps(Cal.event_out);
 
    ts_ei    = ts_ei - ts_eo(1);
@@ -132,7 +193,7 @@ function Data = train_calibration(Data,GV)
    inputs   = zeros(calsz);
    targets  = zeros(calsz);
    
-   if DEBUG
+   if GV.debug
       col = pb_selectcolor(2,2);
 
       est_x = [0.1, 0.48, 0.87, 0.13, 0.16, 0.48, 0.47, 0.86, 0.82, 0.24, 0.28, 0.46, 0.455, 0.75, 0.65];
@@ -175,7 +236,7 @@ function Data = train_calibration(Data,GV)
       targets(iT,1) = Cal.block_info.trial(iT).stim.azimuth;
       targets(iT,2) = Cal.block_info.trial(iT).stim.elevation;
       
-      if DEBUG
+      if GV.debug
          el = Cal.block_info.trial(iT).stim.elevation;
          az = Cal.block_info.trial(iT).stim.azimuth;
          
@@ -517,25 +578,30 @@ function trace = filter_trace(trace,GV)
    
    % Heuristics
    if GV.heuristic_f
-      trace = stampe_filtering(trace);
+      trace = stampe_filtering(trace,GV);
    end
    
    % Smoothen (Savinsky-Golay)
    if GV.sgolay_f 
-      trace = sgolay_filtering(trace);
+      trace = sgolay_filtering(trace,GV);
    end
    
-   % Butterworf maybe ?
+   % Butterworth low-pass
+   if GV.butter_f                %(cut-off: 20-25, order: 5, see table 2 Mack et al 2017)
+      trace = bw_filtering(trace,GV);
+   end
    
    % remove spikes with median filter
    if GV.median_f
-      trace = median_filtering(trace);
+      trace = median_filtering(trace,GV);
    end
 end
 
 
-function trace = stampe_filtering(trace)
+function trace = stampe_filtering(trace,GV)
    % Function will implement a set of 2 heuristic filters (Stampe, 1993) 
+   
+   ot = trace;
    
    for iO = 1:size(trace,2)
       trace(:,iO) = filter1(trace(:,iO));
@@ -583,10 +649,52 @@ function trace = stampe_filtering(trace)
           end
       end
    end
+
+   if GV.debug; visualize_filter(ot,trace,GV); end
 end
 
-function trace = sgolay_filtering(trace)
+function trace = heckman_filtering(trace,conf,GV)
+   % This function will remove all S sample low confidence data
+   % and interpolate them if neighbouring values have high confidence.
+
+   ot = trace;
+   
+   min_thresh = 0.5;
+   max_thresh = 0.8;
+   
+   conf_bool   = conf < min_thresh;
+   
+   for iO = 1:size(trace,2)
+
+      for iS = 1:5
+         % S sample confidence drops
+         
+         pattern     = [0, ones(1,iS), 0];
+         [a,b]       = xcorr(double(conf_bool),pattern);
+         
+         peaks       = a == iS;
+         idc         = find(peaks==1)-length(conf_bool);
+
+         for iC = 1:length(idc)
+            
+            prev = trace(idc(iC)-1,iO);
+            next = trace(idc(iC)+iS,iO);
+            
+            % interpolate mean
+            if conf_bool(idc(iC)-1)> max_thresh &&  conf_bool(idc(iC)+iS)> max_thresh
+               trace(idc(iC):idc(iC)+iS-1,iO) = mean([prev next]);
+            end
+         end
+      end
+   end
+   
+   if GV.debug; visualize_filter(ot,trace,GV,conf); end
+end
+
+function trace = sgolay_filtering(trace,GV)
    % Function will implement a set of 2 heuristic filters (Stampe, 1993) 
+   
+   ot = trace;
    
    %  settings
    order    = 3; 
@@ -595,9 +703,32 @@ function trace = sgolay_filtering(trace)
    for iO = 1:size(trace,2)
       trace(:,iO) = sgolayfilt(trace(:,iO),order,framelen);
    end
+   
+   if GV.debug; visualize_filter(ot, trace, GV); end
 end
 
-function trace = median_filtering(trace)
+function trace = bw_filtering(trace,GV)
+   % See Mack et al 2017 for best filter settings: 200Hz + high noise -->
+   % 20-25 fc, 5th order.
+   
+   ot       = trace;
+   
+   order    = 5;
+   fc       = 20;
+   
+   [b,a]    = butter(order,fc/(GV.fs/2));
+   
+   for iO = 1:size(trace,2)
+      trace(:,iO) = filtfilt(b,a,trace(:,iO));
+   end
+   
+   if GV.debug; visualize_filter(ot,trace,GV); end
+end
+
+function trace = median_filtering(trace,GV)
+   % This function will perform a median filter
+   
+   ot = trace;
    
    %  settings
    window    = 7; 
@@ -605,8 +736,42 @@ function trace = median_filtering(trace)
    for iO = 1:size(trace,2)
       trace(:,iO) = medfilt1(trace(:,iO),window);
    end
+   
+   if GV.debug; visualize_filter(ot, trace, GV); end
 end
 
+function visualize_filter(old, new, GV, conf)
+
+   iT  = 1;          % Azimiuth = 1 / Elevation  = 2;
+   
+   dur      = length(new);
+   t        = (1:dur)/GV.fs;
+   
+   if nargin < 4; conf = nan(size(new)); end
+   
+   % Graph data
+   cfn = pb_newfig(231);
+   sgtitle(pb_sentenceCase(strrep(pb_getfunname('depth',3),'_',' ')));
+   
+   subplot(2,1,1);
+   title('Traces')
+   hold on;
+   plot(t,old(:,iT));
+   plot(t,new(:,iT));  
+   plot(t,conf);
+   legend('Original','Filtered');
+   
+   subplot(2,1,2);
+   title('Removed');
+   hold on;
+   plot(t,old(:,iT)-new(:,iT));
+   plot(t,conf);
+   legend('difference');
+   pb_nicegraph
+   
+   linkaxes(pb_fobj(gcf,'type','axes'),'xy');
+   ylim([0 1]); xlim([90 92]);
+end
 
 function T = gettimestamps(Data,GV)
    % Function will get timestamps for the different streams
