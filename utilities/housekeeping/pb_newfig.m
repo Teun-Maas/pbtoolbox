@@ -14,13 +14,15 @@ function [cfn,f] = pb_newfig(cfn, varargin)
    ws    = pb_keyval('ws',varargin,'docked');         % normal
    rsz   = pb_keyval('resize',varargin,'on');
    sz    = pb_keyval('size',varargin,[0 0 20 14]); 
+   bcol  = pb_keyval('bcol',varargin,'w');
 
    cfn = cfn+1; f = figure(cfn); clf;
    
    % set figure
    set(f,'WindowStyle',ws);
    set(f,'Units',units);
-   set(f,'Resize',rsz)
+   set(f,'Resize',rsz);
+   set(f,'color','w');
    
    if ~strcmp(ws,'docked'); set(f, 'Position',sz); end
 end

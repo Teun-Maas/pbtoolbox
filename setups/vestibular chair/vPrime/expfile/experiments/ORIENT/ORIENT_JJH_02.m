@@ -33,7 +33,7 @@ function ORIENT_JJH_02(varargin)
    GV.open_exp                = pb_keyval('open',varargin,true);                       % Open exp file after generation
    GV.show_targets            = pb_keyval('showtargets',varargin,true);                % Visualize experimental targets
    GV.ext                     = pb_keyval('extension',varargin,'.exp');                % Default .exp, for calibration set to .cal
-   GV.expfile                 = pb_keyval('fname',varargin,[get_fn(dbstack) GV.ext]);  % This will read current filename (*.m) as default expfilename
+   GV.expfile                 = pb_keyval('fname',varargin,[mfilename GV.ext]);        % This will read current filename (*.m) as default expfilename
    
    %     Experiment
    GV.exp_datdir              = pb_keyval('datdir',varargin,'');                       % Data dir for Experimenter PC
@@ -44,9 +44,9 @@ function ORIENT_JJH_02(varargin)
    GV.exp_trialduration       = pb_keyval('trialdur',varargin,0);                      % Select max trial duration, if 0 is chosen there is no max trial duration (use with button presses).
    
    %     Stimuli
-   GV.stim_repeats            = pb_keyval('repeats',varargin,2);                       % Keep at 1 or it wil repeat stimuli n times.
-   GV.stim_duration           = pb_keyval('duration',varargin,[0.5 1 2 4 10 20]);      % Select the duration you want to present with. For multiple inset array (ex. [0.5 1 2 4 16]).
-   GV.stim_intensity        	= pb_keyval('intensity',varargin,50);                    % Select the intensity (range). If you want to randomnise the the intensity set range limits (ex. [40 50]).
+   GV.stim_repeats            = pb_keyval('repeats',varargin,1);                       % Keep at 1 or it wil repeat stimuli n times.
+   GV.stim_duration           = pb_keyval('duration',varargin,[0.5 1 2 4 20]);         % Select the duration you want to present with. For multiple inset array (ex. [0.5 1 2 4 16]).
+   GV.stim_intensity        	= pb_keyval('intensity',varargin,[40 50]);             	% Select the intensity (range). If you want to randomnise the the intensity set range limits (ex. [40 50]).
    GV.stim_onsetdelay        	= pb_keyval('onsetdelay',varargin,[150 350]);            % Select onset delay (range). Pick single number for fixed onset delay, for random range set limits (ex. [1000 1250])
    GV.stim_randomise          = pb_keyval('random',varargin,true);                     % If you want to randomise the order of the stimuli (and you typically should!) set to true.
    GV.stim_ratiochair2world 	= pb_keyval('chair2world',varargin,[1 1]);               % Amount of chair fixed vs world fixed targets
@@ -58,9 +58,9 @@ function ORIENT_JJH_02(varargin)
    
    %     Vestibular profile                                                            % typically only use vertical axis
    GV.vc_profile              = pb_keyval('vc_profile',varargin,[1 2]);                % Select the profile 1-6. [HOR/VERT]
-   GV.vc_amplitude            = pb_keyval('vc_amplitude',varargin,[0 40]);              % Select the maximum amplitude. [HOR/VERT]
-   GV.vc_duration             = pb_keyval('vc_duration',varargin,200);                   % Duration (max duration of profile is 200s)
-   GV.vc_frequency            = pb_keyval('vc_frequency',varargin,0.11);               % Frequency (max) of the vestibular noise / sinewave
+   GV.vc_amplitude            = pb_keyval('vc_amplitude',varargin,[0 40]);             % Select the maximum amplitude. [HOR/VERT]
+   GV.vc_duration             = pb_keyval('vc_duration',varargin,200);                 % Duration (max duration of profile is 200s)
+   GV.vc_frequency            = pb_keyval('vc_frequency',varargin,0.15);               % Frequency (max) of the vestibular noise / sinewave
 
    
    % Build experiment
@@ -79,12 +79,19 @@ function EXP = parse_exp(S,GV)
    % This function will parse stimuli over different blocks and add
    % vestibular signal to each block.
 
-   nblocks = floor(length(S.X)/GV.exp_ntrials);    % compute number of blocks
-
+   % compute blocks
+   nblocks        = ceil(length(S.X)/GV.exp_ntrials);                      % compute number of blocks round up and fill left over trials
+   ntrials_last   = rem(length(S.X),GV.exp_ntrials);
+   ntrials_fill   = GV.exp_ntrials - ntrials_last;
+   shuffle_data   = randperm(length(S.X),ntrials_fill);                    % select idx to repeat
+   
+   
    for iB = 1:nblocks
       % divbide stimuli over blocks
       
-      idc = ((iB-1) * GV.exp_ntrials) +1 : (iB * GV.exp_ntrials);     % select current stimuli idc
+      idc = ((iB-1) * GV.exp_ntrials) + 1 : (iB * GV.exp_ntrials);         % select current stimuli idc
+      
+      if iB == nblocks && ntrials_fill > 0; idc = [idc(1:end-ntrials_fill), shuffle_data]; end
       
       % split stimuli
       EXP.block(iB).Stim.X       = S.X(idc);
@@ -113,7 +120,6 @@ function EXP = parse_exp(S,GV)
       EXP.block(iB).Vertical     = struct('Amplitude', GV.vc_amplitude(2), 'Signal', GV.vc_profile(2), 'Duration', GV.vc_duration, 'Frequency', GV.vc_frequency);
    end
 end
-
 
 function S = get_stimuli(T,GV)
    % This function will prep all stimuli * durations
@@ -155,7 +161,6 @@ function [X,Y] = make_stims(T,GV)
    Y              = [repmat(T(~world_fixed,2), GV.stim_ratiochair2world(1),1); ...
                      repmat(T(world_fixed,2),  GV.stim_ratiochair2world(2),1)];
 end
-
 
 function T = get_targets(GV)
    % This function  will obtain all targets from cfg, and remove targets
@@ -230,7 +235,6 @@ function T = get_targets(GV)
    end
 end
 
-
 function c_expfiles = write_exp(EXP, GV)
    % write the experimental data in expfile.
    
@@ -259,8 +263,6 @@ function c_expfiles = write_exp(EXP, GV)
       % Write trials
       for iT = 1:GV.exp_ntrials
          
-
-
          % Make visual stimulus object
          VIS.LED        = 'LED';
          VIS.X          = EXP.block(iB).Stim.X(iT);
@@ -273,9 +275,9 @@ function c_expfiles = write_exp(EXP, GV)
          
          % Write trial and stimuli
          pb_vWriteTrial(fid, iT);
-         if GV.stim_fixlight
+         if any(GV.stim_fixlight)
             
-            pb_vWriteFixLight(fid,GV.stim_fixdur); 
+            pb_vWriteFixLight(fid,GV); 
             VIS.Onset      = VIS.Onset + GV.stim_fixdur;
             VIS.Offset     = VIS.Offset + GV.stim_fixdur;
          end

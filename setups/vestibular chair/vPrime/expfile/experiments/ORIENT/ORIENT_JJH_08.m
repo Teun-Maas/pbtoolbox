@@ -1,4 +1,4 @@
-function ORIENT_JJH_01(varargin)
+function ORIENT_JJH_08(varargin)
 % PB_VGENEXP_VIS
 %
 % PB_VGENEXP_VIS  will generate an EXP-file for a default localization experiment. 
@@ -38,7 +38,7 @@ function ORIENT_JJH_01(varargin)
    %     Experiment
    GV.exp_datdir              = pb_keyval('datdir',varargin,'');                       % Data dir for Experimenter PC
    GV.exp_ITI                 = pb_keyval('ITI',varargin,[0 0]);                       % ITI, keep at  [0 0]
-   GV.exp_ntrials             = pb_keyval('ntrials',varargin,75);                      % Select the number of trails in each block (should be smaller than number of stimuli generated!)
+   GV.exp_ntrials             = pb_keyval('ntrials',varargin,40);                      % Select the number of trails in each block (should be smaller than number of stimuli generated!)
    GV.exp_stimframe           = pb_keyval('stim',varargin,2);                          % Presently we are working with the 2nd frame configuration (only LEDs, see through)
    GV.exp_lab                 = pb_keyval('lab',varargin,1);                           % The VC lab is default lab choice (set 1)
    GV.exp_trialduration       = pb_keyval('trialdur',varargin,0);                      % Select max trial duration, if 0 is chosen there is no max trial duration (use with button presses).
@@ -46,21 +46,22 @@ function ORIENT_JJH_01(varargin)
    %     Stimuli
    GV.stim_repeats            = pb_keyval('repeats',varargin,1);                       % Keep at 1 or it wil repeat stimuli n times.
    GV.stim_duration           = pb_keyval('duration',varargin,[0.5 1 2 4 20]);         % Select the duration you want to present with. For multiple inset array (ex. [0.5 1 2 4 16]).
-   GV.stim_intensity        	= pb_keyval('intensity',varargin,[40 50]);              	% Select the intensity (range). If you want to randomnise the the intensity set range limits (ex. [40 50]).
-   GV.stim_onsetdelay        	= pb_keyval('onsetdelay',varargin,[150 250]);            % Select onset delay (range). Pick single number for fixed onset delay, for random range set limits (ex. [1000 1250])
+   GV.stim_intensity        	= pb_keyval('intensity',varargin,[40 50]);                    % Select the intensity (range). If you want to randomnise the the intensity set range limits (ex. [40 50]).
+   GV.stim_onsetdelay        	= pb_keyval('onsetdelay',varargin,[150 350]);            % Select onset delay (range). Pick single number for fixed onset delay, for random range set limits (ex. [1000 1250])
    GV.stim_randomise          = pb_keyval('random',varargin,true);                     % If you want to randomise the order of the stimuli (and you typically should!) set to true.
    GV.stim_ratiochair2world 	= pb_keyval('chair2world',varargin,[1 1]);               % Amount of chair fixed vs world fixed targets
    GV.stim_excludecentre    	= pb_keyval('cutoff',varargin, 0);                       % Select the middle range (+- degrees) that you would like to exclude from target selection (if none, set to 0).
    GV.stim_trigger_on         = pb_keyval('trig_on',varargin,0);                       % Onset trigger, typically 0.
    GV.stim_trigger_off        = pb_keyval('trig_off',varargin,0);                      % Offset trigger, typically 0 (unless you want to use button presses or so..)
-   GV.stim_fixlight        	= pb_keyval('fix_light',varargin,1);                     % If you want a fixation light
+   GV.stim_fixlight        	= pb_keyval('fix_light',varargin,1);                     % If you want a fixation light (0=off, 1=cf, 2=wf)
    GV.stim_fixdur             = pb_keyval('fix_dur',varargin,1000);                    % fixation light duration in ms
+   GV.stim_fixdelay           = pb_keyval('fixdelay',varargin,2000);                      % pause after fixation light in ms.
    
    %     Vestibular profile                                                            % typically only use vertical axis
-   GV.vc_profile              = pb_keyval('vc_profile',varargin,[1 1]);                % Select the profile 1-6. [HOR/VERT]
-   GV.vc_amplitude            = pb_keyval('vc_amplitude',varargin,[0 0]);              % Select the maximum amplitude. [HOR/VERT]
-   GV.vc_duration             = pb_keyval('vc_duration',varargin,1);                   % Duration (max duration of profile is 200s)
-   GV.vc_frequency            = pb_keyval('vc_frequency',varargin,0.11);               % Frequency (max) of the vestibular noise / sinewave
+   GV.vc_profile              = pb_keyval('vc_profile',varargin,[1 2]);                % Select the profile 1-6. [HOR/VERT]
+   GV.vc_amplitude            = pb_keyval('vc_amplitude',varargin,[0 40]);             % Select the maximum amplitude. [HOR/VERT]
+   GV.vc_duration             = pb_keyval('vc_duration',varargin,200);                 % Duration (max duration of profile is 200s)
+   GV.vc_frequency            = pb_keyval('vc_frequency',varargin,0.25);                % Frequency (max) of the vestibular noise / sinewave
 
    
    % Build experiment
@@ -72,6 +73,7 @@ function ORIENT_JJH_01(varargin)
    c_expfiles = write_exp(EXP,GV);
    open_exp(c_expfiles,GV);
 end
+
 
 % Helper functions
 function EXP = parse_exp(S,GV)
@@ -277,8 +279,10 @@ function c_expfiles = write_exp(EXP, GV)
          if any(GV.stim_fixlight)
             
             pb_vWriteFixLight(fid,GV); 
-            VIS.Onset      = VIS.Onset + GV.stim_fixdur;
-            VIS.Offset     = VIS.Offset + GV.stim_fixdur;
+            
+            delay          = GV.stim_fixdelay * rand(1);
+            VIS.Onset      = VIS.Onset + GV.stim_fixdur + delay;
+            VIS.Offset     = VIS.Offset + GV.stim_fixdur + delay;
          end
          pb_vWriteStim(fid, 2, [],VIS);
       end

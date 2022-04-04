@@ -24,15 +24,16 @@ function Data = pb_vPrepData(varargin)
    GV.acquisition    = pb_keyval('acquisition', varargin, 3);
    GV.epoch          = pb_keyval('epoch', varargin, 1);
    GV.debug          = pb_keyval('debug', varargin, true);
-   GV.chrono_pup     = pb_keyval('chrono',varargin, true);
+   GV.chrono_pup     = pb_keyval('chrono',varargin, false);
 
    % Load and clean data
    [D,GV]         = load_data(GV);                                         % Will load the data
-   [D,GV]         = clean_data(D,GV);                                      % filters, and removes any inconsentensies from raw data
+   [D,GV]         = calibrate_data(D,GV);                                  % filters, and removes any inconsentensies from raw data
+   GV             = readkeyval(D,GV);                                   % Read keyval
    
    % Parse data
    S        = getstims(D, GV);                                             % read the stimuli
-   T        = gettimestamps(D, GV);                                        % correct the LSL timestamps
+   T        = gettimestamps(D, GV);                                        % synchronize the LSL timestamps
    [P,GV]	= getdata(D, T, GV);                                           % obtain the response behaviour
    [T,P]    = getchair(D, T, P, GV);                                       % add chair rotation
    Data      = pb_struct({'stimuli','timestamps','position'},{S,T,P});
@@ -66,14 +67,10 @@ function [D,GV] = load_data(GV)
    disp(['>> Data loaded...' newline]);
 end
 
-function [D,GV] = clean_data(Data,GV)
-
-   % Read keyval
-   GV       = readkeyval(Data,GV);                                            % convert some GV inputs
-   
+function [D,GV] = calibrate_data(Data,GV)
+  
    % Temporally restructure and filter pupil data
-   Data     = chronolize_pupil(Data,GV);
-   Data     = filter_pupil(Data,GV);
+   % Data     = filter_pupil(Data,GV);
    
    % Calibrate
    if isfield(Data,'Calibration')
@@ -109,44 +106,181 @@ function GV = readkeyval(Data,GV)
    end
 end
 
-function Data = chronolize_pupil(Data,GV)
-   % This function will restructure the pupil labs data in chronocological
-   % order.
+function Data = train_calibration(Data, GV)
+% This will train neural network to map pupillabs norm position to real
+% world azimuth/elevation values.
+
+   pause_dur = 1;
    
-   if GV.chrono_pup     % Make sure this is true
+   Cal = Data(1).Calibration.Data;
+   if isempty(Cal); error('No calibtration data was found.'); end % Check if data exists
    
-      % Get timestamps
-      ts       = Data.Timestamp.Pup;
-      [~,idx]  = sort(ts);
-      ts       = ts(idx);
+   % Get timestamps
+   ts_pup            = lsl_correct_lsl_timestamps(Cal.pupil_labs);
+   ts_eo             = lsl_correct_lsl_timestamps(Cal.event_out);
       
-      % Correct pupil Data and timestamps
-      Data.Pup.Data(:,idx);
-      Data.Pup.Timestamps(idx);
-      Data.Timestamp.Pup = ts;
+   % Get eye
+   conf              = Cal.pupil_labs.Data(1,:);
+   x                 = Cal.pupil_labs.Data(4,:);
+   y                 = Cal.pupil_labs.Data(5,:);
+   z                 = Cal.pupil_labs.Data(6,:);
+   
+   % get 
+   Rx                = Cal.pupil_labs.Data(13,:);
+   Ry                = Cal.pupil_labs.Data(14,:);
+   Rz                = Cal.pupil_labs.Data(15,:);
+   Lx                = Cal.pupil_labs.Data(16,:);
+   Ly                = Cal.pupil_labs.Data(17,:);
+   Lz                = Cal.pupil_labs.Data(18,:);
+   
+   % Convert and merge samples
+   [az,el]           = pupil_xyz2azel(x,y,z);
+   [Rx,Ry]           = pb_pupilcombinesamples(Rx,Ry);
+   [Lx,Ly]           = pb_pupilcombinesamples(Lx,Ly);
+   [Lz,Rz]           = pb_pupilcombinesamples(Lz,Rz);
+   [az,el]           = pb_pupilcombinesamples(az,el);
+   [conf,~]          = pb_pupilcombinesamples(conf,conf);
+   [~,smv, ~]        = pb_pupilvel(az,el,GV.fs);
+   ts_pup            = ts_pup(1:2:end) - ts_eo(1);
+   ts_eo             = ts_eo - ts_eo(1);
+   target_on         = ts_eo(3:4:end);
+   target_off        = ts_eo(4:4:end);
+   
+   % detect saccades
+   [on_idx,off_idx]  = pb_detect_saccades(smv,conf);
+   on_time           = ts_pup(on_idx);
+   off_time          = ts_pup(off_idx);
+   nsaccades         = length(on_time);
+   
+   [cfn,fig] = pb_newfig(231);
+   set(fig,'defaultLegendAutoUpdate','off');
+   t   = title('Trial 1');
+   ylim([-50 50]);
+   hold on;
+   plot(ts_pup,az-median(az));
+   plot(ts_pup,el-median(el));
+   plot(ts_pup,conf*50,'--k','tag','Fixed');
+   pb_nicegraph
+   pb_vline(target_on,'color','k');
+   pb_vline(target_off,'color','k');
+   ax = gca;
+   
+   % patch saccades
+   for iS = 1:length(on_time)
+      t1    = on_time(iS);
+      t2    = off_time(iS);
+
+      x     = [t1 t2 t2 t1];
+      y     = [min(ax.YLim) min(ax.YLim) max(ax.YLim) max(ax.YLim)];
       
-      % Correct pupil time corrections
-      for iC = 1:length(Data.Pup.TimeCorrection)
-         idx_c    = Data.Pup.TCindex(iC);
-         new_idx  = find(idx == idx_c);
-         Data.Pup.TCindex(iC) = new_idx;
+      patch(x,y,[0.5,0.5,0.5],'FaceAlpha',0.3);
+   end
+   legend('Azimuth','Elevation','0.8*confidence')
+   
+   % Map target response
+   discard           = false(size(target_on));
+   X                 = nan([length(target_on) 6]);   
+   T                 = nan([length(target_on) 2]);
+   for iT = 1:length(target_on)
+      % For each trial find target / response values for mapping
+      
+      % Get trial info
+      trial_info  = Cal.block_info.trial(iT).stim(2);
+      target      = [trial_info.azimuth, trial_info.elevation];
+      stim_on     = target_on(iT);
+      stim_off    = target_off(iT);
+      
+      sac_idx     = find(on_time>= stim_on+0.1,1);                         % find first saccade after a 100 ms delay after stimulus onset
+      sac_on      = on_time(sac_idx);
+      sac_off     = off_time(sac_idx);
+      
+      xlim([stim_on-0.5 stim_off+0.5]);
+      t.String = ['Trial ' num2str(iT)];
+      
+      % check if there is a correction saccade
+      last_sac_idx   = 1;
+      if sac_idx < nsaccades
+         dt_sac         = on_time(sac_idx+1) - off_time(sac_idx);
+         if dt_sac < 0.2; last_sac_idx = 2; end
       end
       
-      % Resort them
-      [~,idx] = sort(Data.Pup.TCindex);
-      Data.Pup.TCindex           = Data.Pup.TCindex(idx);
-      Data.Pup.TimeCorrection    =  Data.Pup.TimeCorrection(idx);
+      % sample 100 ms for median duration of smv
+      last_idx       = sac_idx+last_sac_idx-1;
+      fix_idx        = find(ts_pup>off_time(last_idx),1);
+      range          = fix_idx:fix_idx+14;
+      sample_smv     = smv(range);
+      
+      % remove trials under certain conditions   
+      clc;
+      if isempty(sac_idx); discard(iT) = true; disp('   (EM#1) No saccade was found!'); end                          % no saccade is found after stimulus onset
+      if sac_on-stim_on>0.4; discard(iT) = true; disp('   (EM#2) RT too slow!'); end                                  % no saccade is found within reasonable RT
+      if off_time(last_idx) > stim_off-.1; discard(iT) = true; disp('   (EM#3) Localization to slow!'); end                        % no saccade is found prior to offset
+      if max(sample_smv) > 30; discard(iT) = true; disp('   (EM#4) ROI has to high velocities'); end                     % throw away if too much velocity
+      if any(conf((range(1)-100):(range(end)+100)) < 0.7); discard(iT) = true; disp('   (EM#5) Confidence is too low!'); end
+      
+      
+      t.Color = 'r';
+      % write mapping
+      if ~discard(iT) % if you don't discard get 
+         
+         t.Color = 'g';
+         % patch region of interest
+         t1    = ts_pup(range(1));
+         t2    = ts_pup(range(end));
+         x     = [t1 t2 t2 t1];
+         y     = [min(ax.YLim) min(ax.YLim) max(ax.YLim) max(ax.YLim)];
+         patch(x,y,'g','FaceAlpha',0.3);
+      
+
+         T(iT,:)  = target;
+         X(iT,:)  = [median(Lx(range)), median(Ly(range)), median(Lz(range)), median(Rx(range)), median(Ry(range)), median(Rz(range))];  
+         
+      end
+      pause(pause_dur);
+   end
+   
+   % Train network
+   scaler         = 50; %max(max(abs(T)));
+   nT             = T ./ scaler;
+      
+   % Train network
+   net = fitnet(2);                  % Train network with 3 hidden units
+   net.divideParam.trainRatio          = 1;
+   net.divideParam.testRatio           = 0;
+   net.divideParam.valRatio            = 0;
+
+   whos X T
+   net = train(net,X',nT');       % Note the orientation for neural network inputs/outputs
+   
+   % Store nn
+   for iB = 1:size(Data)
+      Data(iB).Calibration.net      = net;
+      Data(iB).Calibration.scaler   = scaler;
    end
 end
 
-function Data = train_calibration(Data,GV)
+
+function [az,el] 	= pupil_xyz2azel(x,y,z)
+   % This function will convert xyz into az, el
+   
+   % Get rid of the NaN's
+%    x  = pb_naninterp(x);
+%    y  = pb_naninterp(y);
+%    z  = pb_naninterp(z);
+   
+   r  = sqrt(x.^2 + y.^2 + z.^2);
+   el = acosd(y./r);
+   az = atan2d(z,x);
+end
+
+function Data = train_calibration2(Data,GV)
 % This will train neural network to map pupillabs norm position to real
 % world azimuth/elevation values.
 
    
    Cal = Data(1).Calibration.Data;
-
-   if isempty(Cal); return; end % Check if data exists
+   if isempty(Cal); error('No calibtration data was found.'); end % Check if data exists
+   
    
    % Prep calibration data
    calsz    = [length(Cal.block_info.trial) 2];
@@ -351,13 +485,55 @@ function azel = mapeye_norm2azel(block_data)
    % neural network and scaler.
 
       % Input
-      normx             = block_data.Pup.Data(2,:);
-      normy             = block_data.Pup.Data(3,:);
+      Rx                = block_data.Pup.Data(13,:);
+      Ry                = block_data.Pup.Data(14,:);
+      Rz                = block_data.Pup.Data(15,:);
+      Lx                = block_data.Pup.Data(16,:);
+      Ly                = block_data.Pup.Data(17,:);
+      Lz                = block_data.Pup.Data(18,:);
 
       % Simulate network
       net               = block_data.Calibration.net;
-      azel              = sim(net,[normx; normy])';                        % NOTE, FLIP BACK ORIENTATION
+      azel              = sim(net,[Lx;Ly;Lz;Rx;Ry;Rz])';                   % NOTE, FLIP BACK ORIENTATION
       azel              = azel .* block_data.Calibration.scaler;           % Scale back for normalization
+      
+      % compare difference
+      x                 = block_data.Pup.Data(4,:);
+      y                 = block_data.Pup.Data(5,:);
+      z                 = block_data.Pup.Data(6,:);
+      [az,el]           = pupil_xyz2azel(x,y,z);
+      
+      az = az-median(az);
+      el = el-median(el);
+      
+      
+      t = block_data.Pup.Timestamps - block_data.Pup.Timestamps(1);
+      
+      % compare
+      cfn = pb_newfig(232);
+      
+      subplot(121);
+      axis square;
+      hold on;
+      
+      plot(t,azel(:,1));
+      plot(t,az)
+      legend('network','pl')
+      
+      subplot(122)
+      axis square
+      hold on
+      
+      plot(t,azel(:,2));
+      plot(t,el)
+      legend('network','pl')
+      h= pb_fobj(gcf,'type','axes');
+      linkaxes(h,'x');
+      
+      ylim([-50 50]);
+      
+      
+      pb_nicegraph;
 end
 
 function azel   = convert_xyz2azel(x,y,z)

@@ -1,23 +1,24 @@
-function pb_vWriteFixLight(fid,GV)
-% PB_VWRITEFIXLIGHT()
+function [az,el] = pb_pupilcombinesamples(az,el,varargin)
+% PB_PUPILMEANSAMPLE()
 %
-% PB_VWRITEFIXLIGHT()  ...
+% PB_PUPILMEANSAMPLE()  ...
 %
 % See also ...
 
 % PBToolbox (2022): JJH: j.heckman@donders.ru.nl
 
-   
-   switch GV.stim_fixlight
-      case 1   % Chair frame
-         x  = 0;
-         y  = 0;
-      case 2   % World frame
-         x  = 90;
-         y  = 0;
+   method = pb_keyval('method',varargin,'mean');
+
+   % make even (so there always is a pair)!
+   if ~iseven(length(az))
+      az(end+1) = nan; el(end+1) = nan;
    end
 
-	fprintf(fid,'%s\t%.0f\t%.0f\t \t%d\t%d\t%d\t%d\t%d\n','LED',x,y,50,0,0,0,GV.stim_fixdur);
+   switch method
+      case 'mean'
+         az = nanmean([az(1:2:end); az(2:2:end)]);
+         el = nanmean([el(1:2:end); el(2:2:end)]);
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

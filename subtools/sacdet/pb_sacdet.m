@@ -55,7 +55,7 @@ function pb_sacdet_OpeningFcn(hObject, ~, handles, varargin)
 
    % Choose default command line output for pb_sacdet
    handles.output    = hObject;
-   handles.filename  = 'sac_file.mat';
+   handles.filename  = 'sac_file';
    set(hObject, 'color', 'w');
 
    % Load data
@@ -71,11 +71,11 @@ function pb_sacdet_OpeningFcn(hObject, ~, handles, varargin)
    end
    
    % Select block you want to analyse
-   block_idx = select_block(D);
+   handles.block_idx = select_block(D);
 
    % Update handles structure
-   handles                       = read_pupil(handles, D(block_idx));
-   handles                       = read_blockinfo(handles, D(block_idx));
+   handles                       = read_pupil(handles, D(handles.block_idx));
+   handles                       = read_blockinfo(handles, D(handles.block_idx));
    handles                       = preall_gui(hObject,handles);
    
    % synchronize timestreams
@@ -85,6 +85,7 @@ function pb_sacdet_OpeningFcn(hObject, ~, handles, varargin)
    
    % Get hv traces, unfiltered.
    trace                         = stampe_filtering(handles.pupil_labs.data);
+   trace                         = bw_filtering(trace,74,10);
    handles.pupil_labs.x          = trace(1,:);
    handles.pupil_labs.y          = trace(2,:);
    
@@ -368,7 +369,7 @@ function handles = p_insert_Callback(~, ~, handles)
             y     = [min(handles.ax_vel.YLim) min(handles.ax_vel.YLim) max(handles.ax_vel.YLim) max(handles.ax_vel.YLim)];
       end
       
-      handles.current_patches(current,iA).FaceAlpha = 0.1;
+      if ~isempty(handles.current_patches); handles.current_patches(current,iA).FaceAlpha = 0.1; end
       handles.current_patches(last,iA) = patch(x,y,'green','FaceAlpha',0.3,'Linewidth',2);
    end
    
@@ -435,6 +436,13 @@ function handles = save_data(hObject,handles)
    % This function will save all relevant info from sacdet and store it in
    % a sac file
 
+   % Get eye traces
+   R              = hypot(handles.pupil_labs.x,handles.pupil_labs.y);
+   vel            = handles.pupil_labs.vel;
+   ts_pup         = handles.pupil_labs.ts;
+   trace          = [handles.pupil_labs.x; handles.pupil_labs.y];
+   trace          = bw_filtering(trace,75,20);
+
    %  Get trial data
    trial_onset    = handles.trial_onset-handles.trial_onset(1);
    trial_offset   = [trial_onset(2:end) trial_onset(end)+max(diff(trial_onset))];
@@ -445,15 +453,21 @@ function handles = save_data(hObject,handles)
    % Get saccade data
    sac_on_idx     = handles.sac_on;
    sac_on         = handles.pupil_labs.ts(sac_on_idx);
+   sac_on_idx     = sac_on_idx(sac_on>=0);
    sac_on         = sac_on(sac_on>=0);
+   
    sac_off_idx    = handles.sac_off;
    sac_off        = handles.pupil_labs.ts(sac_off_idx);
+   sac_off_idx    = sac_off_idx(sac_off>=0);
    sac_off        = sac_off(sac_off>=0);
    
+   
    % Build Sac var
-   NPAR           = 21;                                                    % cnt / trial / nsactrial / 18 paramaters
+   NPAR           = 26;                                                    % cnt / trial / nsactrial / 18 paramaters
    Sac            = zeros(length(sac_on),NPAR);                            % Preallocate var for speed
    cnt            = 1;                                                     % Initialize cnt
+   
+   S              = struct('velocity_profile',[],'frequencies',[],'power',[]);
    
    for iT = 1:length(trial_onset)
       % Run over all trials
@@ -465,48 +479,116 @@ function handles = save_data(hObject,handles)
       for iS = 1:length(sel_sac)
          % Run over all saccades
          
-         % Saccade index
+         % 01.Saccade index
          Sac(cnt,1)     = cnt; 
          
-         % Trial index
+         % 02. Trial index
          Sac(cnt,2)     = iT;
          
-         % Sac idx in trial
+         % 03. Sac idx in trial
          Sac(cnt,3)     = iS;
          
-         % Sac onset index 
+         % 04. Sac onset index 
          Sac(cnt,4)     = sac_on_idx(cnt);
                   
-         % Sac offset index 
+         % 05. Sac offset index 
          Sac(cnt,5)     = sac_off_idx(cnt);
          
-         % Sac onset index 
+         % 06. Sac onset time 
          Sac(cnt,6)     = sac_on(cnt);
                   
-         % Sac offset index 
+         % 07. Sac offset time 
          Sac(cnt,7)     = sac_off(cnt);
          
-         % Stim onset
-         s              = stim.trial(1).stim(2);
-         Sac(cnt,8)     = s.ondelay/1000;
+         % 08. Stim onset (in ms)
+         s              = stim.trial(iT).stim(2);
+         Sac(cnt,8)     = s.ondelay;
          
-         % Stim ofset
-         Sac(cnt,9)     = s.offdelay/1000;
+         % 09. Stim ofset (in ms)
+         Sac(cnt,9)     = s.offdelay;
          
-         % Stim durset
-         Sac(cnt,10)  	= (s.offdelay - s.ondelay)/1000;
+         % 10. Stim duration (in ms)
+         Sac(cnt,10)  	= Sac(cnt,9)-Sac(cnt,8);
          
+         % 11. Horizontal onset position
+         Sac(cnt,11)    = trace(1, Sac(cnt,4));
          
+         % 11. Vertical onset position
+         Sac(cnt,12)    = trace(2, Sac(cnt,4));
+         
+         % 13. Horizontal offset position
+         Sac(cnt,13)    = trace(1, Sac(cnt,5));
+         
+         % 14. Vertical offset position
+         Sac(cnt,14)    = trace(2, Sac(cnt,5));
+         
+         % 15. Horizontal displacement
+         Sac(cnt,15)    = Sac(cnt,13) - Sac(cnt,11);
+
+       	% 16. Vertical displacement
+         Sac(cnt,16)    = Sac(cnt,14) - Sac(cnt,12);
+         
+         % 17. Saccade amplitude
+         Sac(cnt,17)    = hypot(Sac(cnt,16),Sac(cnt,15));
+         
+        	% 18. Saccade duration (in ms)
+         Sac(cnt,18)    = (Sac(cnt,7) - Sac(cnt,6))*1000;
+         
+         % 19. Mean velocity
+         Sac(cnt,19)    = Sac(cnt,17)/Sac(cnt,18)*1000;
+         
+         % 20. Max velocity
+         vel_profile    = vel(Sac(cnt,4):Sac(cnt,5));
+         [pk,pk_idx]    = max(vel_profile);
+         Sac(cnt,20)    = pk;
+         
+         % 21. Peak time (in s)
+         pk_idx         = Sac(cnt,4)+pk_idx-1;
+         Sac(cnt,21)    = ts_pup(pk_idx);
+         
+         % 22. Time2peak
+         Sac(cnt,22)    = (Sac(cnt,21)-Sac(cnt,6))*1000;
+         
+         % 23. Skeweness (similar measure to actual skeweness vOpstal & vGinsbergen '86)
+         Sac(cnt,23)    = Sac(cnt,22)/Sac(cnt,18); 
+         
+         % 24. Number of peaks
+         Sac(cnt,24)    = length(findpeaks(vel_profile));
+
+         S(cnt).velocity_profile             = vel_profile;
+         [S(cnt).frequencies,S(cnt).power] 	= get_sac_power(R(Sac(cnt,4):Sac(cnt,5)));
+         S(cnt).R                            = Sac(cnt,17);
+         
+         % 25. Target Azimuth
+         Sac(cnt,25)   = s.azimuth;
+         
+         % 26. Target Elevation
+         Sac(cnt,26)   = s.elevation;
          
          cnt =  cnt+1;  % count
       end
    end
    
-   
-   
-
    guidata(hObject, handles);
-   uisave('Sac',handles.filename);
+   uisave({'Sac','S'},[handles.filename '_b' num2str(handles.block_idx) '.mat']);
+end
+
+function handles = load_data(hObject,handles)
+
+   [fn, path] = pb_getfile('cd',cd);
+   if fn == 0; return; end
+   load([path filesep fn],'Sac');
+   
+   
+   % delete present saccades
+   delete(handles.current_patches);
+   handles.current_patches    = [];
+   
+   handles.sac_on             = Sac(:,4);
+   handles.sac_off            = Sac(:,5);
+   
+   handles = disp_saccades(handles);
+   guidata(hObject, handles);
 end
 
 %% ALL THINGS SACCADES
@@ -515,19 +597,19 @@ function handles = detect_saccades(handles)
    % This function will find all saccades using the smooth velocity trace
 
    % defaults
-   threshold_vel     = 20;
-   minimum_length    = 5;
-   maxmimum_length   = 70;
-   minimum_conf      = 0.75;
-   window_extra      = 50;
-   minimum_distance  = 10;
+   THRESHOLD_VALUE 	= 30;
+   MIN_LENGTH        = 5;
+   MAX_LENGTH        = 50;
+   MIN_CONF          = 0.8;
+   WINDOW            = 50;
+   MIN_DISTANCE      = 1;
    
    % data
    smv               = handles.pupil_labs.vels;
    conf              = handles.pupil_labs.conf;
 
    % saccade detection algorithm
-   fast              = smv >= threshold_vel;
+   fast              = smv >= THRESHOLD_VALUE;
    change            = [0, diff(fast)];
    
    % potential saccades
@@ -549,7 +631,7 @@ function handles = detect_saccades(handles)
    pot_off        = pot_off(1:end-stop_idx);
    
    % merge saccades to close to eachother
-   idx      = (pot_on(2:end) - pot_off(1:end-1) < minimum_distance);
+   idx      = (pot_on(2:end) - pot_off(1:end-1) < MIN_DISTANCE);
    pot_on   = pot_on(~([0 idx(1:end-1)]));
    pot_off  = pot_off(~idx);
    
@@ -560,9 +642,9 @@ function handles = detect_saccades(handles)
    for iS =  1:length(pot_off)
    % check for criteria, if not met discard saccade
       sac_len     = pot_off(iS) - pot_on(iS);
-      window      = conf(pot_on(iS)-window_extra:pot_off(iS)+window_extra);
+      window      = conf(pot_on(iS)-WINDOW:pot_off(iS)+WINDOW);
       
-      if sac_len<minimum_length || sac_len>maxmimum_length || any(window<minimum_conf)  % remove saccade if saccade is too short or the window dips below 0.8 confidence
+      if sac_len<MIN_LENGTH || sac_len>MAX_LENGTH || any(window<MIN_CONF)  % remove saccade if saccade is too short or the window dips below 0.8 confidence
          keep_sac(iS) = false;
       end
    end
@@ -582,7 +664,7 @@ function idc = correct_onoff(handles, sac_idc, direction)
    % Get data
    smv         = handles.pupil_labs.vels;
    idc         = zeros(size(sac_idc));      
-   samplelen   = 7;                       % This is the max window arround the idx
+   samplelen   = 1;                       % This is the max window arround the idx
    
    for iS = 1:length(sac_idc)
       % Iterate over all saccade idc
@@ -696,9 +778,10 @@ function handles = disp_saccades(handles)
    end
    
    handles.current_saccade = [find(sac_bool==1,1) 1];                      % select the total saccade number in list / and within trial
+   if length(handles.current_saccade)~=2; handles.current_saccade = [1 1]; end
 end
 
-function [f,P] = get_sac_power(trace) %#ok
+function [f,P] = get_sac_power(trace) 
    % Compute power content of saccade in freq domain
    
    % Get length fft
@@ -711,7 +794,7 @@ function [f,P] = get_sac_power(trace) %#ok
    x                    = ones(1,len) * trace(end);
    x(1:length(trace))   = trace;
    x                    = fliplr(x);   
-   x(1:length(trace))   = trace;       
+   x(1:length(trace))   = trace;      
    
    % compute fft
    [~,f,P] = pb_fft(x,200);
@@ -767,6 +850,11 @@ function keyPress(hObject, eventdata)
          % Save data
          case 's'
             handles = save_data(hObject,handles);
+            
+         % load data
+         case 'l'
+            handles = load_data(hObject,handles);
+         
       end
       
    % store saccade info
@@ -784,7 +872,7 @@ function    [fc,order] = get_filtersettings %#ok
 end
 
 
-function trace = bw_filtering(trace,fc,order) %#ok
+function trace = bw_filtering(trace,fc,order)
    % See Mack et al 2017 for best filter settings: 200Hz + high noise -->
    
    [b,a]    = butter(order,fc/(200/2));
@@ -870,7 +958,7 @@ function smv    = getsmooth(vel)
 
    % defaults
    fs       = 200; 
-   sd       = 0.02;
+   sd       = 0.01;
    sdextra  = 5;
    
    % Get velocity
@@ -893,133 +981,3 @@ function smv    = getsmooth(vel)
    y           = real(ifft(fft(x).*fft(g)));
    smv       	= y(nextra+1:end-nextra);
 end
-
-
-
-
-%% CHANGEE
-
-% % --- Executes on button press in insert_stat.
-% function save/read_saccades_Callback(hObject, ~, handles, range) %#ok
-% % hObject    handle to insert_stat (see GCBO)
-% % eventdata  reserved - to be defined in a future version of MATLAB
-% % handles    structure with handles and user data (see GUIDATA)
-% 
-%    if nargin < 4
-%       
-%       % Select stationary onset and offset
-%       x1 = ginput(1);
-%       axes(handles.ax_pos);
-%       h(1) = pb_vline(x1(1),'color','g');   
-%       axes(handles.ax_vel);
-%       h(2) = pb_vline(x1(1),'color','g');
-% 
-%       x2 = ginput(1);
-%       axes(handles.ax_pos);
-%       h(3) = pb_vline(x2(1),'color','g');   
-%       axes(handles.ax_vel);
-%       h(4) = pb_vline(x2(1),'color','g');
-%       
-%    else
-%       
-%       % Create saccades from SACDATA
-%       x1 = range(1);
-%       x2 = range(2);
-%       axes(handles.ax_pos);
-%       h(1) = pb_vline(x1(1),'color','g');   
-%       h(2) = pb_vline(x2(1),'color','g');  
-%       
-%       axes(handles.ax_vel);
-%       h(3) = pb_vline(x1(1),'color','g');
-%       h(4) = pb_vline(x2(1),'color','g');   
-%    end
-%  
-%    % Patch position
-%    axes(handles.ax_pos);
-%    x     = [x1(1) x2(1) x2(1) x1(1)];
-%    y     = [min(handles.ax_pos.YLim) min(handles.ax_pos.YLim) max(handles.ax_pos.YLim) max(handles.ax_pos.YLim)];
-%    hp(1) = patch(x,y,'red','FaceAlpha',0.1,'Linewidth',2);
-%    
-%    % Patch velocity
-%    axes(handles.ax_vel);
-%    x     = [x1(1) x2(1) x2(1) x1(1)];
-%    y     = [min(handles.ax_vel.YLim) min(handles.ax_vel.YLim) max(handles.ax_vel.YLim) max(handles.ax_vel.YLim)];
-%    hp(2) = patch(x,y,'red','FaceAlpha',0.1,'Linewidth',2);
-%    
-%    % Get idx of saccade on/offset
-%    x1 = find(handles.pupil_labs.ts>=x1(1),1);
-%    x2 = find(handles.pupil_labs.ts>=x2(1),1);
-%    
-%    % filter settings
-%    [fc,order] = get_filtersettings;
-%    
-%    cnt      = size(handles.T(1).stationary,2)+1;
-%    trace    = [handles.pupil_labs.x; handles.pupil_labs.y];                % no filter
-%    
-%    for iFx = 1:length(fc)
-% 
-%       % Read static
-%       if iFx > 1 
-%          trace    = bw_filtering(trace, fc(iFx), order(iFx));              % filter data
-%       end
-%       
-%       x        = trace(1,:);
-%       y        = trace(2,:);
-%       v        = getvel(x,y,200);
-% 
-%       t        = statread(v,x1:x2);
-%       fields   = fieldnames(t);
-% 
-%       % Fill in the fields, struct 2 matrix
-%       
-%       for iF = 1:length(fields)
-%          handles.T(iFx).stationary(iF,cnt) = t.(fields{iF});
-%       end
-%       
-%       handles.T(iFx).Fc                = fc(iFx);
-%       handles.T(iFx).Order             = order(iFx);
-%       handles.T(iFx).veltrace{end+1}   = v(x1:x2);
-%    end
-%    
-%    % Visualization
-%    handles.stationary_lines{end+1}     = h;
-%    handles.stationary_patches{end+1}   = hp;
-%    
-% 	guidata(hObject, handles);
-% end
-
-% function s =  sacread(x,y,v,ts,range)
-% 
-%    svel_threshold = 10;   % 20 d/s
-% 
-%    % find systematic 
-%    selv = v(range(1):range(2));
-% 
-%    cIdx = find(selv>=svel_threshold,1);                                	% see how many samples to remove at beginning
-%    if ~isempty(cIdx); range(1) = range(1)+cIdx-1; end
-% 
-%    cIdx = find(fliplr(selv)>=svel_threshold,1);                        	% see how many samples to remove at the end
-%    if ~isempty(cIdx); range(2) = range(2)-cIdx+1; end
-% 
-%    % select saccade info
-%    s.onset_idx          = range(1);                                        % 1 
-%    s.offset_idx         = range(2);                                        % 2
-%    s.onset_time         = ts(range(1));                                    % 3
-%    s.offset_time        = ts(range(2));
-%    s.hor_onset_pos      = x(range(1));
-%    s.ver_onset_pos      = y(range(1));      
-%    s.hor_offset_pos     = x(range(2));
-%    s.ver_offset_pos     = y(range(2));
-%    s.hor_displacement   = s.hor_offset_pos - s.hor_onset_pos;   
-%    s.ver_displacement   = s.ver_offset_pos - s.ver_onset_pos; 
-%    s.amplitude          = hypot(s.hor_displacement,s.ver_displacement);
-%    s.duration           = s.offset_time - s.onset_time;
-%    s.mean_vel           = mean(v(s.onset_idx:s.offset_idx));
-%    [s.peak_vel,idx]     = max(v(s.onset_idx:s.offset_idx));
-%    s.pkpower            = s.duration * s.peak_vel;
-%    s.time_to_peak       = idx/200;
-%    s.skewness           = s.time_to_peak / s.duration;
-%    s.num_of_peaks       = length(findpeaks(selv));
-% end
-
-

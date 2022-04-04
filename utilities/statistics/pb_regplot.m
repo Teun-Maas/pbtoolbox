@@ -37,11 +37,10 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    %% Graphics
    h = gobjects(0);
    if data
-      h(1) = scatter(X, Y, ['k' marker']); 
-      h(1).MarkerFaceAlpha       = alpha;
-      h(1).MarkerEdgeAlpha       = alpha;
+      h(1) = plot(X, Y, marker); 
       h(1).Tag                   = 'Fixed';
-      h(1).MarkerEdgeColor       = color/2;
+      h(1).MarkerEdgeColor       = color;
+
       
    end
    axxes = axis;
