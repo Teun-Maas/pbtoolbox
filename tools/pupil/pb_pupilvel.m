@@ -7,6 +7,9 @@ function [vel,smv, R] = pb_pupilvel(az,el,fs)
 
 % PBToolbox (2022): JJH: j.heckman@donders.ru.nl
 
+   az    = pb_naninterp(az);
+   el    = pb_naninterp(el);
+
    % Get the dimensionless movement, R.
    Rx                                     = az;
    Ry                                     = el;

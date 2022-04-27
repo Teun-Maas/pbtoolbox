@@ -17,8 +17,9 @@ function [fname, path] = pb_getfile(varargin)
 
    if flag; cd(cdir); end
 
-   [fname, path] = uigetfile(ext,title); 
-   fpath = [path fname];
+   % open uiget and store data
+   [fname, path]     = uigetfile(ext,title); 
+   fpath             = [path fname];
 
    if fpath(1) == 0; fpath = []; return; end
 end

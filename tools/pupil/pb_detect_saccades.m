@@ -13,8 +13,8 @@ function [on, off] = pb_detect_saccades(smv,conf)
    THRESHOLD_VALUE 	= 30;
    MIN_LENGTH        = 5;
    MAX_LENGTH        = 60;
-   MIN_CONF          = 0.7;
-   WINDOW            = 10;
+   MIN_CONF          = 0.85;
+   WINDOW            = 5;
    MIN_DISTANCE      = 1;
 
    % saccade detection algorithm

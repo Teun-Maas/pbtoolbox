@@ -7,186 +7,244 @@ function Data = pb_vPrepData(varargin)
 
 % PBToolbox (2022): JJH: j.heckman@donders.ru.nl
    
-   % Parse parameters
-   GV.cdir           = pb_keyval('cd', varargin, cd);
-   GV.block_idx      = pb_keyval('block', varargin, 'all');
-   GV.stim_idx       = pb_keyval('stim', varargin, 1);
-   GV.fn             = pb_keyval('fn', varargin);
-   GV.gaze_method    = pb_keyval('gaze', varargin, 'old');
-   GV.heuristic_f    = pb_keyval('heuristic_filter', varargin, 1);
-   GV.sgolay_f       = pb_keyval('sgolay_filter', varargin, 0);
-   GV.median_f       = pb_keyval('median_filter', varargin, 0);
-   GV.butter_f       = pb_keyval('butter_filter', varargin, 1);
-   GV.path           = pb_keyval('path', varargin, [cd filesep '..']);
-   GV.store          = pb_keyval('store', varargin, 1);
-   GV.discern_frames = pb_keyval('frames', varargin, 1);
-   GV.fs             = pb_keyval('fs', varargin, 200);
-   GV.acquisition    = pb_keyval('acquisition', varargin, 3);
-   GV.epoch          = pb_keyval('epoch', varargin, 1);
-   GV.debug          = pb_keyval('debug', varargin, true);
-   GV.chrono_pup     = pb_keyval('chrono',varargin, false);
 
-   % Load and clean data
+   % Load data, read GV, and clean data
+   GV             = parse_keyval(varargin{:});                             % Pass along the varargin and store keyvalues in a 'global' variable
    [D,GV]         = load_data(GV);                                         % Will load the data
+   % <--- UP UNTILL HERE: CLEANED & COMMENTED
    [D,GV]         = calibrate_data(D,GV);                                  % filters, and removes any inconsentensies from raw data
-   GV             = readkeyval(D,GV);                                   % Read keyval
+   GV             = read_keyval(D,GV);                                     % Correct any keyval
    
    % Parse data
    S        = getstims(D, GV);                                             % read the stimuli
    T        = gettimestamps(D, GV);                                        % synchronize the LSL timestamps
+   
+   % <--- UP UNTILL HERE: RUNS SMOOTHLY / NO ERRORS
+   
    [P,GV]	= getdata(D, T, GV);                                           % obtain the response behaviour
    [T,P]    = getchair(D, T, P, GV);                                       % add chair rotation
-   Data      = pb_struct({'stimuli','timestamps','position'},{S,T,P});
+   Data     = pb_struct({'stimuli','timestamps','position'},{S,T,P});
    
    % store data
-   if GV.epoch; Data = epoch_data(Data, GV); end                           % epoch data
-   if GV.store; save_data(Data,GV); end                                    % store data
+   if GV.epoch_data; Data = epoch_data(Data, GV); end                      % epoch data
+   if GV.gen_storedata; save_data(Data,GV); end                            % store data
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 %                                                           %
 %       Part of Programmeer Beer Toolbox (PBToolbox)        %
-%       Written by: Jesse J. Heckman (2020)                 %
+%       Written by: Jesse J. Heckman (2022)                 %
 %                                                           %
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
+
+% ---
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+%                                                           %
+%           General loading and meta functions              %
+%                                                           %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+function GV = parse_keyval(varargin)
+% This function will read and set all optional/default parameters that
+% will be passed along the functions.
+ 
+   V = varargin;           % Improve readability
+   
+   % General parse
+   GV.gen_cdir             = pb_keyval('cd', V, cd);                       % Directory where block data can be found
+   GV.gen_path             = pb_keyval('path', V, [cd filesep '..']);      % Provide full path of converted data
+   GV.gen_fn               = pb_keyval('fn', V);                           % Enter filename of the converted data
+   GV.gen_blockidx         = pb_keyval('block', V, 'all');                 % Number of blocks to analyse, can be any double (array) or 'all'
+   GV.gen_debug            = pb_keyval('debug', V, true);                  % Select true when debugging, it will provide some more figures and stops along the way.
+   GV.gen_storedata        = pb_keyval('store', V, true);                  % If you want to store (and overwrite) data; select true.
+   GV.gen_cfn              = pb_keyval('cfn', V, 231);                     % Set initial count current figure number
+   
+   % Calibration parse
+   GV.cal_storefig         = pb_keyval('save_cal',V,true);                 % If you want to store (and overwrite) calibration data; select true.
+   GV.cal_loadfromfig      = pb_keyval('load_cal',V,true);                 % Run calibration from latest calibration figure
+   
+   % Stimulus parse
+   GV.stim_targetidx       = pb_keyval('stim', V, 1);                      % Select the stimulus of interest index.
+   GV.stim_frames          = pb_keyval('frames', V, true);                 % This will correct stimulus azimuth for 
+   
+   % Filters parse
+   GV.filter_heuristic   	= pb_keyval('heuristic_filter', V, true);       % Heuristic filter for spike removal
+   GV.filter_butter       	= pb_keyval('butter_filter', V, true);          % No-phase shift 'Lowpass' butterworth filter, Fc = >74 Hz (see Bahill et al, 1982)
+   GV.filter_sgolay      	= pb_keyval('sgolay_filter', V, false);         % this will take the savinski golay filter, very comon in eye research
+   GV.filter_median      	= pb_keyval('median_filter', V, false);         % takes the median filter the cut out noise.
+   
+   % Gaze parse
+   GV.gaze_method          = pb_keyval('gaze', V, 'old');                  % How to compute gaze (G=E+H)? check out functions for different methods
+   GV.gaze_fs              = pb_keyval('fs', V, 200);                      % Refers to pl sampling rate, other data will be upsampled to be matched
+   
+   % Epoch parse
+   GV.epoch_data           = pb_keyval('epoch', V, 1);                     % Store epoche data in chuncks for trial by trial analysis
+   GV.epoch_acqduration    = pb_keyval('acquisition', V, 3);               % Trial acquisition duration
+end
+
 function [D,GV] = load_data(GV)
-   cd(GV.path);
-   if exist(GV.fn,'file')==2
-      load(GV.fn);
+% This function will load the converted data file, from file path. If no
+% file can be found it wil prompt you to locate the file manually.
+
+   cd(GV.gen_path);                                                        % Go to select directory
+   if exist(GV.gen_fn,'file')==2
+      load(GV.gen_fn);                                                     % Load data when filename is given
    else
-      [path, prefix, fname, ext] = getfname(GV);                           % get fileparts
-      if ~path                                                             % assert
+      [path, prefix, fname, ext] = get_fname(GV);                         	% Otherwise, Get fileparts
+      if ~path                                                             % Assert if path exists
          disp('>> pb_vPrepData aborted as no file was selected.');
          return
       else
-         GV.fn = [prefix fname ext];
-         load([path GV.fn],'D'); 
+         GV.gen_fn = [prefix fname ext];
+         load([path GV.gen_fn],'D');                                       % Load data from prompt
       end
    end
    disp(['>> Data loaded...' newline]);
 end
 
-function [D,GV] = calibrate_data(Data,GV)
-  
-   % Temporally restructure and filter pupil data
-   % Data     = filter_pupil(Data,GV);
+function [path, prefix, fname, ext] = get_fname(GV)
+   % Function selects data filename
    
-   % Calibrate
-   if isfield(Data,'Calibration')
-         D  = train_calibration(Data, GV);                                     % train calibration network
-   end 
+   % select dir
+   [fname, path]  = pb_getfile('cd',[GV.gen_cdir filesep '..'],'ext','converted_data_.mat');    % Open the converted data
+   
+   if ~isa(fname,'char')                                                   % If it doesn't exist; give an error
+      prefix   = false; 
+      ext      = false;
+      error('No file was found.');
+      return                                                               
+   end
+   
+   % store fileparts
+   [ext, fname]   = pb_fext(fname);
+   prefix         = fname(1:15);       % 'converted_data_'
+   fname          = fname(16:end);                                         % Final filename (skips over prefix)
 end
 
-function Data = filter_pupil(Data, GV)
+function GV = read_keyval(Data,GV)
+   % Read and correct keyvals parameters that are dependent on 'Data' (i.e. conversion from string to some parameter of the data)
    
-   trace    = [Data.Pup.Data(2,:);Data.Pup.Data(3,:)]';
-   conf     = Data.Pup.Data(1,:);
-   
-   trace    = heckman_filtering(trace,conf,GV);
-   trace    = stampe_filtering(trace,GV);
-   trace    = bw_filtering(trace,GV);
-
-   % Store filtered data
-   Data.Pup.Data(2,:) = trace(:,1)';
-   Data.Pup.Data(3,:) = trace(:,2)';
-end
-
-function GV = readkeyval(Data,GV)
-% Read and correct keyvals
-
-   % Fix blocks
-   if ~isnumeric(GV.block_idx)
-      switch GV.block_idx
+   % Fix block numbers
+   if ~isnumeric(GV.gen_blockidx)
+      switch GV.gen_blockidx                                               % When all is selected, determine length of blocks and make array of blocks
          case 'all'
-            GV.block_idx = 1:length(Data);
-         otherwise
-            GV.block_idx = 1;
+            GV.gen_blockidx = 1:length(Data);
+         otherwise                                                         % If other non numeric, set block to 1 and only analyse first block
+            GV.gen_blockidx = 1;
       end
    end
 end
 
-function Data = train_calibration(Data, GV)
+function save_data(Data, GV)
+   % The function will store the preprocessed data with the according fn
+
+   fn       = strrep(GV.gen_fn,'converted_data_','');                      % Get filename
+   fpath    = fullfile(cd);                                                % Go to directory
+   
+   save([fpath filesep 'preprocessed_data_' fn],'Data')                    % Store data
+end
+
+
+% ---
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+%                                                           %
+%                    Calibration functions                  %
+%                                                           %
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+function [D,GV] = calibrate_data(Data,GV)
+% This function will load any calibration figures, train network for
+% calibration, and store calibration figure.
+
+   % Calibrate
+   if ~isfield(Data,'Calibration'); disp('No Calibration data was found.'); return; end % Assert
+   
+   % Load calibration figure
+   idc   = load_calibration_figure(Data,GV);                               % Load calibration figure to select X,T mappings for NN (Y = M(X,T)
+   D     = train_calibration(Data, idc, GV);                               % Train calibration network
+end
+
+
+function  idc  = load_calibration_figure(Data,GV)  
+% This function  will determine if it needs to load any data figure
+% timestamps
+   idc = [];
+end
+
+
+function Data = train_calibration(Data, idc, GV)
 % This will train neural network to map pupillabs norm position to real
 % world azimuth/elevation values.
 
-   pause_dur = 1;
-   
-   Cal = Data(1).Calibration.Data;
-   if isempty(Cal); error('No calibtration data was found.'); end % Check if data exists
+   % Globals
+   Cal      = Data(1).Calibration.Data;
+   if isempty(Cal); error('No calibtration data was found.'); end          % Check if data exists
    
    % Get timestamps
-   ts_pup            = lsl_correct_lsl_timestamps(Cal.pupil_labs);
+   ts_pup            = lsl_correct_lsl_timestamps(Cal.pupil_labs);         % Calibration files are not yet lsl corrected 
    ts_eo             = lsl_correct_lsl_timestamps(Cal.event_out);
-      
-   % Get eye
-   conf              = Cal.pupil_labs.Data(1,:);
-   x                 = Cal.pupil_labs.Data(4,:);
-   y                 = Cal.pupil_labs.Data(5,:);
-   z                 = Cal.pupil_labs.Data(6,:);
-   
-   % get 
-   Rx                = Cal.pupil_labs.Data(13,:);
-   Ry                = Cal.pupil_labs.Data(14,:);
-   Rz                = Cal.pupil_labs.Data(15,:);
-   Lx                = Cal.pupil_labs.Data(16,:);
-   Ly                = Cal.pupil_labs.Data(17,:);
-   Lz                = Cal.pupil_labs.Data(18,:);
+   ts_pup            = ts_pup(1:2:end) - ts_eo(1);                         % Half the data due to double sampling (and synch with onset first (fixation) LED)
+   ts_eo             = ts_eo - ts_eo(1);                                   % Synch with itself
+   target_on         = ts_eo(3:4:end);                                     % Target onset
+   target_off        = ts_eo(4:4:end);                                     % Target offset
    
    % Convert and merge samples
-   [az,el]           = pupil_xyz2azel(x,y,z);
-   [Rx,Ry]           = pb_pupilcombinesamples(Rx,Ry);
-   [Lx,Ly]           = pb_pupilcombinesamples(Lx,Ly);
-   [Lz,Rz]           = pb_pupilcombinesamples(Lz,Rz);
-   [az,el]           = pb_pupilcombinesamples(az,el);
-   [conf,~]          = pb_pupilcombinesamples(conf,conf);
-   [~,smv, ~]        = pb_pupilvel(az,el,GV.fs);
-   ts_pup            = ts_pup(1:2:end) - ts_eo(1);
-   ts_eo             = ts_eo - ts_eo(1);
-   target_on         = ts_eo(3:4:end);
-   target_off        = ts_eo(4:4:end);
-   
-   % detect saccades
-   [on_idx,off_idx]  = pb_detect_saccades(smv,conf);
+   PL                = get_pupil_data(Cal.pupil_labs.Data);                % Get pupil data from calibration
+   [az,el]           = pupil_xyz2azel(PL.gaze_point_3d_x,PL.gaze_point_3d_y,PL.gaze_point_3d_z);  % compute azel from 3D x/y/z
+   [~,smv, ~]        = pb_pupilvel(az,el,GV.gaze_fs);                      % Get smoothed velocity for rough saccade detection
+
+   % Detect saccades
+   [on_idx,off_idx]  = pb_detect_saccades(smv,PL.confidence);              % Detect saccades
    on_time           = ts_pup(on_idx);
    off_time          = ts_pup(off_idx);
    nsaccades         = length(on_time);
    
-   [cfn,fig] = pb_newfig(231);
-   set(fig,'defaultLegendAutoUpdate','off');
-   t   = title('Trial 1');
-   ylim([-50 50]);
-   hold on;
-   plot(ts_pup,az-median(az));
-   plot(ts_pup,el-median(el));
-   plot(ts_pup,conf*50,'--k','tag','Fixed');
-   pb_nicegraph
+      
+   % Build figure for detection of ROI
+   col         = pb_selectcolor(2,2);   
+   GV          = build_calfigure(GV);
+   
+   plot(ts_pup,az,'color',col(1,:));
+   plot(ts_pup,el,'color',col(2,:));
+   plot(ts_pup,PL.confidence*50,'--k','tag','Fixed');
    pb_vline(target_on,'color','k');
    pb_vline(target_off,'color','k');
-   ax = gca;
    
-   % patch saccades
+   ax          = gca;
+   
+   % Patch saccades
    for iS = 1:length(on_time)
-      t1    = on_time(iS);
-      t2    = off_time(iS);
-
-      x     = [t1 t2 t2 t1];
-      y     = [min(ax.YLim) min(ax.YLim) max(ax.YLim) max(ax.YLim)];
+      % Iterate over saccades
       
-      patch(x,y,[0.5,0.5,0.5],'FaceAlpha',0.3);
+      % Get timestamps saccades
+      t1    = on_time(iS);                                                 % Onset
+      t2    = off_time(iS);                                                % Offset
+
+      % Convert to xy values
+      x     = [t1 t2 t2 t1];                                               % Compute x's
+      y     = [min(ax.YLim) min(ax.YLim) max(ax.YLim) max(ax.YLim)];       % Compute y's
+      
+      patch(x,y,[0.5,0.5,0.5],'FaceAlpha',0.3);                            % Create saccadic patch
    end
-   legend('Azimuth','Elevation','0.8*confidence')
+   legend('Azimuth','Elevation');
    
-   % Map target response
-   discard           = false(size(target_on));
-   X                 = nan([length(target_on) 6]);   
+   % Map target response / preallocate variables
+   discard           = false(size(target_on));                                
+   X                 = nan([length(target_on) 4]);   
    T                 = nan([length(target_on) 2]);
+   
+   % Fill in data (X) and target mapping (T)
    for iT = 1:length(target_on)
       % For each trial find target / response values for mapping
       
       % Get trial info
-      trial_info  = Cal.block_info.trial(iT).stim(2);
-      target      = [trial_info.azimuth, trial_info.elevation];
+      trial_info  = Cal.block_info.trial(iT).stim(2);                      % Second stimulus is the target during calibration
+      target      = [trial_info.azimuth, -trial_info.elevation];
       stim_on     = target_on(iT);
       stim_off    = target_off(iT);
       
@@ -196,61 +254,74 @@ function Data = train_calibration(Data, GV)
       
       xlim([stim_on-0.5 stim_off+0.5]);
       t.String = ['Trial ' num2str(iT)];
+      t.Color = 'k';
       
-      % check if there is a correction saccade
-      last_sac_idx   = 1;
-      if sac_idx < nsaccades
-         dt_sac         = on_time(sac_idx+1) - off_time(sac_idx);
-         if dt_sac < 0.2; last_sac_idx = 2; end
+      for iD = 1:2
+         pb_hline(target(iD),'visibility','on','color',col(iD,:));
       end
       
-      % sample 100 ms for median duration of smv
-      last_idx       = sac_idx+last_sac_idx-1;
-      fix_idx        = find(ts_pup>off_time(last_idx),1);
-      range          = fix_idx:fix_idx+14;
-      sample_smv     = smv(range);
+      % Prompt user to include ROI
+      answer = questdlg('Would you to select like a stationary ROI?', ...
+                        ['Trial ' num2str(iT)], ...
+                        'Yes','No thank you','No thank you');
+      % Handle response
+      switch answer
+          case 'Yes'
+             discard(iT) = false;
+             [x,~] = ginput(2);                                            % Select on- and offset for ROI
+
+          case 'No thank you'
+             discard(iT) = true;
+             pb_delete;
+             pb_delete;
+      end
       
-      % remove trials under certain conditions   
-      clc;
-      if isempty(sac_idx); discard(iT) = true; disp('   (EM#1) No saccade was found!'); end                          % no saccade is found after stimulus onset
-      if sac_on-stim_on>0.4; discard(iT) = true; disp('   (EM#2) RT too slow!'); end                                  % no saccade is found within reasonable RT
-      if off_time(last_idx) > stim_off-.1; discard(iT) = true; disp('   (EM#3) Localization to slow!'); end                        % no saccade is found prior to offset
-      if max(sample_smv) > 30; discard(iT) = true; disp('   (EM#4) ROI has to high velocities'); end                     % throw away if too much velocity
-      if any(conf((range(1)-100):(range(end)+100)) < 0.7); discard(iT) = true; disp('   (EM#5) Confidence is too low!'); end
-      
-      
-      t.Color = 'r';
       % write mapping
       if ~discard(iT) % if you don't discard get 
          
          t.Color = 'g';
          % patch region of interest
-         t1    = ts_pup(range(1));
-         t2    = ts_pup(range(end));
+         t1    = x(1);
+         t2    = x(2);
          x     = [t1 t2 t2 t1];
          y     = [min(ax.YLim) min(ax.YLim) max(ax.YLim) max(ax.YLim)];
          patch(x,y,'g','FaceAlpha',0.3);
       
 
          T(iT,:)  = target;
-         X(iT,:)  = [median(Lx(range)), median(Ly(range)), median(Lz(range)), median(Rx(range)), median(Ry(range)), median(Rz(range))];  
+         lxyz     = [median(PL.gaze_normal1_x(range)), median(PL.gaze_normal1_y(range)), median(PL.gaze_normal1_z(range))];
+         rxyz     = [median(PL.gaze_normal0_x(range)), median(PL.gaze_normal0_y(range)), median(PL.gaze_normal0_z(range))];
+         laz      = atand(lxyz(1)/lxyz(3));
+         lel      = atand(lxyz(2)/sqrt(lxyz(1)^2+lxyz(3)^2));         
+         raz      = atand(rxyz(1)/rxyz(3));
+         rel      = atand(rxyz(2)/sqrt(rxyz(1)^2+rxyz(3)^2));
+         
+         X(iT,:)  = [laz,lel,raz,rel];  
          
       end
-      pause(pause_dur);
    end
+   
+   % Create user data
+   UserData.stim_on  = target_on;
+   UserData.keep     = ~discard;
+   UserData.error    = c_error;
+   UserData.uloc     = unique(T(~isnan(T(:,1)),:),'rows');
+   
+   set(fig_handle,'UserData',UserData)     % Store data
    
    % Train network
    scaler         = 50; %max(max(abs(T)));
    nT             = T ./ scaler;
+   nX             = X ./ scaler;
       
    % Train network
-   net = fitnet(2);                  % Train network with 3 hidden units
+   net = fitnet(3);                  % Train network with 3 hidden units
    net.divideParam.trainRatio          = 1;
    net.divideParam.testRatio           = 0;
    net.divideParam.valRatio            = 0;
 
    whos X T
-   net = train(net,X',nT');       % Note the orientation for neural network inputs/outputs
+   net = train(net,nX',nT');       % Note the orientation for neural network inputs/outputs
    
    % Store nn
    for iB = 1:size(Data)
@@ -259,154 +330,126 @@ function Data = train_calibration(Data, GV)
    end
 end
 
+function GV	= build_calfigure(GV)
+% This function will build a figure for  the analysis of XT mapping ROI for
+% calibration
+   [GV.gen_cfn,fig_handle] = pb_newfig(GV.gen_cfn);
+   set(fig_handle,'defaultLegendAutoUpdate','off');
+   set(fig_handle,'WindowKeyPressFcn',@keyPressCal);
+   axis square;
+   hold on;
+   ylim([-50 50]);
+   pb_nicegraph;
+end
+
+function PL = get_pupil_data(Data)
+% this function  will read out the 
+   c_pl  = pb_pupillabels;
+   
+   idc  = [1, 4, 5, 6, 13, 14, 15, 16, 17, 18];
+   
+   % make pnan
+   if ~iseven(length(Data(1,:))); pnan = nan; else; pnan = []; end
+   
+   for iP = 1:length(idc)
+      % insert fields for the relevant pupil data
+      pldata               = [Data(idc(iP),:), pnan];                      % add nan for making an evensplit
+      PL.(c_pl{idc(iP)})   = nanmean([pldata(1:2:end); pldata(2:2:end)]);  % half the number of samples
+   end
+end
+
+function keyPressCal(h, eventdata)
+% This function will coordinate different keystrokes with functionality
+
+   keystroke   = eventdata.Key;
+   D           = h.UserData;
+   limits      = xlim;
+   current0    = limits(1)+0.5;
+   
+   switch lower(keystroke)
+
+      % Next Trial
+      case {'n','rightarrow'}
+         if current0 >= D.stim_on(end); return; end
+
+         clc;
+         idx   = find(D.stim_on>current0,1);
+         new0  = D.stim_on(idx) - 0.5;
+         xlim([new0 new0+2]);
+
+      % Previous Trial
+      case {'p','leftarrow'}
+         if current0 <= D.stim_on(1); return; end
+
+         clc;
+         idx   = find(D.stim_on>=current0,1)-1;
+         new0  = D.stim_on(idx) - 0.5;
+         xlim([new0 new0+2]);
+         
+      case {'c'} % correct
+         % delete selection
+         % dialog
+         % insert
+         
+            
+      case {'s'}  % check summary
+         
+         clc;
+         disp('Calibration summary')
+         disp(['- total number of trials kept: ' num2str(sum(D.keep)) '/' num2str(length(D.keep))]);
+         disp(['- unique locations kept: ' num2str(length(D.uloc)) '/15']);
+         disp(D.uloc);
+         return;
+   end
+      
+   t = title(['Trial ' num2str(idx)],'color','g');
+   if ~D.keep(idx)
+      t.Color  = 'r'; 
+      
+      disp(['Trial ' num2str(idx) ' was discarded for data mapping.']);
+      error_msg(D.error(idx));
+   else
+      disp(['Trial ' num2str(idx) ' was included for data mapping.']);
+   end
+   
+   function error_msg(idc)
+      idc     = idc{1};
+      c_error =  {'   (EM#1) No saccade was found!'; ... 
+                  '   (EM#2) RT too slow!'; ...
+                  '   (EM#3) Localization to slow!'; ...
+                  '   (EM#4) ROI has to high velocities'; ...
+                  '   (EM#5) Confidence is too low!'};
+      for iE = 1:length(idc)
+         disp(c_error{idc(iE)})
+      end
+   end
+end
 
 function [az,el] 	= pupil_xyz2azel(x,y,z)
-   % This function will convert xyz into az, el
+   % This function will convert xyz into az, el (see VC Manual 2022)
    
-   % Get rid of the NaN's
-%    x  = pb_naninterp(x);
-%    y  = pb_naninterp(y);
-%    z  = pb_naninterp(z);
+   % Left handed, y-down coordinate system 2 azel
+   % Up is negative, Down is positvie; Left is negative, and Right is
+   % positive
    
-   r  = sqrt(x.^2 + y.^2 + z.^2);
-   el = acosd(y./r);
-   az = atan2d(z,x);
-end
+   % Compute r 
+   r        = sqrt(x.^2 + y.^2 + z.^2);
+   if r(1) > 1; [x,y,z] = normalize_coordinates(x,y,z); end
+   
+   % Convert 2 spherical 
+   az       = atand(x./z);
+   el       = atand(y./(sqrt(x.^2 + z.^2)));
+   
+   % make unit vector
+   function [x,y,z] = normalize_coordinates(x,y,z)
+      for iL = 1:length(x)
+         vector   = [x(iL) y(iL) z(iL)];
+         vector   = vector./norm(vector);
 
-function Data = train_calibration2(Data,GV)
-% This will train neural network to map pupillabs norm position to real
-% world azimuth/elevation values.
-
-   
-   Cal = Data(1).Calibration.Data;
-   if isempty(Cal); error('No calibtration data was found.'); end % Check if data exists
-   
-   
-   % Prep calibration data
-   calsz    = [length(Cal.block_info.trial) 2];
-   plx      = Cal.pupil_labs.Data(2,:);                       % normposx
-   ply      = Cal.pupil_labs.Data(3,:);                       % normposy
-   
-   %trace = filter_trace([plx; ply]',GV);
-   trace = [plx; ply]';
-   plx_f = trace(:,1)';
-   ply_f = trace(:,2)';
-   
-   ts_pup   = lsl_correct_lsl_timestamps(Cal.pupil_labs);
-   %ts_pup   = lsl_correct_pupil_timestamps(Cal.pupil_labs)
-   ts_ei    = [];
-   if ~isempty(Cal.event_in)
-   ts_ei    = lsl_correct_lsl_timestamps(Cal.event_in);
-   end
-   ts_eo    = lsl_correct_lsl_timestamps(Cal.event_out);
-
-   ts_ei    = ts_ei - ts_eo(1);
-   ts_pup   = ts_pup - ts_eo(1);                                           % synch with respect to event data
-   ts_eo    = ts_eo - ts_eo(1);
-      
-   idx_p    = find(ts_pup>0,1);
-   idx_t    = find(ts_pup>ts_eo(end));
-   ts_pup   = ts_pup(idx_p:idx_t);
-   plx_f    = plx_f(idx_p:idx_t);
-   ply_f    = ply_f(idx_p:idx_t);
-   
-   ts_eoc   = ts_ei;
-   %ts_eoc   = ts_eo(3:3:end)+0.1;
-
-   % remove dubble kliks
-   ts_bool  = true(size(ts_ei));
-   
-   for iT = 2:length(ts_ei)
-      if ts_ei(iT) - ts_ei(iT-1) < 1
-         ts_bool(iT) = false;
+         x(iL)        = vector(1);
+         y(iL)        = vector(2);
+         z(iL)        = vector(3);
       end
-   end
-   ts_ei = ts_ei(ts_bool);
-   
-   % preallocate training data
-   inputs   = zeros(calsz);
-   targets  = zeros(calsz);
-   
-   if GV.debug
-      col = pb_selectcolor(2,2);
-
-      est_x = [0.1, 0.48, 0.87, 0.13, 0.16, 0.48, 0.47, 0.86, 0.82, 0.24, 0.28, 0.46, 0.455, 0.75, 0.65];
-      est_y = [0.4, 0.46, 0.30, 0.60, 0.28, 0.68, 0.30, 0.53, 0.20, 0.84, 0.20, 0.88, 0.150, 0.80, 0.10];
-      
-      cfn = pb_newfig(231); 
-      colormap winter
-
-      title('Calibration (trial = 1')
-      hold on;
-      axis square;
-      xlim([0 1]);
-      ylim([0 1]);
-      xlabel('X-coordinate');
-      ylabel('Y-coordinate');
-      
-      pb_nicegraph;
-
-      c     = linspace(1,10,length(plx_f));
-      alpha = 0.2;
-      scatter(plx_f,ply_f,15,c,'filled','markerfacealpha',alpha,'markeredgealpha',alpha); %,'markerfacecolor', col(1,:),'markeredgecolor',col(1,:),'markerfacealpha',0.2);
-      plot(est_x,est_y,'o','color',col(2,:),'Markersize',30,'linewidth',2);
-      legend('Gaze','AutoUpdate',false);
-   end
-   
-   for iT = 1:length(inputs)
-
-      % Get the index for median x and y input positions
-      ts_buttonpress = ts_ei(iT);
-      idx_pup        = find(ts_pup >= ts_buttonpress,1);
-      range          = idx_pup:(idx_pup + floor(GV.fs/10));
-      med_x          = median(plx_f(range));
-      med_y          = median(ply_f(range));
-      
-      % Store inputs
-      inputs(iT,1) = med_x;
-      inputs(iT,2) = med_y;
-     
-      % get targets from block info
-      targets(iT,1) = Cal.block_info.trial(iT).stim.azimuth;
-      targets(iT,2) = Cal.block_info.trial(iT).stim.elevation;
-      
-      if GV.debug
-         el = Cal.block_info.trial(iT).stim.elevation;
-         az = Cal.block_info.trial(iT).stim.azimuth;
-         
-         
-         title(['Calibration (trial = ' num2str(iT) ')']); 
-         scatter(plx_f(range),ply_f(range),'markerfacecolor',col(1,:),'markeredgecolor',col(1,:),'markerfacealpha',0.9);
-         plot(med_x,med_y,'x','color',col(1,:),'markersize',30,'linewidth',5);
-         plot(est_x(iT),est_y(iT),'o','color',col(1,:),'markersize',30,'linewidth',3);
-         
-         
-         pb_delete;
-         pb_delete;
-         pb_delete
-      end
-   end
-   
-   remove_poor_data = [2, 4, 5, 6, 7, 8, 9, 10, 12, 14]; 
-   %remove_poor_data = 1:15;
-   inputs   = inputs(remove_poor_data,:);
-   targets  = targets(remove_poor_data,:);
-   
-   scaler         = max(max(abs(targets)));
-   ntargets     	= targets ./ scaler;
-      
-   % Train network
-   net = feedforwardnet(3);                  % Train network with 3 hidden units
-   net.divideParam.trainRatio = 1;
-   net.divideParam.testRatio = 0;
-   net.divideParam.valRatio = 0;
-
-   net = train(net,inputs',ntargets');       % Note the orientation for neural network inputs/outputs
-   
-   % Store nn
-   for iB = 1:size(Data)
-      Data(iB).Calibration.net      = net;
-      Data(iB).Calibration.scaler   = scaler;
    end
 end
 
@@ -415,13 +458,13 @@ function [P,GV] = getdata(Data, T, GV)
    % Function will get timestamps for the different streams
    disp('>> Obtaining data streams...');
    
-   for iB = 1:length(GV.block_idx)
+   for iB = 1:length(GV.gen_blockidx)
       % iterate over blocks
       
-      block = GV.block_idx(iB);
+      block = GV.gen_blockidx(iB);
       
       % determine fixation point
-      [pup_idx,opt_idx] = get_fixation_idx(Data(iB),T(iB));
+      [pup_idx,opt_idx]          = get_fixation_idx(Data(iB),T(iB));
 
       % store timestamps
       P(iB).pupillabs            = getpupil(Data(iB), T(iB), pup_idx, GV);
@@ -431,7 +474,7 @@ function [P,GV] = getdata(Data, T, GV)
       P(iB).chair                = [];
       P(iB).block_idx            = block;
       
-      disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.block_idx)) ')']);
+      disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.gen_blockidx)) ')']);
    end
    disp(newline)
 end
@@ -621,7 +664,7 @@ function trace = getdilation(block_data,GV)
    
    % 1. Preprocessing
    raw_diameter     = block_data.Pup.Data.base_data.diameter_3d;
-   time              = (1:length(raw_diameter))/GV.fs; 
+   time              = (1:length(raw_diameter))/GV.gaze_fs; 
    diameter_filt  = raw_diameter;
    
    % find blinks
@@ -656,8 +699,8 @@ function trace = getdilation(block_data,GV)
    
    % 3. Bandpass smooth
    trace    = movavg(trace,5);
-   trace    = highpass(trace,'Fc',0.1,'Fs',GV.fs)';
-	trace    = lowpass(trace,'Fc',2,'Fs',GV.fs)';
+   trace    = highpass(trace,'Fc',0.1,'Fs',GV.gaze_fs)';
+	trace    = lowpass(trace,'Fc',2,'Fs',GV.gaze_fs)';
 end
 
 function trace = getopti(block_data,idx,GV)
@@ -758,17 +801,17 @@ function trace = filter_trace(trace,GV)
    end
    
    % Smoothen (Savinsky-Golay)
-   if GV.sgolay_f 
+   if GV.filter_sgolay 
       trace = sgolay_filtering(trace,GV);
    end
    
    % Butterworth low-pass
-   if GV.butter_f                %(cut-off: 20-25, order: 5, see table 2 Mack et al 2017)
+   if GV.filter_butter                %(cut-off: 20-25, order: 5, see table 2 Mack et al 2017)
       trace = bw_filtering(trace,GV);
    end
    
    % remove spikes with median filter
-   if GV.median_f
+   if GV.filter_median
       trace = median_filtering(trace,GV);
    end
 end
@@ -826,7 +869,7 @@ function trace = stampe_filtering(trace,GV)
       end
    end
 
-   if GV.debug; visualize_filter(ot,trace,GV); end
+   if GV.gen_debug; visualize_filter(ot,trace,GV); end
 end
 
 function trace = heckman_filtering(trace,conf,GV)
@@ -864,7 +907,7 @@ function trace = heckman_filtering(trace,conf,GV)
       end
    end
    
-   if GV.debug; visualize_filter(ot,trace,GV,conf); end
+   if GV.gen_debug; visualize_filter(ot,trace,GV,conf); end
 end
 
 function trace = sgolay_filtering(trace,GV)
@@ -880,7 +923,7 @@ function trace = sgolay_filtering(trace,GV)
       trace(:,iO) = sgolayfilt(trace(:,iO),order,framelen);
    end
    
-   if GV.debug; visualize_filter(ot, trace, GV); end
+   if GV.gen_debug; visualize_filter(ot, trace, GV); end
 end
 
 function trace = bw_filtering(trace,GV)
@@ -890,15 +933,15 @@ function trace = bw_filtering(trace,GV)
    ot       = trace;
    
    order    = 5;
-   fc       = 20;
+   fc       = 75;
    
-   [b,a]    = butter(order,fc/(GV.fs/2));
+   [b,a]    = butter(order,fc/(GV.gaze_fs/2));
    
    for iO = 1:size(trace,2)
       trace(:,iO) = filtfilt(b,a,trace(:,iO));
    end
    
-   if GV.debug; visualize_filter(ot,trace,GV); end
+   if GV.gen_debug; visualize_filter(ot,trace,GV); end
 end
 
 function trace = median_filtering(trace,GV)
@@ -913,7 +956,7 @@ function trace = median_filtering(trace,GV)
       trace(:,iO) = medfilt1(trace(:,iO),window);
    end
    
-   if GV.debug; visualize_filter(ot, trace, GV); end
+   if GV.gen_debug; visualize_filter(ot, trace, GV); end
 end
 
 function visualize_filter(old, new, GV, conf)
@@ -921,7 +964,7 @@ function visualize_filter(old, new, GV, conf)
    iT  = 1;          % Azimiuth = 1 / Elevation  = 2;
    
    dur      = length(new);
-   t        = (1:dur)/GV.fs;
+   t        = (1:dur)/GV.gaze_fs;
    
    if nargin < 4; conf = nan(size(new)); end
    
@@ -953,10 +996,10 @@ function T = gettimestamps(Data,GV)
    % Function will get timestamps for the different streams
    disp('>> Obtaining LSL timestamps...');
    
-   for iB = 1:length(GV.block_idx)
+   for iB = 1:length(GV.gen_blockidx)
       % iterate over blocks
       
-      block = GV.block_idx(iB);
+      block = GV.gen_blockidx(iB);
          
       % correct pupil labs
       lsl_tsPupRaw         = Data(block).Timestamp.Pup;
@@ -981,7 +1024,7 @@ function T = gettimestamps(Data,GV)
       T(iB).chair                = [];
       T(iB).block_idx            = block;
       
-      disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.block_idx)) ')']);
+      disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.gen_blockidx)) ')']);
    end
    disp(newline)
 end
@@ -990,26 +1033,26 @@ function S = getstims(Data,GV)
    % Function will sort stimulus times/targets
    disp('>> Obtaining stimuli...');
 
-   for iB = 1:length(GV.block_idx)
+   for iB = 1:length(GV.gen_blockidx)
       % iterate over blocks
       
-      block = GV.block_idx(iB);
+      block = GV.gen_blockidx(iB);
       
       for iT = 1:length(Data(block).Block_Info.trial)
-         % iterate over trials
+         % Iterate over trials
                   
-         % store stimuli
-         S(iB).azimuth(iT)       = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).azimuth;
-         S(iB).elevation(iT)     = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).elevation;
-         S(iB).duration(iT)      = Data(block).Block_Info.trial(iT).stim(:,GV.stim_idx).offdelay - Data(block).Block_Info.trial(iT).stim(:,1).ondelay;
+         % Store stimuli in right spherical coordinate system
+         S(iB).azimuth(iT)       = Data(block).Block_Info.trial(iT).stim(:,GV.stim_targetidx).azimuth;                        % Left is negative / Right is positive
+         S(iB).elevation(iT)     = Data(block).Block_Info.trial(iT).stim(:,GV.stim_targetidx).elevation * -1; 
+         S(iB).duration(iT)      = Data(block).Block_Info.trial(iT).stim(:,GV.stim_targetidx).offdelay - Data(block).Block_Info.trial(iT).stim(:,1).ondelay;   % Down is positive / Up is negative, so flip elevation from measuring file
          S(iB).frame(iT)         = {'Chair fixed'};
          
-         if GV.discern_frames && S(iB).azimuth(iT) == 90    % select world fixed frames // transform azimuth position can only be done after epoching
+         if GV.stim_frames && S(iB).azimuth(iT) == 90    % select world fixed frames // transform azimuth position can only be done after epoching
             S(iB).frame(iT)      = {'World fixed'};
          end
       end
       S(iB).block_idx = block;
-      disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.block_idx)) ')']);
+      disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.gen_blockidx)) ')']);
    end
    disp(newline)
 end
@@ -1021,10 +1064,10 @@ function [T,P] = getchair(Data, T, P, GV)
    % globals
    fs    = 9.95;
    
-   for iB = 1:length(GV.block_idx)
+   for iB = 1:length(GV.gen_blockidx)
       % iterate over blocks
       
-      block = GV.block_idx(iB);
+      block = GV.gen_blockidx(iB);
       
       % position signals
       sensehat_posD     = rad2deg(cumsum(Data(block).Sensehat.gyro_y - Data(block).Sensehat.gyro_y(1)))/-100;        % integrate velocity signal
@@ -1072,34 +1115,19 @@ function [T,P] = getchair(Data, T, P, GV)
          T(iB).chair                = tsVestibularI;
       end
 
-      disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.block_idx)) ')']);
+      disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.gen_blockidx)) ')']);
    end
    disp(newline)
 end
 
 % Read functions
-function [path, prefix, fname, ext] = getfname(GV)
-   % Function selects data 
-   
-   % select dir
-   [fname, path]  = pb_getfile('cd',[GV.cdir filesep '..'],'ext','converted_data_.mat'); % Open the converted data
-   if ~isa(fname,'char')
-      prefix   = false; 
-      ext      = false;
-      return
-   end
-   
-   % store fileparts
-   [ext, fname]   = pb_fext(fname);
-   prefix         = fname(1:15);       % 'converted_data_'
-   fname          = fname(16:end);
-end
+
 
 function Data = epoch_data(Data,GV)
    % function will automatically epoch your data into chuncks as suggested
    % by the acquisition information
    
-   samples     = GV.fs*GV.acquisition - 1;
+   samples     = GV.gaze_fs*GV.epoch_acqduration - 1;
 
    for iB = 1:length(Data.timestamps)
 
@@ -1138,7 +1166,7 @@ function Data = epoch_data(Data,GV)
       nstim       = length(Data.stimuli(iB).azimuth);
       ntriggers   = length(Data.timestamps(iB).stimuli);
       
-      ind         = GV.stim_idx;
+      ind         = GV.stim_targetidx;
       ext         = round(ntriggers/nstim);
 
       for iS = 1:nstim
@@ -1168,7 +1196,7 @@ function Data = epoch_data(Data,GV)
    end
    
    
-   if GV.discern_frames
+   if GV.stim_frames
       % This part will correct all 90 azimuth angles to stimulus onset
       % chair fixed reference frames
       
@@ -1200,11 +1228,18 @@ function Data = correct_world_fixed_azimuth(Data)
    end
 end
 
-function save_data(Data, GV)
-   % stores the preprocessed data
 
-   fn       = strrep(GV.fn,'converted_data_','');
-   fpath    = fullfile(cd);
+
+function Data = filter_pupil(Data, GV)
    
-   save([fpath filesep 'preprocessed_data_' fn],'Data')
+   trace    = [Data.Pup.Data(2,:);Data.Pup.Data(3,:)]';
+   conf     = Data.Pup.Data(1,:);
+   
+   trace    = heckman_filtering(trace,conf,GV);
+   trace    = stampe_filtering(trace,GV);
+   trace    = bw_filtering(trace,GV);
+
+   % Store filtered data
+   Data.Pup.Data(2,:) = trace(:,1)';
+   Data.Pup.Data(3,:) = trace(:,2)';
 end

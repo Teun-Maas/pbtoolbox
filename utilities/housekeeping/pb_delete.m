@@ -9,6 +9,7 @@ function pb_delete(varargin)
    
    %type  = pb_keyval('Type',varargin,'line');
    ax    = pb_keyval('Axis',varargin,gca);
+   num   = pb_keyval('number',varargin,1);
    
    h = pb_fobj(ax);
    
@@ -20,7 +21,9 @@ function pb_delete(varargin)
          cnt = cnt+1;
       end
    end
-   delete(h(length(h)-cnt));
+   for iN = 1:num
+      delete(h(length(h)-cnt));
+   end
 end
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

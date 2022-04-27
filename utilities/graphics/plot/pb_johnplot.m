@@ -20,7 +20,8 @@ function pb_johnplot(X,Y,varargin)
    axis square;
    
    marker = imread(which('marker_john_1.png'),'BackgroundColor', [1 1 1]);
-
+   marker = imread(which('marker_lizet_1.png'),'BackgroundColor', [1 1 1]);
+   
    for iScat = 1:length(X)
       x = [X(iScat) - defsz*0.133 X(iScat) + defsz*0.133];
       y = [Y(iScat) + defsz*0.2 Y(iScat) - defsz*0.2];

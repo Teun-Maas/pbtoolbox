@@ -12,7 +12,7 @@ function S = pb_struct(fields,data)
    S = struct(fields{1},data{1});
    
    for iL = 2:length(fields)
-      S = setfield(S,fields{iL},data{iL});
+      S = setfield(S,fields{iL},data{iL}); %#ok boomer
    end
 end
  
