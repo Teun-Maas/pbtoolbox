@@ -10,6 +10,7 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
    
    dshow    = pb_keyval('dshow',varargin,false);
    ax       = pb_keyval('axis',varargin);
+   handles  = pb_keyval('handles',varargin,[]);
    
    D(N) = struct;
    for i = 1:N
@@ -28,7 +29,7 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
          case 'vor'
             [D(i).x,D(i).t] = VC_VOR(dur, SR);
          case 'designed'
-            [D(i).x,D(i).t] = VC_design(dur, SR);
+            [D(i).x,D(i).t] = VC_design(dur, SR,handles.cfg.fn_profile);
          otherwise
             error('False type specification');
       end
@@ -107,15 +108,15 @@ function [x,t]  = VC_VOR(dur, SR)
    x              = cumsum(v)/SR;
 end
 
-function [x,t]  = VC_design(ax,SR)
+function [x,t]  = VC_design(ax,SR,fn)
    % Function will create the designed signal that is uploaded as
    % vestibular_profile.mat within the same dir as the expfile
    
    t = inv(SR):inv(SR):200;
    
-   % Assert
-   l = list([cd filesep 'vestibular_profile.mat']);
-   if isempty(l); error('No vestibular profile was found'); end
+   % Assert vesti bular profile
+   if isempty(fn); error('No vestibular profile was found'); end
+   load(fn,'signal');                                                      % load
    
    % check if axis exists
    switch ax
