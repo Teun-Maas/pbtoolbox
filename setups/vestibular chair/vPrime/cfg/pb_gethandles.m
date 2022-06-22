@@ -26,7 +26,16 @@ function handles = pb_gethandles(handles)
    d                 = dir(str);                                           % default exp folder
    cfg.expfiles		= {d.name};
    cfg.expfname		= get(handles.editLoad,'String');
-
+   
+   % vestibular profile
+   idc               = 1:max(strfind(cfg.expfname,filesep));
+   folder            = cfg.expfname(idc);
+   l                 = dir([folder 'vestibular_profile.mat']);
+   
+   % profile
+   profile           = [];
+   if isempty(l); profile = [l(1).folder filesep l(1).name]; end
+   cfg.fn_profile    = profile; 
    
    handles.cfg			= cfg;
 end
