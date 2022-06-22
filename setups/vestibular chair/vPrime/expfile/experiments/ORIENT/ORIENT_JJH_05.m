@@ -1,4 +1,4 @@
-function ORIENT_JJH_02(varargin)
+function ORIENT_JJH_05(varargin)
 % PB_VGENEXP_VIS
 %
 % PB_VGENEXP_VIS  will generate an EXP-file for a default localization experiment. 
@@ -57,8 +57,8 @@ function ORIENT_JJH_02(varargin)
    GV.stim_fixdur             = pb_keyval('fix_dur',varargin,1000);                    % fixation light duration in ms
    
    %     Vestibular profile                                                            % typically only use vertical axis
-   GV.vc_profile              = pb_keyval('vc_profile',varargin,[1 6]);                % Select the profile 1-6. [HOR/VERT]
-   GV.vc_amplitude            = pb_keyval('vc_amplitude',varargin,[0 40]);             % Select the maximum amplitude. [HOR/VERT]
+   GV.vc_profile              = pb_keyval('vc_profile',varargin,[6 6]);                % Select the profile 1-6. [HOR/VERT]
+   GV.vc_amplitude            = pb_keyval('vc_amplitude',varargin,[20 40]);             % Select the maximum amplitude. [HOR/VERT]
    GV.vc_duration             = pb_keyval('vc_duration',varargin,200);                 % Duration (max duration of profile is 200s)
    GV.vc_frequency            = pb_keyval('vc_frequency',varargin,0.15);               % Frequency (max) of the vestibular noise / sinewave
 

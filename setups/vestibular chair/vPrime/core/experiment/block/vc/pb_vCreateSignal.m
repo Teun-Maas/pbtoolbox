@@ -8,7 +8,8 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
 
 % PBToolbox (2018): JJH: j.heckman@donders.ru.nl
    
-   dshow = pb_keyval('dshow',varargin,false);
+   dshow    = pb_keyval('dshow',varargin,false);
+   ax       = pb_keyval('axis',varargin);
    
    D(N) = struct;
    for i = 1:N
@@ -26,6 +27,8 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
             [D(i).x,D(i).t] = VC_turnsignal(dur, SR);
          case 'vor'
             [D(i).x,D(i).t] = VC_VOR(dur, SR);
+         case 'designed'
+            [D(i).x,D(i).t] = VC_design(dur, SR);
          otherwise
             error('False type specification');
       end
@@ -104,16 +107,32 @@ function [x,t]  = VC_VOR(dur, SR)
    x              = cumsum(v)/SR;
 end
 
-% function [x,t]  = VC_VOR(dur, SR)
-%     % function will create turn signal of length dur
-%     
-%     t = (0:(dur*SR)-1)/SR;
-%     x = t;
-%     
-%     tsz = length(t);
-%     ind = floor(tsz/2);
-%     x(ind+1:end) = x(ind);
-% end
+function [x,t]  = VC_design(ax,SR)
+   % Function will create the designed signal that is uploaded as
+   % vestibular_profile.mat within the same dir as the expfile
+   
+   t = inv(SR):inv(SR):200;
+   
+   % Assert
+   l = list([cd filesep 'vestibular_profile.mat']);
+   if isempty(l); error('No vestibular profile was found'); end
+   
+   % check if axis exists
+   switch ax
+      case 'VER'
+         x = signal.VER;
+      case 'HOR'
+         x = signal.HOR;
+      otherwise
+         error('Not a proper axis selected (i.e. VER or HOR)');
+   end
+   
+   if max(abs(x))>1; x = x/max(abs(x)); end                                % normalize (max value is 1)
+   if size(t) ~= size(x); error('Dimensions t and x do not match.'); end   % Check if length matches
+   
+   tkw  = tukeywin(length(t),0.125);
+   if any(abs(x)>tkw); x = x .* transpose(tkw); end                        % add tukeywindow if it is not there
+end
 
  
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

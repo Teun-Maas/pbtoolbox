@@ -30,9 +30,10 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    b     = regstats(Y,X,'linear','beta');
    b     = b.beta;
    
-   gain                        = b(2);
-   bias                        = b(1);
-   r                           = corrcoef(X,Y); r = b(2);
+   gain   	= b(2);
+   bias    	= b(1);
+   r       	= corrcoef(X,Y); r = b(2);
+   b        = bias;
 
    %% Graphics
    h = gobjects(0);
@@ -48,6 +49,7 @@ function [h,b,r] = pb_regplot(X,Y,varargin)
    mov = max(axxes)/10;
    if textOut; text(mov,-mov,['r = ' num2str(gain)],'FontSize',18); end
    if ~hs; hold off; end
+   uistack(h(1),'top')
 end
 
 

@@ -219,7 +219,7 @@ end
 function signal = readVest(line)
    % reads VS signal from the expfile
    
-   types = {'none','sine','noise','turn','vor','sum'};
+   types = {'none','sine','noise','turn','vor','designed'};
    n     = str2num(erase(sscanf(line,'%s',2),sscanf(line,'%s',1)));
    type  = types{n};
    signal.type = type;

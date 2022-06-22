@@ -16,6 +16,7 @@ function pb_nicegraph(varargin)
 	conditions  =   pb_keyval('conditions',varargin,1);
 	linewidth   =   pb_keyval('linewidth',varargin,1);
    font        =  pb_keyval('font',varargin,'Times New Roman');
+   fsize       =  pb_keyval('fontsize',varargin,20);
 
 	ax      = pb_fobj(gcf,'Type','Axes');
 	if ax<1; return; end
@@ -56,7 +57,7 @@ function pb_nicegraph(varargin)
       setAx.XGrid         = 'on';
       setAx.XColor        = [.3 .3 .3];
       setAx.YColor        = [.3 .3 .3];
-      setAx.FontSize      = 15;
+      setAx.FontSize      = fsize;
       setAx.YDir          = 'normal';
       setAx.LineWidth     = 1;
       
