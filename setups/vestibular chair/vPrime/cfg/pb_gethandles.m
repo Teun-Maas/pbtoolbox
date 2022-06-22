@@ -34,7 +34,7 @@ function handles = pb_gethandles(handles)
    
    % profile
    profile           = [];
-   if isempty(l); profile = [l(1).folder filesep l(1).name]; end
+   if ~isempty(l); profile = [l(1).folder filesep l(1).name]; end
    cfg.fn_profile    = profile; 
    
    handles.cfg			= cfg;
