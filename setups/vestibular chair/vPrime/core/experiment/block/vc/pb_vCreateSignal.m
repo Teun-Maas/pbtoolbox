@@ -29,7 +29,7 @@ function D = pb_vCreateSignal(N, dur, SR, freq, type, varargin)
          case 'vor'
             [D(i).x,D(i).t] = VC_VOR(dur, SR);
          case 'designed'
-            [D(i).x,D(i).t] = VC_design(dur, SR,handles.cfg.fn_profile);
+            [D(i).x,D(i).t] = VC_design(ax, SR,handles.cfg.fn_profile);
          otherwise
             error('False type specification');
       end
