@@ -18,8 +18,8 @@ function [profile,dur,bool_mov] = pb_vSignalVC(handles)
    signal      = pb_vBuildSignal(block(bnumber).signal);  
    signal      = pb_vSafety(signal); 
    
-   vSignal     = pb_vCreateSignal(1, signal(1).duration, 10, signal(1).frequency, signal(1).type,'axis','VER',handles);
-   hSignal     = pb_vCreateSignal(1, signal(2).duration, 10, signal(2).frequency, signal(2).type,'axis','HOR',handles);
+   vSignal     = pb_vCreateSignal(1, signal(1).duration, 10, signal(1).frequency, signal(1).type,'axis','VER','handles',handles);
+   hSignal     = pb_vCreateSignal(1, signal(2).duration, 10, signal(2).frequency, signal(2).type,'axis','HOR','handles',handles);
 
    %  Finalize signals
    sigData.v.x    = vSignal.x .* signal(1).amplitude;    
