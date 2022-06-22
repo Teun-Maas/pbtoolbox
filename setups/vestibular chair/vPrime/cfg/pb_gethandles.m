@@ -30,7 +30,7 @@ function handles = pb_gethandles(handles)
    % vestibular profile
    idc               = 1:max(strfind(cfg.expfname,filesep));
    folder            = cfg.expfname(idc);
-   l                 = dir([folder 'vestibular_profile.mat']);
+   l                 = dir([cfg.expfname(1:end-4) '.mat']);
    
    % profile
    profile           = [];
