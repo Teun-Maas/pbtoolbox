@@ -1,4 +1,4 @@
-function ORIENT_JJH_05(varargin)
+function ORIENT_JJH_09(varargin)
 % PB_VGENEXP_VIS
 %
 % PB_VGENEXP_VIS  will generate an EXP-file for a default localization experiment. 
@@ -38,35 +38,35 @@ function ORIENT_JJH_05(varargin)
    %     Experiment
    GV.exp_datdir              = pb_keyval('datdir',varargin,'');                       % Data dir for Experimenter PC
    GV.exp_ITI                 = pb_keyval('ITI',varargin,[0 0]);                       % ITI, keep at  [0 0]
-   GV.exp_ntrials             = pb_keyval('ntrials',varargin,40);                      % Select the number of trails in each block (should be smaller than number of stimuli generated!)
+   GV.exp_ntrials             = pb_keyval('ntrials',varargin,60);                      % Select the number of trails in each block (should be smaller than number of stimuli generated!)
    GV.exp_stimframe           = pb_keyval('stim',varargin,2);                          % Presently we are working with the 2nd frame configuration (only LEDs, see through)
    GV.exp_lab                 = pb_keyval('lab',varargin,1);                           % The VC lab is default lab choice (set 1)
    GV.exp_trialduration       = pb_keyval('trialdur',varargin,0);                      % Select max trial duration, if 0 is chosen there is no max trial duration (use with button presses).
    
    %     Stimuli
-   GV.stim_repeats            = pb_keyval('repeats',varargin,2);                       % Keep at 1 or it wil repeat stimuli n times.
-   GV.stim_duration           = pb_keyval('duration',varargin,[0.5 1 2 4 20]);         % Select the duration you want to present with. For multiple inset array (ex. [0.5 1 2 4 16]).
-   GV.stim_intensity        	= pb_keyval('intensity',varargin,[40 50]);             	% Select the intensity (range). If you want to randomnise the the intensity set range limits (ex. [40 50]).
-   GV.stim_onsetdelay        	= pb_keyval('onsetdelay',varargin,[150 350]);            % Select onset delay (range). Pick single number for fixed onset delay, for random range set limits (ex. [1000 1250])
+   GV.stim_repeats            = pb_keyval('repeats',varargin,1);                       % Keep at 1 or it wil repeat stimuli n times.
+   GV.stim_duration           = pb_keyval('duration',varargin,[1 15]);                 % Select the duration you want to present with. For multiple inset array (ex. [0.5 1 2 4 16]).
+   GV.stim_intensity        	= pb_keyval('intensity',varargin,[40 50]);              	% Select the intensity (range). If you want to randomnise the the intensity set range limits (ex. [40 50]).
+   GV.stim_onsetdelay        	= pb_keyval('onsetdelay',varargin,[150 250]);            % Select onset delay (range). Pick single number for fixed onset delay, for random range set limits (ex. [1000 1250])
    GV.stim_randomise          = pb_keyval('random',varargin,true);                     % If you want to randomise the order of the stimuli (and you typically should!) set to true.
-   GV.stim_ratiochair2world 	= pb_keyval('chair2world',varargin,[1 0]);               % Amount of chair fixed vs world fixed targets
+   GV.stim_ratiochair2world 	= pb_keyval('chair2world',varargin,[1 1]);               % Amount of chair fixed vs world fixed targets
    GV.stim_excludecentre    	= pb_keyval('cutoff',varargin, 0);                       % Select the middle range (+- degrees) that you would like to exclude from target selection (if none, set to 0).
    GV.stim_trigger_on         = pb_keyval('trig_on',varargin,0);                       % Onset trigger, typically 0.
    GV.stim_trigger_off        = pb_keyval('trig_off',varargin,0);                      % Offset trigger, typically 0 (unless you want to use button presses or so..)
    GV.stim_fixlight        	= pb_keyval('fix_light',varargin,0);                     % If you want a fixation light
-   GV.stim_fixdur             = pb_keyval('fix_dur',varargin,1000);                    % fixation light duration in ms
+   GV.stim_fixdur             = pb_keyval('fix_dur',varargin,0);                       % fixation light duration in ms
+   GV.stim_steps              = pb_keyval('steps',varargin,2);                         % Number of steps (1 = single target, n = multiple steps)
    
    %     Vestibular profile                                                            % typically only use vertical axis
-   GV.vc_profile              = pb_keyval('vc_profile',varargin,[6 6]);                % Select the profile 1-6. [HOR/VERT]
-   GV.vc_amplitude            = pb_keyval('vc_amplitude',varargin,[20 40]);             % Select the maximum amplitude. [HOR/VERT]
-   GV.vc_duration             = pb_keyval('vc_duration',varargin,200);                 % Duration (max duration of profile is 200s)
+   GV.vc_profile              = pb_keyval('vc_profile',varargin,[1 1]);                % Select the profile 1-6. [HOR/VERT]
+   GV.vc_amplitude            = pb_keyval('vc_amplitude',varargin,[0 0]);              % Select the maximum amplitude. [HOR/VERT]
+   GV.vc_duration             = pb_keyval('vc_duration',varargin,1);                	% Duration (max duration of profile is 200s)
    GV.vc_frequency            = pb_keyval('vc_frequency',varargin,0.15);               % Frequency (max) of the vestibular noise / sinewave
 
    
    % Build experiment
-   T     = get_targets(GV);
-   S     = get_stimuli(T,GV);
-   EXP   = parse_exp(S,GV);
+   [Tc,Tw]     = get_targets(GV);
+   EXP         = parse_exp(Tc,Tw,GV);
    
    % Write experiment
    c_expfiles = write_exp(EXP,GV);
@@ -75,83 +75,154 @@ end
 
 
 % Helper functions
-function EXP = parse_exp(S,GV)
+function EXP = parse_exp(Tc,Tw,GV)
    % This function will parse stimuli over different blocks and add
    % vestibular signal to each block.
 
-   % compute blocks
-   nblocks        = ceil(length(S.X)/GV.exp_ntrials);                      % compute number of blocks round up and fill left over trials
-   ntrials_last   = rem(length(S.X),GV.exp_ntrials);
-   ntrials_fill   = GV.exp_ntrials - ntrials_last;
-   shuffle_data   = randperm(length(S.X),ntrials_fill);                    % select idx to repeat
+   % Get trials
+   trials         = get_trials(Tc,Tw);
+   ntrials        = length(trials);
+   nblocks        = ceil(ntrials/GV.exp_ntrials);                          % compute number of blocks round up and fill left over trials
    
    
    for iB = 1:nblocks
-      % divbide stimuli over blocks
+      %  Divide stimuli over blocks
       
-      idc = ((iB-1) * GV.exp_ntrials) + 1 : (iB * GV.exp_ntrials);         % select current stimuli idc
+      idc         	= ((iB-1)*GV.exp_ntrials)+1:(iB * GV.exp_ntrials);    % select current stimuli idc
+      durations     	= [1 1; 1 15; 15 1; 15 15];                           % Select duration    
       
-      if iB == nblocks && ntrials_fill > 0; idc = [idc(1:end-ntrials_fill), shuffle_data]; end
-      
-      % split stimuli
-      EXP.block(iB).Stim.X       = S.X(idc);
-      EXP.block(iB).Stim.Y       = S.Y(idc);
-      EXP.block(iB).Stim.dur     = S.dur(idc);
-      
-      % inset other parameters
-      if length(GV.stim_intensity) == 1
-         int    	= GV.stim_intensity * ones(size(idc')); 
-      elseif length(GV.stim_intensity) == 2
-         int   	= randi(GV.stim_intensity,size(idc'));
-      end
-      
-      
+      % Select onset delay
       if length(GV.stim_onsetdelay) == 1
          onset  	= GV.stim_onsetdelay * ones(size(idc')); 
       elseif length(GV.stim_onsetdelay) == 2
          onset   	= randi(GV.stim_onsetdelay,size(idc'));
       end
       
-      EXP.block(iB).Stim.int     = int;
-      EXP.block(iB).Stim.onset   = onset;
-      EXP.block(iB).Stim.offset  = EXP.block(iB).Stim.onset + EXP.block(iB).Stim.dur;
+      for iT = 1:length(idc)
+         %  Write each trial
+         
+         current_trial     = trials(idc(iT),:);                            % Select trial info     
+         
+         for iS = 1:2
+            %  Split stimuli
+            
+            % Select target
+            stimulus_idx         = current_trial(iS);
+            switch iS
+               case 1
+                  T  = Tc;
+               case 2
+                  T  = Tw;
+            end
+            
+            % Select duration
+            duration       = durations(current_trial(3),:);
+
+            %  Write stimuli
+            S(iS).X     	= T(stimulus_idx,1);
+            S(iS).Y     	= T(stimulus_idx,2);
+            S(iS).dur      = duration(iS);
+            S(iS).int      = randi([40,50]);
+            S(iS).onset    = [];
+            S(iS).offset   = [];
+         end
+
+         if current_trial(4)==2; S = flip(S); end                          % Flip presentation order
+         
+         % Write onset and offset
+         for iS  = 1:2
+            S(iS).onset    = onset(iT);
+            S(iS).offset   = onset(iT) + S(iS).dur;
+            
+            onset(iT)      = onset(iT) + randi([75,200]);                  % Add delay for second stimulus
+         end
+         
+         % Write stimui
+         EXP.block(iB).trial(iT).stim        = S;
+
+      end
       
-      EXP.block(iB).Horizontal   = struct('Amplitude', GV.vc_amplitude(1),  'Signal', GV.vc_profile(1), 'Duration', GV.vc_duration, 'Frequency', GV.vc_frequency);
+      EXP.block(iB).Horizontal   = struct('Amplitude', GV.vc_amplitude(1), 'Signal', GV.vc_profile(1), 'Duration', GV.vc_duration, 'Frequency', GV.vc_frequency);
       EXP.block(iB).Vertical     = struct('Amplitude', GV.vc_amplitude(2), 'Signal', GV.vc_profile(2), 'Duration', GV.vc_duration, 'Frequency', GV.vc_frequency);
    end
 end
 
-function S = get_stimuli(T,GV)
-   % This function will prep all stimuli * durations
+function trials = get_trials(Tc,Tw)
+   %  This function will trials 
 
-   % Make stim grid
-   [X,Y]          = make_stims(T,GV);
-   dur            = GV.stim_duration;
-   [X,~,~]      	= ndgrid(X,0,dur);
-   [Y,~,dur]     	= ndgrid(Y,0,dur);
+   % Break condition
+   repeat         = true;
+   reps           = 0;
+  
    
-   % Vectors
-   X              = X(:);
-   Y              = Y(:);
-   dur            = dur(:);
-   
-   % Repeat
-   S.X     = repmat(X,[GV.stim_repeats 1]);
-   S.Y     = repmat(Y,[GV.stim_repeats 1]);
-   S.dur   = repmat(dur,[GV.stim_repeats 1]);
-   
-   if GV.stim_randomise   % shuffle targets
-      rperm    = randperm(length(S.X));   % random key
+   while repeat
+      % Repeat while each target is lower than 
       
-      % shuffle
-      S.X      = S.X(rperm);
-      S.Y      = S.Y(rperm);
-      S.dur   	= S.dur(rperm);
+      
+      %  Preallocate
+      trials      = zeros(120,4);
+      idx         = 0;
+      cW       	=  zeros(1,14);
+
+      % 	Limits
+      nO         	= 2;
+      nD          = 4;
+      nT          = length(Tc);
+      uT          = nO*nD*nT;
+
+      % Get Elevations
+      cEl            = Tc(:,2);
+      wEl            = Tw(:,2);
+      spatial_seg    = 8;
+      
+      %  Create 120 trial conditions
+      for iO = 1:nO
+         for iD = 1:nD         
+            for iT = 1:nT 
+
+               % Find potential match
+               potentials           = find(wEl>cEl(iT)+ spatial_seg | wEl<cEl(iT) - spatial_seg);
+               match_order          = randperm(length(potentials));
+               match                = potentials(match_order(1));
+
+               %  Fill trial conditions
+               idx            = idx + 1;
+               trials(idx,:)  = [iT, match, iD, iO];
+
+            end
+         end
+      end
+
+      % count 
+      for iW = 1:length(Tw)
+         cW(iW) = sum(trials(:,2)==iW);
+      end
+      
+      % Rerun?
+      repeat   = any(cW<6 | cW>10);                                       % <12 | >17 
+      reps     = reps+1;
    end
+   
+   cfn = pb_newfig(0);
+   c_title = {'Chair','World'};
+   for iS = 1:2
+      subplot(1,2,iS);
+      hold on;
+      axis square;
+      title([c_title{iS} ' Targets']);
+      ylim([0 20]);
+      histogram(trials(:,iS),16-iS)
+   end
+   sgtitle(['Experiment ' num2str(reps)])
+   pb_nicegraph;
+   
+   %  Shuffle;
+   rperm                = randperm(120);
+   trials               = trials(rperm,:);
 end
 
 function [X,Y] = make_stims(T,GV)
-   % this function will select the target positions and correct them for the
+   % This function will select the target positions and correct them for the
    % relative ratio of presenting them (world vs chair fixed targets)
     
    world_fixed    = T(:,1) == 90;   % azimuth check, 90 is world fixed
@@ -162,7 +233,7 @@ function [X,Y] = make_stims(T,GV)
                      repmat(T(world_fixed,2),  GV.stim_ratiochair2world(2),1)];
 end
 
-function T = get_targets(GV)
+function [Tc,Tw] = get_targets(GV)
    % This function  will obtain all targets from cfg, and remove targets
    % too close to elevation = 0.
 
@@ -233,6 +304,14 @@ function T = get_targets(GV)
       
       pb_nicegraph;
    end
+  
+   % Get idx
+   idx_chair            = T(:,1)~=90;
+   idx_world            = T(:,1)==90;
+   
+   Tc                   = T(idx_chair,:);
+   Tw                   = T(idx_world,:);
+   
 end
 
 function c_expfiles = write_exp(EXP, GV)
@@ -263,25 +342,25 @@ function c_expfiles = write_exp(EXP, GV)
       % Write trials
       for iT = 1:GV.exp_ntrials
          
-         % Make visual stimulus object
-         VIS.LED        = 'LED';
-         VIS.X          = EXP.block(iB).Stim.X(iT);
-         VIS.Y          = EXP.block(iB).Stim.Y(iT);  
-         VIS.Int        = EXP.block(iB).Stim.int(iT);
-         VIS.EventOn    = GV.stim_trigger_on;
-         VIS.EventOff   = GV.stim_trigger_off;
-         VIS.Onset      = EXP.block(iB).Stim.onset(iT);
-         VIS.Offset     = EXP.block(iB).Stim.offset(iT);
-         
          % Write trial and stimuli
          pb_vWriteTrial(fid, iT);
-         if any(GV.stim_fixlight)
             
-            pb_vWriteFixLight(fid,GV); 
-            VIS.Onset      = VIS.Onset + GV.stim_fixdur;
-            VIS.Offset     = VIS.Offset + GV.stim_fixdur;
+         for iS = 1:length(EXP.block(iB).trial(iT).stim)
+            % Make visual stimulus object
+            
+            clear VIS;
+            
+            VIS.LED        = 'LED';
+            VIS.X          = EXP.block(iB).trial(iT).stim(iS).X;
+            VIS.Y          = EXP.block(iB).trial(iT).stim(iS).Y;  
+            VIS.Int        = EXP.block(iB).trial(iT).stim(iS).int;
+            VIS.EventOn    = GV.stim_trigger_on;
+            VIS.EventOff   = GV.stim_trigger_off;
+            VIS.Onset      = EXP.block(iB).trial(iT).stim(iS).onset;
+            VIS.Offset     = EXP.block(iB).trial(iT).stim(iS).offset;
+
+            pb_vWriteStim(fid, 2, [],VIS);
          end
-         pb_vWriteStim(fid, 2, [],VIS);
       end
       
       % Write 

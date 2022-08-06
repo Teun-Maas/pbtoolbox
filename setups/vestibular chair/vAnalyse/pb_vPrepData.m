@@ -71,7 +71,7 @@ function GV = parse_keyval(varargin)
    GV.cal_reptrain         = pb_keyval('cal_reptrain',V,10);               % Amount of repeated trainings
    GV.cal_retrain          = pb_keyval('retrain',V,false);                  % Retraint the neural network
    GV.cal_fn               = pb_keyval('cal_fn',V,['cal_figure_' GV.gen_fn(16:end-4) '.fig']); % This will give you the filename of calration figure.
-   GV.cal_nethidden        = pb_keyval('cal_hidden',V,2);                  % Number of hidden units in network
+   GV.cal_nethidden        = pb_keyval('cal_hidden',V,3);                  % Number of hidden units in network
    
    % Stimulus parse
    GV.stim_targetidx       = pb_keyval('stim', V, 1);                      % Select the stimulus of interest index.
@@ -604,7 +604,6 @@ function show_calibration_training(Data,X,T,UD,GV)
    ylabel('Elevation ($^{\circ}$)');
 
    
-
    % 2. Plot regression
    subplot(232); 
    hold on; 
@@ -1030,12 +1029,12 @@ function [P,GV] = getdata(Data, T, GV)
       [pup_idx,opt_idx]          = get_fixation_idx(Data(iB),T(iB));
 
       % Store timestamps
-      P(iB).pupillabs            = getpupil(Data(iB), T(iB), pup_idx, GV); %#ok
-      P(iB).pupilometry          = getdilation(Data(iB), GV); %#ok
-      P(iB).optitrack            = getopti(Data(iB), opt_idx,GV); %#ok
-      P(iB).gaze                 = computegaze(P,Data(iB), T(iB), opt_idx, pup_idx, GV); %#ok
-      P(iB).chair                = []; %#ok
-      P(iB).block_idx            = block; %#ok
+      P(iB).pupillabs            = getpupil(Data(iB), T(iB), pup_idx, GV);                      %#ok
+      P(iB).pupilometry          = getdilation(Data(iB), GV);                                   %#ok
+      P(iB).optitrack            = getopti(Data(iB), opt_idx,GV);                               %#ok
+      P(iB).gaze                 = computegaze(P,Data(iB), T(iB), opt_idx, pup_idx, GV);        %#ok
+      P(iB).chair                = [];                                                          %#ok
+      P(iB).block_idx            = block;                                                       %#ok
       
       disp(['   ' '- block ' num2str(block) ' was parsed (' num2str(iB) '/' num2str(length(GV.gen_blockidx)) ')']);
    end
@@ -1059,19 +1058,19 @@ function [pup_idx, opt_idx] = get_fixation_idx(block_data,block_time)
          azel_eye    = map_eyes2azel(block_data);
       end
    else
-      x           = block_data.Pup.Data.gaze_normal_3d(:,1);
-      y           = block_data.Pup.Data.gaze_normal_3d(:,2);
-      z           = block_data.Pup.Data.gaze_normal_3d(:,3);
+      x      	= block_data.Pup.Data(4,:);
+      y     	= block_data.Pup.Data(5,:);
+      z      	= block_data.Pup.Data(6,:);
       
-      azel_eye    = convert_xyz2azel(x,y,z);
+      azel_eye    = pupil_xyz2azel(x,y,z);
    end
    
    % graph
    cfn = pb_newfig(231);
    hold on;
 
-   plot(block_time.optitrack - block_time.optitrack(1), azel_head - azel_head(1,1));
-   plot(block_time.pupillabs - block_time.optitrack(1), azel_eye - azel_eye(1,:));
+   plot(block_time.optitrack - block_time.optitrack(1), azel_head);
+   plot(block_time.pupillabs - block_time.optitrack(1), azel_eye);
    
    legend('Head azimuth','Head elevation','Eye azimuth','Eye elevation')
    xlim([0 25]);
@@ -1105,7 +1104,7 @@ function azel = map_eyes2azel(block_data)
 
       % Simulate network
       net               = block_data.Calibration.net;                      % Load network
-      nazel             = sim(net,(Xn));                                   % Simulate network 
+      nazel             = sim(net,Xn);                                   % Simulate network 
       azel              = nazel .* block_data.Calibration.scaler;          % Scale back to undo normalization
       
       % compare difference

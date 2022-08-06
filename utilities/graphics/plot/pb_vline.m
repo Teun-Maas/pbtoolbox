@@ -25,7 +25,7 @@ function h = pb_vline(x, varargin)
 
    ho       = ishold; hold on;
    len      = length(x);
-   h        = gobjects(len);
+   h        = gobjects(len,1);
 
    %% Plot
 
@@ -35,7 +35,7 @@ function h = pb_vline(x, varargin)
    lim(lim==0) = 1e-100;
    
    for i = 1:len
-      h(i)  = plot([x(i);x(i)], lim, style);
+      h(i)  = plot([x(i); x(i)], lim, style);
       if ~isempty(col); set(h(i),'Color',col); end
       set(h(i),'Tag','graphical aid: vertical');
       set(h(i),'LineWidth',lw);

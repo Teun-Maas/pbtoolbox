@@ -25,7 +25,7 @@ function h = pb_hline(y, varargin)
    
    ho       = ishold; hold on;
    len      = length(y);
-   h        = gobjects(len);
+   h        = gobjects(len,1);
 
    %% Plot
 
