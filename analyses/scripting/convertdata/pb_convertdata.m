@@ -52,7 +52,15 @@ function D = pb_convertdata(fn)
 
       D(iS).Pup               = pup;
       D(iS).Sensehat          = mat2struct(sensehat.Data,pb_struct_sensehat);
-      D(iS).VC                = dat(iS).vestibular_signal;
+      
+      % Fill VC
+      D(iS).VC                      	= dat(iS).vestibular_signal;
+      if isempty(D(iS).VC)
+         D(iS).VC.sv.horizontal        = zeros(1,2000); 
+         D(iS).VC.sv.vertical          = zeros(1,2000);          
+         D(iS).VC.pv.horizontal        = zeros(1,2000); 
+         D(iS).VC.pv.vertical          = zeros(1,2000); 
+      end
 
       D(iS).Timestamp.Pup     = lsl_correct_lsl_timestamps(pup);
       D(iS).Timestamp.Sense   = lsl_correct_lsl_timestamps(sensehat);

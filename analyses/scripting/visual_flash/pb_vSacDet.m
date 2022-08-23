@@ -8,7 +8,7 @@ function pb_vSacDet(Data,varargin)
 % PBToolbox (2021): JJH: j.heckman@donders.ru.nl
 
    %  Keyval
-   fs          = pb_keyval('fs',varargin,120);
+   fs          = pb_keyval('fs',varargin,200);
    duration    = pb_keyval('duration',varargin,3);
    start_idx   = pb_keyval('start_idx',varargin,1);
    stop_idx    = pb_keyval('stop_idx',varargin);
